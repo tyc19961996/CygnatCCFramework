@@ -2,6 +2,7 @@ import { sys } from "cc";
 import FileBase from "../FileBase";
 import { READ_FILE_TYPE, FileReaderData,JsZIPFileData, filedataType } from "../FileEnum";
 import FileTools from "../FileTools";
+import { Log } from "../../Logger/Log";
 
 export default  class FileWeb extends FileBase{
     onLoad() {
@@ -55,7 +56,7 @@ export default  class FileWeb extends FileBase{
     openLocalFile(accept: string, callback: (file: File) => void) {
         let inputEl: HTMLInputElement = <HTMLInputElement>document.getElementById('file_input');
         //if (!inputEl) {
-            // ConsoleEx.Log('xxxxxx createElement input');
+            // Log('xxxxxx createElement input');
             inputEl = document.createElement('input');
             inputEl.id = 'file_input';
             inputEl.setAttribute('id', 'file_input');
@@ -136,7 +137,7 @@ export default  class FileWeb extends FileBase{
             //将本地图片拖拽到页面中后要进行的处理都在这
             //let listing  = document.getElementById("listing");
             let fileList = e.dataTransfer.files;
-            ConsoleEx.Log(fileList);
+            Log(fileList);
             let items = e.dataTransfer.items;
             //listing.innerHTML = "";
 
@@ -250,7 +251,7 @@ export default  class FileWeb extends FileBase{
                             tdata.texture = texture;
                             tdata.state = 2;
                             if (targt.CheckList(datalist)) {
-                                ConsoleEx.Log("全部读取完成");
+                                Log("全部读取完成");
                                 TempdropHandler && TempdropHandler(datalist);
                             }
                         });
@@ -258,7 +259,7 @@ export default  class FileWeb extends FileBase{
                     default:
                         tdata.state = 2;
                         if (targt.CheckList(datalist)) {
-                            ConsoleEx.Log("全部读取完成");
+                            Log("全部读取完成");
                             TempdropHandler && TempdropHandler(datalist);
                         }
                         break;

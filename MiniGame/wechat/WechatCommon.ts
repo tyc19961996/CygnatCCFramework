@@ -4,7 +4,7 @@
  * @Description: 微信小游戏工具类
  */
 
-import { Core } from "../../../header";
+import { Core } from "../../header";
 import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
 import { LoginResult, SubscribeResult, TouchData } from "../interface/IMiniCommon";

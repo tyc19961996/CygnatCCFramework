@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "rootDir": "."
+  },
+  "include": [
+    "header.ts",
+    "Asset/**/*.ts",
+    "Core/**/*.ts",
+    "ECS/**/*.ts",
+    "Event/**/*.ts",
+    "MiniGame/**/*.ts",
+    "Net/**/*.ts",
+    "types/**/*.d.ts",
+    "UI/**/*.ts"
+  ],
+  "exclude": [
+    ".git",
+    "dist",
+    "library",
+    "local",
+    "node_modules",
+    "temp"
+  ]
+}

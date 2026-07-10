@@ -4,6 +4,7 @@ import FileConfig from "../FileConfig";
 import { READ_FILE_TYPE, FileReaderData, JsZIPFileData, filedataType } from "../FileEnum";
 import FileTools from "../FileTools";
 import { sys, error, native } from "cc";
+import { Com, Error as LogError, Log } from "../../Logger/Log";
 
 export default class FileJSB extends FileBase {
     openLocalDirectoryCallBack(CallBack: Function, accept?: string) {
@@ -41,12 +42,12 @@ export default class FileJSB extends FileBase {
         
         if (readPath == '') { return; }
         if (!native.fileUtils.isFileExist(readPath)) {
-            ConsoleEx.Error('项目配置文件不存在，请先打开项目');
+            LogError('项目配置文件不存在，请先打开项目');
             return;
         }
         let config = native.fileUtils.getStringFromFile(readPath);
         this.m_ProjectFile = JSON.parse(config);
-        ConsoleEx.Log('项目配置文件读取成功', this.m_ProjectFile);
+        Log('项目配置文件读取成功', this.m_ProjectFile);
     }
 
     GlobalWriteStringToFile(file_txt: string, filepath: string) {
@@ -63,9 +64,9 @@ export default class FileJSB extends FileBase {
             this.CreateDirectory(path);
             let write = native.fileUtils.writeStringToFile(file_txt, path);
             if (write) {
-                ConsoleEx.Com("写入成功", fileName);
+                Com("写入成功", fileName);
             } else {
-                ConsoleEx.Error("写入失败", path);
+                LogError("写入失败", path);
             }
         }
     }
@@ -163,9 +164,9 @@ export default class FileJSB extends FileBase {
         let filePath = writablePath + ZipName;
         let success = fileUtil["writeDataToFile"](FileTools.arrayBuffer(blob.data), filePath);
         if (success) {
-            ConsoleEx.Log('save file successful:', filePath);
+            Log('save file successful:', filePath);
         } else {
-            ConsoleEx.Log('save file failed');
+            Log('save file failed');
         }
     }
 

@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "lib": [
+      "ES2019",
+      "DOM"
+    ],
+    "strict": false,
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "cc": [
+        "types/cocos-creator"
+      ],
+      "cc/env": [
+        "types/cocos-creator-env"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.d.ts"
+  ],
+  "exclude": [
+    ".git",
+    "build",
+    "library",
+    "local",
+    "node_modules",
+    "temp"
+  ]
+}

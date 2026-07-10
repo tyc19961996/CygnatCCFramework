@@ -4,6 +4,7 @@ import FileConfig from "../FileConfig";
 import { FileReaderData, JsZIPFileData, filedataType } from "../FileEnum";
 import FileTools from "../FileTools";
 import { Asset, SpriteFrame, assetManager, sys } from "cc";
+import { Error as LogError, Log } from "../../Logger/Log";
 
 export default class FileEnditor extends FileBase {
     /**获取 写入文件的根路径 */
@@ -61,10 +62,10 @@ export default class FileEnditor extends FileBase {
         if (!this.EnditorFSOrOs.existsSync(path)) {
             let temp  = this.EnditorFSOrOs.mkdirSync(path)
             if(!temp){
-                ConsoleEx.Log('创建文件夹成功')
+                Log('创建文件夹成功')
                 return true
             }else{
-                ConsoleEx.Error('创建失败',temp)
+                LogError('创建失败',temp)
                 return false;
             }
         }else{
@@ -104,7 +105,7 @@ export default class FileEnditor extends FileBase {
     readLocalFile(file: string, callback: (res: Asset) => void) {
         assetManager.loadRemote<SpriteFrame>(file, (err, res: Asset) => {
             if (err) {
-                ConsoleEx.Error(err);
+                LogError(err);
                 return;
             }
             callback(res);
@@ -147,7 +148,7 @@ export default class FileEnditor extends FileBase {
         // })
 
         // if (selectfile == "-1") {
-        //     ConsoleEx.Log("未选择文件");
+        //     Log("未选择文件");
         //     return;
         // }
         // if (Array.isArray(selectfile)) {

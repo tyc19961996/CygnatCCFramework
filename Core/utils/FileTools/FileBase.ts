@@ -4,6 +4,7 @@ import { FileReaderData, JsZIPFileData, projectFileInfo } from "./FileEnum";
 import FileFs from "./FileFs";
 import FileFuntion from "./FileFuntion";
 import { sys } from "cc";
+import { Error as LogError } from "../Logger/Log";
 
 export default abstract class FileBase extends FileFuntion {
 
@@ -28,9 +29,9 @@ export default abstract class FileBase extends FileFuntion {
             return FileConfig.mWin32Path + FileConfig.CnfJson;
         }
         if (EDITOR) {
-            ConsoleEx.Error('没有找到对应平台的配置');
+            LogError('没有找到对应平台的配置');
         } else {
-            ConsoleEx.Error('没有找到对应平台的配置');
+            LogError('没有找到对应平台的配置');
         }
         return ''
     }

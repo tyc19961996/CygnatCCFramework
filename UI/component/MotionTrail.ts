@@ -111,7 +111,7 @@ export class MotionTrail extends UIRenderer {
             updateRenderData: this.onFlushed.bind(this),
             fillBuffers: this.fillBuffer.bind(this),
         };
-        JSB && (this.update = this._assembler.updateRenderData);
+        JSB && ((this as any).update = this._assembler.updateRenderData);
         this._useVertexOpacity = true;
     }
     public onLoad() {

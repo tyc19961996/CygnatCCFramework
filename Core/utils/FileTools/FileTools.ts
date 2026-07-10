@@ -67,6 +67,8 @@ export default  class FileTools{
             charArr.push(_result.charCodeAt(i));
         }
         let array: Uint8Array = new Uint8Array(charArr);
-        return array;
+        const buffer = new ArrayBuffer(array.byteLength);
+        new Uint8Array(buffer).set(array);
+        return buffer;
     }
 }
