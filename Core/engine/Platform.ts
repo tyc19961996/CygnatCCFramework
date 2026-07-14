@@ -6,10 +6,6 @@
 
 import { sys } from "cc";
 import { Log } from "../utils/Logger/Log";
-import { Node } from "cc";
-import { UITransform } from "cc";
-import { screen } from "cc";
-import { view } from "cc";
 
 export enum PlatformType {
     Android = 1,
@@ -25,6 +21,8 @@ export enum PlatformType {
     HuaweiQuick = 7,
     /** 快手 */
     KuaiShou = 8,
+    /** Bilibili 小游戏 */
+    Bilibili = 9,
     /** 其他都为Browser */
     Browser = 1001,
 }
@@ -103,6 +101,12 @@ export class Platform {
     public static isKuaiShou: boolean = false;
 
     /**
+     * 是否为 Bilibili 小游戏
+     * @type {boolean}
+     */
+    public static isBilibili: boolean = false;
+
+    /**
      * 平台类型
      * @type {PlatformType}
      */
@@ -113,20 +117,6 @@ export class Platform {
      * @type {string}
      */
     public static deviceId: string;
-
-
-    public static getNodeInScreenRect(node: Node) {
-        const rect = node.getComponent(UITransform)!.getBoundingBoxToWorld();
-        const dpi = screen.devicePixelRatio;
-        const scaleX = view.getScaleX();
-        const scaleY = view.getScaleY();
-        const left = (rect.x * scaleX) / dpi;
-        const top = (screen.windowSize.height - (rect.y + rect.height) * scaleY) / dpi;
-        const width = (rect.width * scaleX) / dpi;
-        const height = (rect.height * scaleY) / dpi;
-        return { left, top, width, height };
-    }
-
 }
 
 /**
@@ -148,10 +138,6 @@ export class PlatformInitializer {
         Platform.isMobile = sys.isMobile;
         Platform.isNativeMobile = sys.isNative && sys.isMobile;
 
-        Log("isNative:", Platform.isNative);
-        Log("isMobile:", Platform.isMobile);
-        Log("isNativeMobile:", Platform.isNativeMobile);
-
         switch (sys.os) {
             case sys.OS.ANDROID:
                 Platform.isAndroid = true;
@@ -169,37 +155,39 @@ export class PlatformInitializer {
                 break;
         }
 
-        switch (sys.platform) {
-            case sys.Platform.WECHAT_GAME:
-                if (window['ks']) {
-                    Platform.isKuaiShou = true;
-                    Platform.platform = PlatformType.KuaiShou;
-                } else {
-                    Platform.isWX = true;
-                    Platform.platform = PlatformType.WX;
-                }
-                break;
-            case sys.Platform.ALIPAY_MINI_GAME:
-                Platform.isAlipay = true;
-                Platform.platform = PlatformType.Alipay;
-                break;
-            case sys.Platform.BYTEDANCE_MINI_GAME:
-                Platform.isBytedance = true;
-                Platform.platform = PlatformType.Bytedance;
-                break
-            case sys.Platform.HUAWEI_QUICK_GAME:
-                Platform.isHuaweiQuick = true;
-                Platform.platform = PlatformType.HuaweiQuick;
-                break;
-            default:
-                // 其他都设置为浏览器
-                Platform.isBrowser = true;
-                Platform.platform = PlatformType.Browser;
-                break;
+        if (window['bl']) {
+            Platform.isBilibili = true;
+            Platform.platform = PlatformType.Bilibili;
+        } else {
+            switch (sys.platform) {
+                case sys.Platform.WECHAT_GAME:
+                    if (window['ks']) {
+                        Platform.isKuaiShou = true;
+                        Platform.platform = PlatformType.KuaiShou;
+                    } else {
+                        Platform.isWX = true;
+                        Platform.platform = PlatformType.WX;
+                    }
+                    break;
+                case sys.Platform.ALIPAY_MINI_GAME:
+                    Platform.isAlipay = true;
+                    Platform.platform = PlatformType.Alipay;
+                    break;
+                case sys.Platform.BYTEDANCE_MINI_GAME:
+                    Platform.isBytedance = true;
+                    Platform.platform = PlatformType.Bytedance;
+                    break
+                case sys.Platform.HUAWEI_QUICK_GAME:
+                    Platform.isHuaweiQuick = true;
+                    Platform.platform = PlatformType.HuaweiQuick;
+                    break;
+                default:
+                    // 其他都设置为浏览器
+                    Platform.isBrowser = true;
+                    Platform.platform = PlatformType.Browser;
+                    break;
+            }
         }
         Log(`platform: ${PlatformType[Platform.platform]}`);
     }
-
-
-
 }

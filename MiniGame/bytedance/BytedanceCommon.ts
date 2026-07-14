@@ -198,7 +198,7 @@ export class BytedanceCommon extends BaseCommon {
     }
 
     public async openSidebar(): Promise<boolean> {
-        return new Promise((resolve) => {   
+        return new Promise((resolve) => {
             tt.navigateToScene({
                 scene: "sidebar",
                 success: () => {

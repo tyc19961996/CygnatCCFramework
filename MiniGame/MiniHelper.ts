@@ -10,6 +10,8 @@ import { AlipayCommon } from "./alipay/AlipayCommon";
 import { AlipayPay } from "./alipay/AlipayPay";
 import { BaseAds } from "./Base/BaseAds";
 import { BaseCommon } from "./Base/BaseCommon";
+import { BilibiliAds } from "./bilibili/BilibiliAds";
+import { BilibiliCommon } from "./bilibili/BilibiliCommon";
 import { BytedanceAds } from "./bytedance/BytedanceAds";
 import { BytedanceCommon } from "./bytedance/BytedanceCommon";
 import { BytedancePay } from "./bytedance/BytedancePay";
@@ -34,12 +36,14 @@ export class MiniHelper {
         if (!this._common) {
             if (Platform.isWX) {
                 this._common = new WechatCommon();
+            } else if (Platform.isBilibili) {
+                this._common = new BilibiliCommon();
+            } else if (Platform.isKuaiShou) {
+                this._common = new KuaiShouCommon();
             } else if (Platform.isAlipay) {
                 this._common = new AlipayCommon();
             } else if (Platform.isBytedance) {
                 this._common = new BytedanceCommon();
-            } else if (Platform.isKuaiShou) {
-                this._common = new KuaiShouCommon();
             }else{
                 this._common = new BaseCommon();
             }
@@ -51,12 +55,14 @@ export class MiniHelper {
         if (!this._ad) {
             if (Platform.isWX) {
                 this._ad = new WechatAds();
-            } else if (Platform.isAlipay) {
+            } else if (Platform.isBilibili) {
+                this._ad = new BilibiliAds();
+            }else if (Platform.isKuaiShou) {
+                this._ad = new KuaiShouAds();
+            }  else if (Platform.isAlipay) {
                 this._ad = new AlipayAds();
             } else if (Platform.isBytedance) {
                 this._ad = new BytedanceAds();
-            }else if (Platform.isKuaiShou) {
-                this._ad = new KuaiShouAds();
             }else{
                 this._ad = new BaseAds<any,any>();
             }

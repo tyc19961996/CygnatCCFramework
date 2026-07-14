@@ -121,7 +121,7 @@ export class BaseCommon implements IMiniCommon {
     /**
      * 获取运行平台
      */
-    public getPlatform(): 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtools' | 'iPad' {
+    public getPlatform(): 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtools' {
         return 'windows';
     }
 
@@ -216,7 +216,7 @@ export class BaseCommon implements IMiniCommon {
     /**
      * 删除获取用户信息按钮
      */
-    public  destroyUserInfoBtn(): void {
+    protected  destroyUserInfoBtn(): void {
         if (this._userInfoButton) {
             this._userInfoButton.destroy();
             this._userInfoButton = null;

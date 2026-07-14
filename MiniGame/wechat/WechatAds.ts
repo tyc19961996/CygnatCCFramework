@@ -75,6 +75,8 @@ export class WechatAds extends BaseAds<WechatMiniprogram.RewardedVideoAd, Wechat
                 this._interstitialAdFail = null;
             })
         })
+
+
     }
 
     protected createVideoAd(): WechatMiniprogram.RewardedVideoAd {

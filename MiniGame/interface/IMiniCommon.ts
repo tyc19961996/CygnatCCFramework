@@ -194,7 +194,4 @@ export interface IMiniCommon {
 
     /** 登录获取 code */
     login(force?: boolean): Promise<LoginResult>;
-
-    /** 删除获取用户信息按钮 */
-    destroyUserInfoBtn():void;
 }

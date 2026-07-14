@@ -6,6 +6,7 @@
 
 import { Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
+import { LoginResult } from "../interface/IMiniCommon";
 
 
 export class AlipayCommon extends BaseCommon {
@@ -35,6 +36,17 @@ export class AlipayCommon extends BaseCommon {
      */
     public getLibVersion(): string {
         return my.SDKVersion;
+    }
+
+    public login(_force?: boolean): Promise<LoginResult> {
+        return new Promise((resolve) => {
+            //@ts-ignore
+            my.getAuthCode({
+                scopes: 'auth_base',
+                success: (res: any) => resolve({ success: true, code: res.authCode }),
+                fail: (res: any) => resolve({ success: false, code: "", errCode: res.error, errMsg: res.errorMessage }),
+            });
+        })
     }
 
     /** 

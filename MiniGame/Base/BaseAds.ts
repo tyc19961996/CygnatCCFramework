@@ -1,8 +1,17 @@
-import { IMiniAdsListener, IMiniRewardAds } from "../interface/IMiniAds";
+import {
+    IMiniAdsListener,
+    IMiniRewardAdInitConfig,
+    IMiniRewardAds,
+    IMiniShowRewardAdOptions,
+    MiniAdCallback,
+    MiniRewardAdPlacement,
+} from "../interface/IMiniAds";
 
 export class BaseAds<T,B> implements IMiniRewardAds {
     /** 激励广告ID */
     protected _rewardAdUnitId: string = "";
+    /** 多激励广告ID */
+    protected _rewardAdUnitIds: Partial<Record<MiniRewardAdPlacement, string>> = {};
     /** 激励广告实例 */
     protected _rewardAd: T = null;
     /** 插屏广告ID */
@@ -31,11 +40,15 @@ export class BaseAds<T,B> implements IMiniRewardAds {
      */
     protected _interstitialAdFail: (errCode: number, errMsg: string) => void;
 
-    public init(rewardAdUnitId: string,interstitialUnitId?:string): void {
-        this._rewardAdUnitId = rewardAdUnitId;
-        this._interstitialAdUnitId = interstitialUnitId;
+    public init(rewardAdUnitId: string, interstitialUnitId?: string): void;
+    public init(config: IMiniRewardAdInitConfig): void;
+    public init(rewardAdUnitIdOrConfig: string | IMiniRewardAdInitConfig, interstitialUnitId?: string): void {
+        const config = this.normalizeInitConfig(rewardAdUnitIdOrConfig, interstitialUnitId);
+        this._rewardAdUnitIds = config.rewardAdIds || {};
+        this._rewardAdUnitId = this._rewardAdUnitIds[MiniRewardAdPlacement.Default] || "";
+        this._interstitialAdUnitId = config.interstitialAdId || "";
 
-         if (!this._rewardAd) {
+         if (this._rewardAdUnitId && !this._rewardAd) {
             console.log('创建激励广告');
             this._rewardAd = this.createVideoAd();
         }
@@ -46,10 +59,43 @@ export class BaseAds<T,B> implements IMiniRewardAds {
         }
     }
 
+    protected normalizeInitConfig(
+        rewardAdUnitIdOrConfig: string | IMiniRewardAdInitConfig,
+        interstitialUnitId?: string
+    ): IMiniRewardAdInitConfig {
+        if (typeof rewardAdUnitIdOrConfig === "string") {
+            return {
+                defaultRewardAdId: rewardAdUnitIdOrConfig,
+                rewardAdIds: rewardAdUnitIdOrConfig
+                    ? { [MiniRewardAdPlacement.Default]: rewardAdUnitIdOrConfig }
+                    : {},
+                interstitialAdId: interstitialUnitId,
+            };
+        }
+
+        const rewardAdIds: Partial<Record<MiniRewardAdPlacement, string>> = {
+            ...(rewardAdUnitIdOrConfig.rewardAdIds || {}),
+        };
+
+        if (rewardAdUnitIdOrConfig.defaultRewardAdId && !rewardAdIds[MiniRewardAdPlacement.Default]) {
+            rewardAdIds[MiniRewardAdPlacement.Default] = rewardAdUnitIdOrConfig.defaultRewardAdId;
+        }
+
+        return {
+            defaultRewardAdId: rewardAdIds[MiniRewardAdPlacement.Default],
+            rewardAdIds,
+            interstitialAdId: rewardAdUnitIdOrConfig.interstitialAdId,
+        };
+    }
+
     /**
      * 显示广告
      */
-    public showAds(res: { success: () => void, fail: (errCode: number, errMsg: string) => void }): void {
+    public showAds(res: MiniAdCallback): void {
+        this.showRewardAd({ placement: MiniRewardAdPlacement.Default }, res);
+    }
+
+    public showRewardAd(_options: IMiniShowRewardAdOptions, res: MiniAdCallback): void {
         res.success();
     }
 

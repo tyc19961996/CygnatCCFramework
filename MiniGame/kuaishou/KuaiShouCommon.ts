@@ -8,7 +8,7 @@ import { Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
 import { LoginResult, SubscribeResult, TouchData } from "../interface/IMiniCommon";
 
-type KuaiShouPlatform = 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtools' | 'iPad';
+type KuaiShouPlatform = 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtools';
 type KuaiShouFailResult = KuaiShouMiniprogram.FailResult;
 
 export class KuaiShouCommon extends BaseCommon {

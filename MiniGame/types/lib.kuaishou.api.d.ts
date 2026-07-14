@@ -261,7 +261,32 @@ declare namespace KuaiShouMiniprogram {
         msg: string;
     }
 
+    const interstitalAdErrCodes: readonly [
+        4,
+        1006,
+        2003,
+        2004,
+        2005,
+        2006
+    ];
+    /**
+     * @value 4 广告校验失败
+     * @value 1006 小程序启动一定时间内不允许展示插屏广告
+     * @value 2003 当前正在播放插屏广告，不允许再次展示插屏广告
+     * @value 2004 广告渲染失败
+     * @value 2005 插屏广告实例不允许跨页面调用
+     * @value 2006 插屏广告实例已经销毁
+     */
+    type InterstitalAdErrCode = typeof interstitalAdErrCodes[number];
     interface InterstitialAdErrorEvent extends AdErrorEvent {
+        /**
+         * 错误码
+         */
+        code: InterstitalAdErrCode;
+        /**
+         * 错误信息
+         */
+        msg: string;
     }
 
     interface CreateInterstitialAdOptions {
@@ -301,6 +326,16 @@ declare namespace KuaiShouMiniprogram {
         offClose(callback?: () => void): void;
     }
 
+    const rewardedVideoAdErrCodes: readonly [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        1006
+    ];
+
     interface RewardedVideoAdCloseEvent {
         /**
          * 用户是否完整观看了激励视频广告
@@ -312,7 +347,25 @@ declare namespace KuaiShouMiniprogram {
         count?: number;
     }
 
+    /**
+     * @value 0 内部错误
+     * @value 1 广告对象已关闭
+     * @value 2 广告数据暂未准备好
+     * @value 3 网络错误
+     * @value 4 广告校验失败
+     * @value 5 详情页正在展示
+     * @value 1006 过早展示广告，需在规定时间后再展示广告
+     */
+    type RewardedVideoAdErrCode = typeof rewardedVideoAdErrCodes[number];
     interface RewardedVideoAdErrorEvent extends AdErrorEvent {
+        /**
+         * 错误码
+         */
+        code: RewardedVideoAdErrCode;
+        /**
+         * 错误信息
+         */
+        msg: string;
     }
 
     interface CreateRewardedVideoAdOptions {

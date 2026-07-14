@@ -4,7 +4,7 @@
  * @Description: 微信小游戏工具类
  */
 
-import { Core } from "../../header";
+import { Core } from "../../../header";
 import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
 import { LoginResult, SubscribeResult, TouchData } from "../interface/IMiniCommon";
@@ -39,9 +39,6 @@ export class WechatCommon extends BaseCommon {
         wx.onTouchMove?.((res) => { this._notifyTouchMove(this._convertTouchData(res)); });
         wx.onTouchEnd?.((res) => { this._notifyTouchEnd(this._convertTouchData(res)); });
         wx.onTouchCancel?.((res) => { this._notifyTouchCancel(this._convertTouchData(res)); });
-        //打开分享菜单
-        //@ts-ignore
-        wx.showShareMenu?.();
     }
 
     /**
