@@ -250,6 +250,62 @@ declare namespace KuaiShouMiniprogram {
         scene: NavigateToSceneName;
     }
 
+    interface AddShortcutResult {
+        /**
+         * 1 表示成功
+         */
+        code: number;
+        /**
+         * 成功或失败信息
+         */
+        msg: string;
+    }
+
+    interface AddShortcutOptions extends CallbackOptions<AddShortcutResult> {
+    }
+
+    interface CheckShortcutResult {
+        /**
+         * 1 表示成功
+         */
+        code: number;
+        /**
+         * 是否已添加快捷方式
+         */
+        installed: boolean;
+    }
+
+    interface CheckShortcutOptions extends CallbackOptions<CheckShortcutResult> {
+    }
+
+    interface ReportSceneResult {
+        errMsg: "reportScene:ok" | string;
+        data?: Record<string, unknown>;
+    }
+
+    interface ReportSceneFailResult extends FailResult {
+        errNo?: number;
+    }
+
+    interface ReportSceneOptions extends CallbackOptions<ReportSceneResult, ReportSceneFailResult> {
+        /**
+         * 场景 ID
+         */
+        sceneId: number;
+        /**
+         * 场景耗时，单位 ms
+         */
+        costTime?: number;
+        /**
+         * 自定义维度数据
+         */
+        dimension?: Record<string, string>;
+        /**
+         * 自定义指标数据
+         */
+        metric?: Record<string, string>;
+    }
+
     interface AdErrorEvent {
         /**
          * 错误码
@@ -507,6 +563,21 @@ declare namespace KuaiShouMiniprogram {
          * 跳转到指定场景。
          */
         navigateToScene(options: NavigateToSceneOptions): void;
+
+        /**
+         * 添加小游戏快捷方式到手机桌面。
+         */
+        addShortcut?(options: AddShortcutOptions): void;
+
+        /**
+         * 检查小游戏快捷方式是否已添加到手机桌面。
+         */
+        checkShortcut?(options: CheckShortcutOptions): void;
+
+        /**
+         * 上报启动场景值。
+         */
+        reportScene?(options: ReportSceneOptions): void;
 
         /**
          * 创建激励视频广告实例。

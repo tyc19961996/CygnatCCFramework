@@ -4,9 +4,9 @@
  * @Description: 快手小游戏通用能力适配
  */
 
-import { Warn } from "../../Core";
+import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, SubscribeResult, TouchData } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, SubscribeResult, TouchData } from "../interface/IMiniCommon";
 
 type KuaiShouPlatform = 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtools';
 type KuaiShouFailResult = KuaiShouMiniprogram.FailResult;
@@ -283,6 +283,84 @@ export class KuaiShouCommon extends BaseCommon {
                     resolve(true);
                 },
                 fail: () => {
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /**
+     * 添加小游戏快捷方式到手机桌面。
+     */
+    public canAddShortcut(): boolean {
+        return !!ks.addShortcut;
+    }
+
+    /**
+     * 添加小游戏快捷方式到手机桌面。
+     */
+    public async addShortcut(): Promise<boolean> {
+        if (!this.canAddShortcut()) return false;
+
+        if (this.getPlatform() === "ios") {
+            ks.addShortcut({});
+            return true;
+        }
+
+        return new Promise((resolve) => {
+            ks.addShortcut({
+                success: () => {
+                    resolve(true);
+                },
+                fail: (res: KuaiShouFailResult) => {
+                    Warn(`快手添加桌面快捷方式失败 ${this.getErrorMessage(res)}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /**
+     * 检查小游戏快捷方式是否已添加到手机桌面。
+     */
+    public async checkShortcut(): Promise<boolean> {
+        if (!ks.checkShortcut) return false;
+        if (this.getPlatform() !== "android") return false;
+
+        return new Promise((resolve) => {
+            ks.checkShortcut({
+                success: (res: KuaiShouMiniprogram.CheckShortcutResult) => {
+                    resolve(!!res.installed);
+                },
+                fail: (res: KuaiShouFailResult) => {
+                    Warn(`快手检查桌面快捷方式失败 ${this.getErrorMessage(res)}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /**
+     * 是否支持启动场景值上报。
+     */
+    public canReportScene(): boolean {
+        return !!ks.reportScene && Utils.compareVersion(this.getHostVersion(), "13.5.40") >= 0;
+    }
+
+    /**
+     * 上报启动场景值。
+     */
+    public async reportScene(options: ReportSceneOptions): Promise<boolean> {
+        if (!this.canReportScene()) return false;
+
+        return new Promise((resolve) => {
+            ks.reportScene({
+                ...options,
+                success: () => {
+                    resolve(true);
+                },
+                fail: (res: KuaiShouFailResult) => {
+                    Warn(`快手场景值上报失败 ${this.getErrorMessage(res)}`);
                     resolve(false);
                 }
             });

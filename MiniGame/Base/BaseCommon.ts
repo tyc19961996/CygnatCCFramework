@@ -5,7 +5,7 @@
  */
 
 import { Screen } from "../../Core";
-import { IMiniCommon, LoginResult, SubscribeResult, TouchData } from "../interface/IMiniCommon";
+import { IMiniCommon, LoginResult, ReportSceneOptions, SubscribeResult, TouchData } from "../interface/IMiniCommon";
 
 export class BaseCommon implements IMiniCommon {
 
@@ -206,6 +206,26 @@ export class BaseCommon implements IMiniCommon {
     }
 
     public async openSidebar(): Promise<boolean> {
+        return false;
+    }
+
+    public canAddShortcut(): boolean {
+        return false;
+    }
+
+    public async addShortcut(): Promise<boolean> {
+        return false;
+    }
+
+    public async checkShortcut(): Promise<boolean> {
+        return false;
+    }
+
+    public canReportScene(): boolean {
+        return false;
+    }
+
+    public async reportScene(_options: ReportSceneOptions): Promise<boolean> {
         return false;
     }
 

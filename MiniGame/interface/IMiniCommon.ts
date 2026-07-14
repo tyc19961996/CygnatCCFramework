@@ -34,6 +34,17 @@ export interface SubscribeResult {
     errMsg?: string;
 }
 
+export interface ReportSceneOptions {
+    /** 场景 ID，在平台后台配置 */
+    sceneId: number;
+    /** 场景耗时，单位 ms */
+    costTime?: number;
+    /** 自定义维度数据，value 需为字符串 */
+    dimension?: Record<string, string>;
+    /** 自定义指标数据，value 需为数值字符串 */
+    metric?: Record<string, string>;
+}
+
 export interface IMiniCommon {
     /**
      * 分享
@@ -191,6 +202,21 @@ export interface IMiniCommon {
 
     /** 打开侧边栏（仅抖音支持） */
     openSidebar(): Promise<boolean>;
+
+    /** 是否支持添加小游戏快捷方式到手机桌面（仅 Bilibili、快手、抖音支持） */
+    canAddShortcut(): boolean;
+
+    /** 添加小游戏快捷方式到手机桌面（仅 Bilibili、快手、抖音支持，调用前可先判断 canAddShortcut） */
+    addShortcut(): Promise<boolean>;
+
+    /** 检查小游戏快捷方式是否已添加到手机桌面（仅 Bilibili、快手、抖音 Android 支持） */
+    checkShortcut(): Promise<boolean>;
+
+    /** 是否支持启动场景值上报（支付宝不支持） */
+    canReportScene(): boolean;
+
+    /** 上报启动场景值（微信、Bilibili、快手、抖音支持，调用前可先判断 canReportScene） */
+    reportScene(options: ReportSceneOptions): Promise<boolean>;
 
     /** 登录获取 code */
     login(force?: boolean): Promise<LoginResult>;

@@ -206,6 +206,43 @@ declare namespace BilibiliMiniprogram {
         available?: boolean;
     }
 
+    /** 桌面快捷方式状态。 */
+    interface ShortcutStatus {
+        /** 是否已经添加了桌面快捷方式。 */
+        exist: boolean;
+    }
+
+    /** bl.addShortcut 成功结果。 */
+    interface AddShortcutResult extends CallbackResult {
+        errMsg?: "addShortcut:ok" | string;
+    }
+
+    /** bl.checkShortcut 成功结果。 */
+    interface CheckShortcutResult extends CallbackResult {
+        /** 桌面快捷方式状态。 */
+        status: ShortcutStatus;
+        errMsg?: "checkShortcut:ok" | string;
+    }
+
+    /** bl.reportScene 成功结果。 */
+    interface ReportSceneResult extends CallbackResult {
+        /** 开发者上报的原始数据。 */
+        data?: Record<string, unknown>;
+        errMsg?: "reportScene:ok" | string;
+    }
+
+    /** bl.reportScene 参数。 */
+    interface ReportSceneOptions extends AsyncOptions<ReportSceneResult> {
+        /** 场景 ID。 */
+        sceneId: number;
+        /** 场景耗时，单位 ms。 */
+        costTime?: number;
+        /** 自定义维度数据。 */
+        dimension?: Record<string, string>;
+        /** 自定义指标数据。 */
+        metric?: Record<string, string>;
+    }
+
     /** 激励视频关闭事件。 */
     interface RewardedVideoAdCloseEvent {
         /** 是否完整观看。 */
@@ -290,6 +327,12 @@ declare namespace BilibiliMiniprogram {
         checkScene?(options: AsyncOptions<CheckSceneResult> & { scene: string }): void;
         /** 跳转指定场景，当前用于侧边栏。 */
         navigateToScene?(options: AsyncOptions & { scene: string }): void;
+        /** 添加小游戏快捷方式到手机桌面。 */
+        addShortcut?(options: AsyncOptions<AddShortcutResult>): void;
+        /** 检查小游戏快捷方式是否已添加到手机桌面。 */
+        checkShortcut?(options: AsyncOptions<CheckShortcutResult>): void;
+        /** 上报启动场景值。 */
+        reportScene?(options: ReportSceneOptions): void;
         /** 创建激励视频广告；本项目 Bilibili 只接入默认广告位。 */
         createRewardedVideoAd?(options: { adUnitId: string }): RewardedVideoAd;
     }

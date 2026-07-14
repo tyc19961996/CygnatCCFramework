@@ -29,6 +29,35 @@ declare namespace WechatMiniprogram {
         errMsg: string
     }
 
+    interface ReportSceneSuccessCallbackResult {
+        /** 开发者上报的原始数据 */
+        data?: IAnyObject;
+    }
+
+    interface ReportSceneFailCallbackResult {
+        /** 错误信息 */
+        errMsg: string;
+        /** 开发者上报的原始数据 */
+        data?: IAnyObject;
+    }
+
+    interface ReportSceneOption {
+        /** 场景 ID，在管理后台获取 */
+        sceneId: number;
+        /** 场景耗时，单位 ms */
+        costTime?: number;
+        /** 自定义维度数据 */
+        dimension?: Record<string, string>;
+        /** 自定义指标数据 */
+        metric?: Record<string, string>;
+        /** 接口调用成功的回调函数 */
+        success?: (res: ReportSceneSuccessCallbackResult) => void;
+        /** 接口调用失败的回调函数 */
+        fail?: (res: ReportSceneFailCallbackResult) => void;
+        /** 接口调用结束的回调函数 */
+        complete?: (res: GeneralCallbackResult) => void;
+    }
+
     interface ConnectSocketOption extends ICommonCallBack {
         /** 开发者服务器 wss 接口地址 */
         url: string
@@ -152,6 +181,8 @@ declare namespace WechatMiniprogram {
 
     interface Wx {
         connectSocket(option: ConnectSocketOption): SocketTask
+        /** 上报启动场景值。需要基础库 2.26.2。 */
+        reportScene?(option: ReportSceneOption): void;
     }
 
     /** 来源信息。从另一个小程序、公众号或 App 进入小程序时返回。否则返回 `{}`。(参见后文注意) */

@@ -4,10 +4,9 @@
  * @Description: 微信小游戏工具类
  */
 
-import { Core } from "../../../header";
-import { Utils, Warn } from "../../Core";
+import { Log, Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, SubscribeResult, TouchData } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, SubscribeResult, TouchData } from "../interface/IMiniCommon";
 
 export class WechatCommon extends BaseCommon {
     private _launchOptions: WechatMiniprogram.LaunchOptionsApp = null;
@@ -260,11 +259,11 @@ export class WechatCommon extends BaseCommon {
             wx.authorize({
                 scope: scope,
                 success: (res) => {
-                    Core.Log(`请求${scope}成功：${JSON.stringify(res)}`);
+                    Log(`请求${scope}成功：${JSON.stringify(res)}`);
                     resolve(true);
                 },
                 fail: (res) => {
-                    Core.Log(`请求${scope}失败：${JSON.stringify(res)}`);
+                    Log(`请求${scope}失败：${JSON.stringify(res)}`);
                     resolve(false)
                 }
             })
@@ -435,6 +434,27 @@ export class WechatCommon extends BaseCommon {
         if (Utils.compareVersion(this.getLibVersion(), '2.9.4') < 0) return false;
 
         return true;
+    }
+
+    public canReportScene(): boolean {
+        return !!wx.reportScene && Utils.compareVersion(this.getLibVersion(), "2.26.2") >= 0;
+    }
+
+    public async reportScene(options: ReportSceneOptions): Promise<boolean> {
+        if (!this.canReportScene()) return false;
+
+        return new Promise((resolve) => {
+            wx.reportScene({
+                ...options,
+                success: () => {
+                    resolve(true);
+                },
+                fail: (res) => {
+                    Warn(`微信场景值上报失败 errMsg:${res.errMsg}`);
+                    resolve(false);
+                }
+            });
+        });
     }
 
     public async login(_force?: boolean): Promise<LoginResult> {

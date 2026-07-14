@@ -4,9 +4,9 @@
  * @Description: Bilibili 小游戏通用能力适配
  */
 
-import { Warn } from "../../Core";
+import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, SubscribeResult, TouchData } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, SubscribeResult, TouchData } from "../interface/IMiniCommon";
 
 type BilibiliPlatform = 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtools';
 
@@ -284,6 +284,69 @@ export class BilibiliCommon extends BaseCommon {
         });
     }
 
+    /** 添加小游戏快捷方式到手机桌面。 */
+    public canAddShortcut(): boolean {
+        return this.canUseShortcutApi() && !!bl.addShortcut;
+    }
+
+    /** 添加小游戏快捷方式到手机桌面。 */
+    public async addShortcut(): Promise<boolean> {
+        if (!this.canAddShortcut()) return false;
+
+        return new Promise((resolve) => {
+            bl.addShortcut({
+                success: () => {
+                    resolve(true);
+                },
+                fail: (res) => {
+                    Warn(`Bilibili 添加桌面快捷方式失败 ${this.getErrorMessage(res)}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /** 检查小游戏快捷方式是否已添加到手机桌面。 */
+    public async checkShortcut(): Promise<boolean> {
+        if (!this.canUseShortcutApi() || !bl.checkShortcut) return false;
+        if (this.getPlatform() !== "android") return false;
+
+        return new Promise((resolve) => {
+            bl.checkShortcut({
+                success: (res) => {
+                    resolve(!!res.status?.exist);
+                },
+                fail: (res) => {
+                    Warn(`Bilibili 检查桌面快捷方式失败 ${this.getErrorMessage(res)}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /** 是否支持启动场景值上报。 */
+    public canReportScene(): boolean {
+        return !!bl.reportScene && Utils.compareVersion(this.getLibVersion(), "3.99.9") >= 0;
+    }
+
+    /** 上报启动场景值。 */
+    public async reportScene(options: ReportSceneOptions): Promise<boolean> {
+        if (!this.canReportScene()) return false;
+
+        return new Promise((resolve) => {
+            bl.reportScene({
+                ...options,
+                success: () => {
+                    resolve(true);
+                },
+                fail: (res) => {
+                    Warn(`Bilibili 场景值上报失败 ${this.getErrorMessage(res)}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
     /** 登录获取 code，后续由 LGameAPI 发送到服务端换取 openid/token。 */
     public async login(_force?: boolean): Promise<LoginResult> {
         if (!bl.login) {
@@ -336,6 +399,10 @@ export class BilibiliCommon extends BaseCommon {
             screenX: touch.screenX ?? touch.clientX ?? touch.pageX ?? 0,
             screenY: touch.screenY ?? touch.clientY ?? touch.pageY ?? 0,
         }));
+    }
+
+    private canUseShortcutApi(): boolean {
+        return Utils.compareVersion(this.getLibVersion(), "3.99.4") >= 0;
     }
 
     /** 提取平台错误信息。 */

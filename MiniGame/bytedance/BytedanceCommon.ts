@@ -6,7 +6,7 @@
 
 import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, SubscribeResult } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, SubscribeResult } from "../interface/IMiniCommon";
 
 export class BytedanceCommon extends BaseCommon {
     private _launchOptions: BytedanceMiniprogram.LaunchParams = null;
@@ -205,6 +205,66 @@ export class BytedanceCommon extends BaseCommon {
                     resolve(true);
                 },
                 fail: () => {
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    public canAddShortcut(): boolean {
+        return !!tt.addShortcut && Utils.compareVersion(this.getLibVersion(), "2.46.0") >= 0;
+    }
+
+    public async addShortcut(): Promise<boolean> {
+        if (!this.canAddShortcut()) return false;
+
+        return new Promise((resolve) => {
+            tt.addShortcut({
+                success: () => {
+                    resolve(true);
+                },
+                fail: (res) => {
+                    Warn(`抖音添加桌面快捷方式失败 errCode:${res.errNo} errMsg:${res.errMsg}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    public async checkShortcut(): Promise<boolean> {
+        if (!tt.checkShortcut || Utils.compareVersion(this.getLibVersion(), "2.46.0") < 0) {
+            return false;
+        }
+        if (this.getPlatform() !== "android") return false;
+
+        return new Promise((resolve) => {
+            tt.checkShortcut({
+                success: (res) => {
+                    resolve(!!res.status?.exist);
+                },
+                fail: (res) => {
+                    Warn(`抖音检查桌面快捷方式失败 errCode:${res.errNo} errMsg:${res.errMsg}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    public canReportScene(): boolean {
+        return !!tt.reportScene && Utils.compareVersion(this.getLibVersion(), "2.88.0") >= 0;
+    }
+
+    public async reportScene(options: ReportSceneOptions): Promise<boolean> {
+        if (!this.canReportScene()) return false;
+
+        return new Promise((resolve) => {
+            tt.reportScene({
+                ...options,
+                success: () => {
+                    resolve(true);
+                },
+                fail: (res) => {
+                    Warn(`抖音场景值上报失败 errCode:${res.errNo} errMsg:${res.errMsg}`);
                     resolve(false);
                 }
             });

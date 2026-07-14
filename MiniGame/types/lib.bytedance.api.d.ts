@@ -25,6 +25,48 @@ declare namespace BytedanceMiniprogram {
         errNo?: number;
     }
 
+    interface ShortcutStatus {
+        /** 是否已经添加了桌面快捷方式 */
+        exist: boolean;
+        /** 是否需要更新快捷方式 */
+        needUpdate?: boolean;
+    }
+
+    interface AddShortcutOption {
+        success?: GeneralSuccessCallback;
+        fail?: GeneralFailCallback;
+        complete?: GeneralCompleteCallback;
+    }
+
+    interface CheckShortcutSuccessResult extends GeneralSuccessResult {
+        status: ShortcutStatus;
+    }
+
+    interface CheckShortcutOption {
+        success?: (res: CheckShortcutSuccessResult) => void;
+        fail?: GeneralFailCallback;
+        complete?: GeneralCompleteCallback;
+    }
+
+    interface ReportSceneSuccessResult extends GeneralSuccessResult {
+        /** 开发者上报的原始数据 */
+        data?: Record<string, unknown>;
+    }
+
+    interface ReportSceneOption {
+        /** 场景 ID */
+        sceneId: number;
+        /** 场景耗时，单位 ms */
+        costTime?: number;
+        /** 自定义维度数据 */
+        dimension?: Record<string, string>;
+        /** 自定义指标数据 */
+        metric?: Record<string, string>;
+        success?: (res: ReportSceneSuccessResult) => void;
+        fail?: GeneralFailCallback;
+        complete?: GeneralCompleteCallback;
+    }
+
     /** 获取版本信息和环境变量 */
     interface EnvInfo {
         /** 小程序信息 */
@@ -867,6 +909,12 @@ declare namespace BytedanceMiniprogram {
 
         /** 确认当前宿主版本是否支持跳转某个小游戏入口场景，目前仅支持「侧边栏」场景。 */
         checkScene: (input: CheckSceneOption) => void;
+        /** 添加小游戏快捷方式到手机桌面。 */
+        addShortcut?: (input: AddShortcutOption) => void;
+        /** 检查小游戏快捷方式是否已添加到手机桌面。 */
+        checkShortcut?: (input: CheckShortcutOption) => void;
+        /** 上报启动场景值。 */
+        reportScene?: (input: ReportSceneOption) => void;
         /** 监听开始触摸事件。 */
         onTouchStart: (
             /** 监听事件的回调函数 */

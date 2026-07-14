@@ -3,6 +3,7 @@ import { join } from "node:path";
 
 const miniGameTypeFiles = [
   "lib.ali.api.d.ts",
+  "lib.bilibili.api.d.ts",
   "lib.bytedance.api.d.ts",
   "lib.kuaishou.api.d.ts",
   "lib.wx.api.d.ts"
