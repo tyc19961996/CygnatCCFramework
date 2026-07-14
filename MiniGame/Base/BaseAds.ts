@@ -74,17 +74,17 @@ export class BaseAds<T,B> implements IMiniRewardAds {
         }
 
         const rewardAdIds: Partial<Record<MiniRewardAdPlacement, string>> = {
-            ...(rewardAdUnitIdOrConfig.rewardAdIds || {}),
+            ...(rewardAdUnitIdOrConfig?.rewardAdIds || {}),
         };
 
-        if (rewardAdUnitIdOrConfig.defaultRewardAdId && !rewardAdIds[MiniRewardAdPlacement.Default]) {
+        if (rewardAdUnitIdOrConfig?.defaultRewardAdId && !rewardAdIds[MiniRewardAdPlacement.Default]) {
             rewardAdIds[MiniRewardAdPlacement.Default] = rewardAdUnitIdOrConfig.defaultRewardAdId;
         }
 
         return {
             defaultRewardAdId: rewardAdIds[MiniRewardAdPlacement.Default],
             rewardAdIds,
-            interstitialAdId: rewardAdUnitIdOrConfig.interstitialAdId,
+            interstitialAdId: rewardAdUnitIdOrConfig?.interstitialAdId || "",
         };
     }
 
