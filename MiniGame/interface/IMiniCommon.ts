@@ -182,6 +182,9 @@ export interface IMiniCommon {
     /** 创建用户信息按钮 */
     createUserInfoButton(options: any): any;
 
+    /** 删除用户信息按钮 */
+    destroyUserInfoBtn():void;
+
     /** 隐私协议授权查询 */
     requirePrivacyAuthorize(): Promise<boolean>;
 

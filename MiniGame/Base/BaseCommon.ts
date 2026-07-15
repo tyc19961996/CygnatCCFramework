@@ -236,7 +236,7 @@ export class BaseCommon implements IMiniCommon {
     /**
      * 删除获取用户信息按钮
      */
-    protected  destroyUserInfoBtn(): void {
+    public destroyUserInfoBtn(): void {
         if (this._userInfoButton) {
             this._userInfoButton.destroy();
             this._userInfoButton = null;
