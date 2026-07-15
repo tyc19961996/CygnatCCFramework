@@ -4,7 +4,7 @@
  * @Description: 适配用的类
  */
 
-import { ResolutionPolicy, view } from "cc";
+import { ResolutionPolicy, view, Node, UITransform, screen } from "cc";
 import { Size } from "../header";
 import { Screen } from "./Screen";
 import { Log } from "../utils/Logger/Log";
@@ -127,4 +127,21 @@ export abstract class Adapter {
      * @internal
      */
     protected abstract registerListener(listener: (...args: any) => void): void;
+
+    /**
+    * 获取cocos 节点在小程序屏幕上的位置
+    * @param node 
+    * @returns 
+    */
+    public static getNodeInScreenRect(node: Node) {
+        const rect = node.getComponent(UITransform)!.getBoundingBoxToWorld();
+        const dpi = screen.devicePixelRatio;
+        const scaleX = view.getScaleX();
+        const scaleY = view.getScaleY();
+        const left = (rect.x * scaleX) / dpi;
+        const top = (screen.windowSize.height - (rect.y + rect.height) * scaleY) / dpi;
+        const width = (rect.width * scaleX) / dpi;
+        const height = (rect.height * scaleY) / dpi;
+        return { left, top, width, height };
+    }
 }
