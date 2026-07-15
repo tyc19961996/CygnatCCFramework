@@ -199,14 +199,42 @@ export class BilibiliCommon extends BaseCommon {
         });
     }
 
-    /** 创建用户信息按钮；重复创建前先销毁旧按钮。 */
+/** 创建用户信息按钮；重复创建前先销毁旧按钮。 */
     public async createUserInfoButton(
-        options: BilibiliMiniprogram.UserInfoButtonOptions
-    ): Promise<BilibiliMiniprogram.UserInfoButton | null> {
+        options: any
+    ): Promise<any> {
         if (!bl.createUserInfoButton) return null;
+
+        const { title, left = 0, top = 0, width = 0, height = 0 } = options;
+
         this.destroyUserInfoBtn();
-        this._userInfoButton = bl.createUserInfoButton(options);
-        return this._userInfoButton;
+
+        return new Promise((resolve, reject) => {
+            this._userInfoButton = bl.createUserInfoButton({
+                type: 'text',
+                text: title,
+                style: {
+                    left: left,
+                    top: top,
+                    width: width,
+                    height: height,
+                    fontSize: 24,
+                    lineHeight: 20,
+                    color: "#00000000",
+                    textAlign: "center",
+                    borderRadius: 0
+                }
+            })
+
+            //监听按钮点击
+            this._userInfoButton.onTap((res) => {
+                console.log(`用户信息按钮点击: ${JSON.stringify(res)}`);
+                resolve(res);
+                this.destroyUserInfoBtn();
+            })
+
+            console.log(`创建用户信息按钮成功:  left:${left}, top:${top}, width:${width}, height:${height}`);
+        })
     }
 
     /** Bilibili 暂未接入项目统一隐私授权弹窗，默认无需额外授权。 */
