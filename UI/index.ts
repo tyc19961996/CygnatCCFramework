@@ -22,6 +22,7 @@ export { InfoPool } from "./core/InfoPool";
 
 /** 引擎相关 */
 export { UIModule } from "./engine/UIModule";
+export { CocosWindowContainer } from "./engine/CocosWindowContainer";
 
 export { AssetLoader } from "./core/AssetLoader";
 export { ResUrls } from "../Asset/AssetInfo";
