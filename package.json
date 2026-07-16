@@ -46,7 +46,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && node scripts/copy-package-types.mjs",
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-package-types.mjs && node scripts/fix-esm-extensions.mjs",
     "prepare": "npm run build",
     "pack:check": "npm pack --dry-run --ignore-scripts"
   },
