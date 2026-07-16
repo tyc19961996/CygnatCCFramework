@@ -2595,6 +2595,58 @@ declare namespace AliyMiniprogram {
 		}
 	}
 
+	/** 触控设备上的触摸点 */
+	interface TouchPoint {
+		/** Touch 对象的唯一标识符，一次触摸动作全程不变 */
+		identifier: number;
+		/** 触点相对于屏幕左边沿的 X 坐标 */
+		clientX: number;
+		/** 触点相对于屏幕上边沿的 Y 坐标 */
+		clientY: number;
+	}
+
+	/** 触摸事件回调数据 */
+	interface TouchEvent {
+		/** 当前所有触摸点的列表 */
+		touches: TouchPoint[];
+		/** 触发此次事件的触摸点列表（文档未列出，部分版本返回） */
+		changedTouches?: TouchPoint[];
+		/** 事件触发时间戳（文档未列出，部分版本返回） */
+		timeStamp?: number;
+	}
+
+	/** my.getSetting / my.openSetting 返回结果 */
+	interface GetSettingResult {
+		/** 用户授权结果，键如 userInfo、location、album 等；用户未触发过对应授权时键不存在 */
+		authSetting: Record<string, boolean>;
+		/** 用户订阅消息设置，getSetting 传 withSubscriptions 为 true 时返回 */
+		subscriptionsSetting?: {
+			/** 订阅消息总开关 */
+			mainSwitch: boolean;
+			/** 每一项订阅消息的订阅状态，键为模板 id，值为 'accept' | 'reject' */
+			itemSettings: Record<string, 'accept' | 'reject'>;
+		};
+	}
+
+	/** my.requestSubscribeMessage 成功回调结果 */
+	interface SubscribeMessageResult {
+		/** 用户订阅操作结果：subscribe 订阅成功 | cancel 取消订阅 */
+		behavior: string;
+		/** 本次订阅过程是否弹出了订阅面板 */
+		show: boolean;
+		/** 一次性订阅，是否勾选"总是保持以上选择，不再询问" */
+		keep?: boolean;
+		/** 长期订阅，是否点击"拒绝，不再询问" */
+		refuse?: boolean;
+		/** 订阅数据 */
+		result?: {
+			/** 最终订阅成功的模板列表 */
+			subscribedEntityIds: string[];
+			/** 未订阅的模板列表 */
+			unsubscribedEntityIds: string[];
+		};
+	}
+
 	enum ReadyState {
 		/** 正在连接(CONNECTING) */
 		CONNECTING = 0,
@@ -3537,9 +3589,20 @@ interface My {
 	offHide(listener: () => void);
 
 	/** my.showSharePanel 唤起支付宝分享面板 可以通过页面事件处理函数 page.onShareAppMessage 设置分享面板的分享信息或处理分享的回调事件*/
-	showSharePanel(): void;
+	showSharePanel(options?: {
+		success?: (res: any) => void,
+		fail?: (res: AliyMiniprogram.CallBack.Fail) => void,
+		complete?: () => void
+	}): void;
 	/** 设置页面的分享信息，通过onShareAppMessage注册分享信息，当调用my.showSharePanel 或者点击分享面板的时候会调用 */
-	onShareAppMessage: () => { title: string, desc: string, imageUrl };
+	onShareAppMessage: () => {
+		title?: string,
+		desc?: string,
+		imageUrl?: string,
+		success?: (res: any) => void,
+		fail?: (res: any) => void,
+		complete?: () => void
+	};
 
 	/** 监听小程序 JS 错误 */
 	onError(listener: (err: Error) => void);
@@ -3584,6 +3647,88 @@ interface My {
 			textAlign?: any // 文案对齐方式，type=“text”有效
 		}
 	}): AliyMiniprogram.GameClubButton;
+
+	/** 监听开始触摸事件 */
+	onTouchStart(listener: (res: AliyMiniprogram.TouchEvent) => void): void;
+	/** 监听触点移动事件 */
+	onTouchMove(listener: (res: AliyMiniprogram.TouchEvent) => void): void;
+	/** 监听触摸结束事件 */
+	onTouchEnd(listener: (res: AliyMiniprogram.TouchEvent) => void): void;
+	/** 监听触摸被打断事件 */
+	onTouchCancel(listener: (res: AliyMiniprogram.TouchEvent) => void): void;
+	/** 取消监听开始触摸事件，不传监听函数则移除所有监听 */
+	offTouchStart(listener?: (res: AliyMiniprogram.TouchEvent) => void): void;
+	/** 取消监听触点移动事件，不传监听函数则移除所有监听 */
+	offTouchMove(listener?: (res: AliyMiniprogram.TouchEvent) => void): void;
+	/** 取消监听触摸结束事件，不传监听函数则移除所有监听 */
+	offTouchEnd(listener?: (res: AliyMiniprogram.TouchEvent) => void): void;
+	/** 取消监听触摸被打断事件，不传监听函数则移除所有监听 */
+	offTouchCancel(listener?: (res: AliyMiniprogram.TouchEvent) => void): void;
+
+	/**
+	 * 获取用户授权码 (基础库 2.7.7 或更高版本)
+	 * scopes: 'auth_base' 静默授权 | 'auth_user' 主动授权（获取会员信息需要）
+	 */
+	getAuthCode(options: {
+		scopes?: string | string[],
+		success?: (res: { authCode: string, authErrorScopes?: _PlainObject, authSuccessScopes?: string[] }) => void,
+		fail?: (res: AliyMiniprogram.CallBack.Fail) => void,
+		complete?: () => void
+	}): void;
+
+	/**
+	 * 获取用户对当前小游戏的授权状态 (基础库 2.1.15 或更高版本)
+	 */
+	getSetting(options: {
+		/** 是否同时获取用户订阅消息的订阅状态，默认不获取 */
+		withSubscriptions?: boolean,
+		success?: (res: AliyMiniprogram.GetSettingResult) => void,
+		fail?: (res: AliyMiniprogram.CallBack.Fail) => void,
+		complete?: () => void
+	}): void;
+
+	/**
+	 * 打开小游戏设置界面，返回用户权限设置结果 (基础库 2.1.15 或更高版本)
+	 */
+	openSetting(options?: {
+		success?: (res: AliyMiniprogram.GetSettingResult) => void,
+		fail?: (res: AliyMiniprogram.CallBack.Fail) => void,
+		complete?: () => void
+	}): void;
+
+	/**
+	 * 判断游戏中心是否能够添加到支付宝首页 (基础库 2.1.57 或更高版本)
+	 * fail 错误码：60001 疲劳度检测不通过 | 60002 此应用已经在首页了 | 60005 达到添加次数上限
+	 */
+	canAddGameCenterToMyApps(options: {
+		success?: (res: { canAddAppToMyApps: boolean }) => void,
+		fail?: (res: AliyMiniprogram.CallBack.Fail) => void,
+		complete?: () => void
+	}): void;
+
+	/**
+	 * 添加游戏中心到支付宝首页 (基础库 2.1.57 或更高版本)
+	 * 需要先调用 canAddGameCenterToMyApps 判断可添加后再调用；调用后弹出确认面板，需用户手动确认
+	 * fail 错误码：60001 应用添加失败 | 60002 疲劳度检测不通过 | 60003 用户点击了取消
+	 */
+	addGameCenterToMyApps(options: {
+		success?: (res: { addAppToMyApps: boolean }) => void,
+		fail?: (res: AliyMiniprogram.CallBack.Fail) => void,
+		complete?: () => void
+	}): void;
+
+	/**
+	 * 唤起客户端小游戏消息订阅界面 (基础库 2.7.10 或更高版本)
+	 */
+	requestSubscribeMessage(options: {
+		/** 需要订阅的消息模板 id 集合（一次最多 3 个，一次性/长期性模板不可混用） */
+		entityIds: string[],
+		/** 模板小游戏 appId，仅服务商代调用场景需要 */
+		thirdTypeAppId?: string,
+		success?: (res: AliyMiniprogram.SubscribeMessageResult) => void,
+		fail?: (res: AliyMiniprogram.CallBack.Fail) => void,
+		complete?: () => void
+	}): void;
 
 	gameBiz: {
 		/**

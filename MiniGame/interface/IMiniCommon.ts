@@ -215,6 +215,12 @@ export interface IMiniCommon {
     /** 检查小游戏快捷方式是否已添加到手机桌面（仅 Bilibili、快手、抖音 Android 支持） */
     checkShortcut(): Promise<boolean>;
 
+    /** 判断游戏中心是否能够添加到支付宝首页（仅支付宝支持，基础库 2.1.57 或更高版本） */
+    canAddGameCenterToMyApps(): Promise<boolean>;
+
+    /** 添加游戏中心到支付宝首页（仅支付宝支持，调用前可先判断 canAddGameCenterToMyApps，调用后弹出确认面板需用户手动确认） */
+    addGameCenterToMyApps(): Promise<boolean>;
+
     /** 是否支持启动场景值上报（支付宝不支持） */
     canReportScene(): boolean;
 
