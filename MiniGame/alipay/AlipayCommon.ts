@@ -9,7 +9,22 @@ import { BaseCommon } from "../Base/BaseCommon";
 import { LoginResult, SubscribeResult, TouchData } from "../interface/IMiniCommon";
 
 
+/**
+ * my.navigateToMiniProgram 参数（由 alipays schema 解析而来，chInfo 会转入 startParam）
+ */
+interface IAliNavigateParams {
+    appId: string;
+    [key: string]: string | Record<string, string>;
+}
+
 export class AlipayCommon extends BaseCommon {
+
+    /** 游戏中心 openURL 跳转链接（Android 用，iOS 需追加 %26startMultApp%3DYES；链接需在开放平台控制台加入 openURL 白名单） */
+    private static readonly GAME_CENTER_OPEN_URL: string = "alipays://platformapi/startapp?appId=2060090000285522&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fyuyan%2F180020010001210691%2Findex.html%3FcaprMode%3Dsync&sourceAppId=2021003125685383&sourceUrl=alipays%3A%2F%2Fplatformapi%2Fstartapp%3FappId%3D2021003125685383%26url%3Dhttps%253A%252F%252Frender.alipay.com%252Fp%252Fyuyan%252F180020010001206617%252Findex.html%253FcaprMode%253Dsync%26chInfo%3Dreturnvisit%26sms%3DYES%26appClearTop%3Dfalse";
+
+    /** 游戏中心 navigateToMiniProgram schema（Android 用，iOS 需追加 &startMultApp=YES） */
+    private static readonly GAME_CENTER_NAVIGATE_SCHEMA: string = "alipays://platformapi/startapp?appId=2021003125685383&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fyuyan%2F180020010001206617%2Findex.html%3FcaprMode%3Dsync&chInfo=returnvisit&sms=YES&appClearTop=false";
+
     private _launchOptions: AliyMiniprogram.AppLaunchOptions = null;
 
     private _systemInfo: getSystemInfoSyncReturn = null;
@@ -344,6 +359,131 @@ export class AlipayCommon extends BaseCommon {
                 }
             });
         });
+    }
+
+    /**
+     * 上报游戏中心任务自定义埋点事件
+     * my.gameBiz 在低版本客户端可能不存在，调用前判空
+     */
+    public reportGameCenterEvent(event: string): void {
+        if (my.gameBiz && my.gameBiz.reportCustomEvent) {
+            my.gameBiz.reportCustomEvent(event, {});
+        }
+    }
+
+    /**
+     * 判断支付宝客户端版本是否不低于指定版本
+     * @param version 版本号，如 "10.5.60"
+     */
+    public isAlipayVersionAtLeast(version: string): boolean {
+        const hostVersion = this.getSystemInfo()?.version;
+        if (!hostVersion) {
+            return false;
+        }
+        return this._compareVersion(hostVersion, version) >= 0;
+    }
+
+    /**
+     * 跳转支付宝游戏中心（复访任务）
+     * my.ap.openURL 存在时优先 openURL 包装链，否则 navigateToMiniProgram schema；iOS 需追加 startMultApp=YES
+     * @returns 是否成功发起跳转
+     */
+    public jumpToGameCenter(): Promise<boolean> {
+        const platform = this.getSystemInfo()?.platform ?? "";
+        const isIos = platform === "iOS" || platform === "iPhone OS";
+        if (my.ap && my.ap.openURL) {
+            const suffix = isIos ? "%26startMultApp%3DYES" : "";
+            return this._jumpToGameCenterByOpenUrl(AlipayCommon.GAME_CENTER_OPEN_URL + suffix);
+        }
+        const suffix = isIos ? "&startMultApp=YES" : "";
+        return this._navigateToMiniProgramBySchema(AlipayCommon.GAME_CENTER_NAVIGATE_SCHEMA + suffix);
+    }
+
+    /**
+     * openURL 跳转游戏中心
+     * 报"跳转地址不在白名单内"时，需在开放平台控制台把链接加入 openURL 白名单（运营侧配置）
+     */
+    private _jumpToGameCenterByOpenUrl(url: string): Promise<boolean> {
+        return new Promise((resolve) => {
+            my.ap.openURL({
+                url: url,
+                success: () => resolve(true),
+                fail: (res: AliyMiniprogram.CallBack.Fail) => {
+                    Warn(`openURL 跳转游戏中心失败 code:${res.error} msg:${res.errorMessage}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /**
+     * navigateToMiniProgram 跳转游戏中心（schema 解析为参数）
+     */
+    private _navigateToMiniProgramBySchema(schema: string): Promise<boolean> {
+        const { params, message } = this._schemaToParams(schema);
+        if (!params) {
+            Warn(`无效的小程序 schema ${schema}: ${message}`);
+            return Promise.resolve(false);
+        }
+        return new Promise((resolve) => {
+            my.navigateToMiniProgram({
+                ...params,
+                success: () => resolve(true),
+                fail: (res: AliyMiniprogram.CallBack.Fail) => {
+                    Warn(`navigateToMiniProgram 跳转游戏中心失败 code:${res.error} msg:${res.errorMessage}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /**
+     * 解析 alipays schema 为 navigateToMiniProgram 参数
+     * chInfo 转入 startParam，appId 必须为 16 位
+     */
+    private _schemaToParams(schema: string): { params?: IAliNavigateParams, message?: string } {
+        if (!schema.startsWith("alipays:")) {
+            return { message: "非 alipays: 开头" };
+        }
+        const params: IAliNavigateParams = { appId: "" };
+        const parseQuery = (str: string): string[][] => {
+            return str.replace(/^.*?\?/, "").split("&").map((s) => {
+                const p = s.includes("=") ? s.indexOf("=") : s.length;
+                return [s.slice(0, p), s.slice(p + 1)].map(decodeURIComponent);
+            });
+        };
+        for (const [k, v] of parseQuery(schema)) {
+            if (k === "appId") {
+                if (v.length !== 16) {
+                    return { message: `非 16 位 appId '${v}'` };
+                }
+            } else if (k === "chInfo") {
+                const startParam = (params["startParam"] as Record<string, string>) || {};
+                startParam[k] = v;
+                params["startParam"] = startParam;
+                continue;
+            }
+            params[k] = v;
+        }
+        return { params };
+    }
+
+    /**
+     * 比较版本号
+     * @returns 1: v1 > v2；0: 相等；-1: v1 < v2
+     */
+    private _compareVersion(v1: string, v2: string): number {
+        const list1 = v1.split(".");
+        const list2 = v2.split(".");
+        const len = Math.max(list1.length, list2.length);
+        for (let i = 0; i < len; i++) {
+            const num1 = parseInt(list1[i], 10) || 0;
+            const num2 = parseInt(list2[i], 10) || 0;
+            if (num1 !== num2) {
+                return num1 > num2 ? 1 : -1;
+            }
+        }
+        return 0;
     }
 
     private getSystemInfo(): getSystemInfoSyncReturn {

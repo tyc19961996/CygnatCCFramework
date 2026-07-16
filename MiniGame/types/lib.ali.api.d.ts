@@ -3718,6 +3718,39 @@ interface My {
 	}): void;
 
 	/**
+	 * 跳转到其他小程序
+	 * 除固定参数外，支持透传由 alipays schema 解析出的参数（url、startParam、sms、appClearTop、startMultApp 等）
+	 */
+	navigateToMiniProgram(options: {
+		/** 目标小程序 appId（16 位） */
+		appId: string,
+		/** 打开的页面路径，为空则打开首页 */
+		path?: string,
+		/** 需要传递给目标小程序的数据 */
+		extraData?: _PlainObject,
+		success?: (res: any) => void,
+		fail?: (res: AliyMiniprogram.CallBack.Fail) => void,
+		complete?: () => void,
+		/** schema 解析出的其他透传参数 */
+		[key: string]: any
+	}): void;
+
+	/**
+	 * 支付宝客户端扩展能力集合（低版本客户端可能不存在，使用前需判空）
+	 */
+	ap?: {
+		/**
+		 * 打开 alipays 协议链接（链接需在开放平台控制台加入 openURL 白名单）
+		 */
+		openURL(options: {
+			url: string,
+			success?: (res: any) => void,
+			fail?: (res: AliyMiniprogram.CallBack.Fail) => void,
+			complete?: () => void
+		}): void;
+	};
+
+	/**
 	 * 唤起客户端小游戏消息订阅界面 (基础库 2.7.10 或更高版本)
 	 */
 	requestSubscribeMessage(options: {

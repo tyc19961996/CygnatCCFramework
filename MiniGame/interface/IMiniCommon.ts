@@ -221,6 +221,12 @@ export interface IMiniCommon {
     /** 添加游戏中心到支付宝首页（仅支付宝支持，调用前可先判断 canAddGameCenterToMyApps，调用后弹出确认面板需用户手动确认） */
     addGameCenterToMyApps(): Promise<boolean>;
 
+    /** 上报游戏中心任务自定义埋点事件（仅支付宝支持，内部判空 my.gameBiz，其他平台空实现） */
+    reportGameCenterEvent(event: string): void;
+
+    /** 跳转支付宝游戏中心（仅支付宝支持，my.ap.openURL 优先，否则 my.navigateToMiniProgram） */
+    jumpToGameCenter(): Promise<boolean>;
+
     /** 是否支持启动场景值上报（支付宝不支持） */
     canReportScene(): boolean;
 

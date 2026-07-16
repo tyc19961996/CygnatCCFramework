@@ -229,6 +229,14 @@ export class BaseCommon implements IMiniCommon {
         return false;
     }
 
+    public reportGameCenterEvent(_event: string): void {
+
+    }
+
+    public async jumpToGameCenter(): Promise<boolean> {
+        return false;
+    }
+
     public canReportScene(): boolean {
         return false;
     }
