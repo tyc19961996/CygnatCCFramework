@@ -8,7 +8,7 @@
 
  */
 
-import { BlockInputEvents, Component, Node, Size, tween, Tween, UITransform, UIOpacity, v3, Vec3 } from "cc";
+import { BlockInputEvents, Component, Layout, Node, Size, tween, Tween, UITransform, UIOpacity, v3, Vec3, warn } from "cc";
 import { Screen } from "../../Core";
 import { HeaderManager } from "../core/HeaderManager";
 import { WindowManager } from "../core/WindowManager";
@@ -60,6 +60,12 @@ export abstract class WindowBase<T = any, U = any> extends Component implements 
      * @internal
      */
     public _init(swallowTouch: boolean): void {
+
+        // 窗口根节点上启用的 Layout 会把下面注入的全屏吞噬节点纳入排版，导致窗口被撑满/错位
+        const layout = this.node.getComponent(Layout);
+        if (layout && layout.enabled) {
+            warn(`[Window] ${this.node.name} 根节点挂有启用的 Layout，会与框架注入的吞噬触摸节点冲突（窗口可能被撑满）。请把 Layout 移到内容子节点或禁用它。`);
+        }
 
         // 窗口本身可能留有安全区的边, 所以需要一个全屏的节点来吞噬触摸事件
 
