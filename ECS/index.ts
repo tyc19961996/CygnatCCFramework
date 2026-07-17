@@ -11,3 +11,6 @@ export {
     allOf, anyOf, onlyOf, excludeOf,
     getSingleton, addSingleton,
 } from "./ECS";
+
+/** 构造器/组件类型别名（register/getEntity/allOf 等公开函数的参数类型） */
+export type { CompType, EntityCtor, CompCtor } from "./ECSModel";

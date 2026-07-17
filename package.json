@@ -1,6 +1,6 @@
 {
   "name": "cygnat-cc-framework",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A Cocos Creator TypeScript game framework.",
   "private": true,
   "type": "module",
@@ -10,34 +10,6 @@
     ".": {
       "types": "./dist/header.d.ts",
       "import": "./dist/header.js"
-    },
-    "./Core": {
-      "types": "./dist/Core/index.d.ts",
-      "import": "./dist/Core/index.js"
-    },
-    "./Asset": {
-      "types": "./dist/Asset/index.d.ts",
-      "import": "./dist/Asset/index.js"
-    },
-    "./Event": {
-      "types": "./dist/Event/index.d.ts",
-      "import": "./dist/Event/index.js"
-    },
-    "./UI": {
-      "types": "./dist/UI/index.d.ts",
-      "import": "./dist/UI/index.js"
-    },
-    "./MiniGame": {
-      "types": "./dist/MiniGame/index.d.ts",
-      "import": "./dist/MiniGame/index.js"
-    },
-    "./Net": {
-      "types": "./dist/Net/index.d.ts",
-      "import": "./dist/Net/index.js"
-    },
-    "./ECS": {
-      "types": "./dist/ECS/index.d.ts",
-      "import": "./dist/ECS/index.js"
     },
     "./package.json": "./package.json"
   },

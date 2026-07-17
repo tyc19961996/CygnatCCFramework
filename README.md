@@ -14,24 +14,27 @@ The package runs `npm run build` during GitHub installation and exposes the comp
 
 ## Usage
 
-Import the framework entry:
+Import the framework entry. All public APIs are accessed through the module namespaces — subpath imports (e.g. `cygnat-cc-framework/UI`) are intentionally not exposed:
 
 ```ts
-import { Core, Assets, Event, UI, MiniGame, Ecs } from "cygnat-cc-framework";
-```
-
-Or import a top-level module:
-
-```ts
-import * as Core from "cygnat-cc-framework/Core";
-import * as Net from "cygnat-cc-framework/Net";
-import * as UI from "cygnat-cc-framework/UI";
+import { Core, Asset, Event, UI, MiniGame, ECS, Net } from "cygnat-cc-framework";
 ```
 
 Example:
 
 ```ts
 Core.enableDebugMode(true);
+UI.WindowManager.showWindowByName("MainWindow");
+```
+
+To make the IDE respect the package encapsulation (no auto-import of internal `dist` paths), set an `exports`-aware module resolution in the consuming project's `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "moduleResolution": "bundler"
+  }
+}
 ```
 
 ## Cocos Creator Notes

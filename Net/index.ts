@@ -2,6 +2,7 @@
 /** Http */
 export * from "./http/HttpManager";
 export { HttpTask } from "./http/HttpTask";
+export { HttpRequest } from "./http/HttpRequest";
 export type { IHttpEvent } from "./http/IHttpEvent";
 export type { IHttpRequest } from "./http/IHttpRequest";
 export type { IHttpResponse } from "./http/IHttpResponse";
