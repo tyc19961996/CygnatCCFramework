@@ -57,7 +57,7 @@ export type { IObjectPool, IObjectPoolR } from "./pool/ObjectPool";
 export { Observer } from "./bind/Observer";
 export type { IObserver, IReadonlyObserver, OnValueChange } from "./bind/Observer";
 export { LSObserver, BooleanLSObserver, NumberLSObserver, StringLSObserver, JSONLSObserver } from "./bind/LSObserver";
-export { autoBind, AutoBind } from "./bind/AutoBind";
+export { autoBind, AutoBind, propertyHandlers, functionHandlers } from "./bind/AutoBind";
 
 /** 管理器 */
 export { TimeManager } from "./utils/Manager/TimeManager";
