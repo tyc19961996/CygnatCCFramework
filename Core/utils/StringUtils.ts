@@ -161,5 +161,23 @@
          }
          return TempStr.replace(".00", "");
      }
-     
+
+    /**
+     * 给字符串中的每段数字加上前后缀（常用于富文本包裹数字变色）
+     * @example addStringsAroundNumbers("造成120点伤害", "<color=#ff0000>", "</color>")
+     */
+    public static addStringsAroundNumbers(str: string, prefix: string, suffix: string): string {
+        return str.replace(/(\d+(?:\.\d+)?)/g, `${prefix}$1${suffix}`);
+    }
+
+    /**
+     * 用 {key} 占位符格式化字符串
+     * @example formatByKey("第{level}关", { level: 3 }) => "第3关"
+     */
+    public static formatByKey(str: string, params: { [key: string]: string | number }): string {
+        return str.replace(/\{(\w+)\}/g, (match, key) => {
+            return params[key] !== undefined ? params[key].toString() : match;
+        });
+    }
+
  }
