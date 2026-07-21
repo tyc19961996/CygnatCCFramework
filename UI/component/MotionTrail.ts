@@ -25,7 +25,7 @@ class Joint {           //尾巴关节，每个关节控制2个顶点，N个关�
 }
 const { ccclass, property, menu } = _decorator;
 @ccclass('MotionTrail')
-@menu('Gi/MotionTrail')
+@menu('cygnat/MotionTrail')
 export class MotionTrail extends UIRenderer {
     @property({ type: SpriteAtlas, readonly: true })
     protected atlas: SpriteAtlas = null;

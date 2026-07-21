@@ -139,7 +139,7 @@ export enum LoadMoreState {
 }
 
 @ccclass('VirtualScrollView')
-@menu('2D/VirtualScrollView(虚拟滚动列表)')
+@menu('cygnat/VirtualScrollView')
 export class VirtualScrollView extends Component {
   @property({ type: Node, displayName: '容器节点', tooltip: 'content 容器节点（在 Viewport 下）' })
   public content: Node | null = null;

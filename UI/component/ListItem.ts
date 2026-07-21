@@ -19,7 +19,7 @@ enum SelectedType {
 
 @ccclass('ListItem')
 @disallowMultiple()
-@menu('List Item')
+@menu('cygnat/ListItem')
 @executionOrder(-5001)          //先于List
 export default class ListItem extends Component {
     //选择模式
