@@ -26,7 +26,7 @@ enum SelectedType {
     MULT = 2,//多选
 }
 
-@ccclass
+@ccclass('List')
 @disallowMultiple()
 @menu('List')
 @requireComponent(ScrollView)

@@ -17,7 +17,7 @@ enum SelectedType {
     SWITCH = 2,
 }
 
-@ccclass
+@ccclass('ListItem')
 @disallowMultiple()
 @menu('List Item')
 @executionOrder(-5001)          //先于List
