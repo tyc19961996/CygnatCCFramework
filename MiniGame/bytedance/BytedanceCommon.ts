@@ -250,6 +250,15 @@ export class BytedanceCommon extends BaseCommon {
         });
     }
 
+    /**
+     * 上报自定义埋点事件
+     * tt.reportAnalytics 的 data value 支持 number/string/boolean；事件名不超过 110 字符
+     */
+    public reportEvent(event: string, data: { [key: string]: any } = {}): void {
+        if (!tt.reportAnalytics) return;
+        tt.reportAnalytics(event, data);
+    }
+
     public canReportScene(): boolean {
         return !!tt.reportScene && Utils.compareVersion(this.getLibVersion(), "2.88.0") >= 0;
     }

@@ -362,12 +362,12 @@ export class AlipayCommon extends BaseCommon {
     }
 
     /**
-     * 上报游戏中心任务自定义埋点事件
+     * 上报自定义埋点事件（游戏中心任务埋点）
      * my.gameBiz 在低版本客户端可能不存在，调用前判空
      */
-    public reportGameCenterEvent(event: string): void {
+    public reportEvent(event: string, data: { [key: string]: any } = {}): void {
         if (my.gameBiz && my.gameBiz.reportCustomEvent) {
-            my.gameBiz.reportCustomEvent(event, {});
+            my.gameBiz.reportCustomEvent(event, data);
         }
     }
 

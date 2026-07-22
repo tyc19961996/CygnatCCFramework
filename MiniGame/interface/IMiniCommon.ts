@@ -221,8 +221,15 @@ export interface IMiniCommon {
     /** 添加游戏中心到支付宝首页（仅支付宝支持，调用前可先判断 canAddGameCenterToMyApps，调用后弹出确认面板需用户手动确认） */
     addGameCenterToMyApps(): Promise<boolean>;
 
-    /** 上报游戏中心任务自定义埋点事件（仅支付宝支持，内部判空 my.gameBiz，其他平台空实现） */
-    reportGameCenterEvent(event: string): void;
+    /**
+     * 上报自定义埋点事件
+     * - 支付宝：my.gameBiz.reportCustomEvent，内部判空
+     * - 微信：wx.reportEvent，data 的 value 仅支持字符串与整数（bool 转 'true'/'false'，小数转整数）
+     * - 抖音：tt.reportAnalytics
+     * - Bilibili：bl.reportEvent，仅支持数字事件码（event 需传如 "3001"），不支持 data
+     * - 快手：不支持，空实现
+     */
+    reportEvent(event: string, data?: { [key: string]: any }): void;
 
     /** 跳转支付宝游戏中心（仅支付宝支持，my.ap.openURL 优先，否则 my.navigateToMiniProgram） */
     jumpToGameCenter(): Promise<boolean>;

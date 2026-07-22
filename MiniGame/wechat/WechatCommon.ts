@@ -436,6 +436,29 @@ export class WechatCommon extends BaseCommon {
         return true;
     }
 
+    /**
+     * 上报自定义埋点事件
+     * wx.reportEvent 的 data value 仅支持字符串与整数：bool 转 'true'/'false'，小数四舍五入为整数，其余类型转字符串
+     */
+    public reportEvent(event: string, data: { [key: string]: any } = {}): void {
+        if (!wx.reportEvent) return;
+
+        const sanitized: { [key: string]: string | number } = {};
+        for (const key in data) {
+            const value = data[key];
+            if (typeof value === "boolean") {
+                sanitized[key] = value ? "true" : "false";
+            } else if (typeof value === "number") {
+                sanitized[key] = Number.isInteger(value) ? value : Math.round(value);
+            } else if (typeof value === "string") {
+                sanitized[key] = value;
+            } else {
+                sanitized[key] = String(value);
+            }
+        }
+        wx.reportEvent(event, sanitized);
+    }
+
     public canReportScene(): boolean {
         return !!wx.reportScene && Utils.compareVersion(this.getLibVersion(), "2.26.2") >= 0;
     }

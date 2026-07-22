@@ -333,6 +333,8 @@ declare namespace BilibiliMiniprogram {
         checkShortcut?(options: AsyncOptions<CheckShortcutResult>): void;
         /** 上报启动场景值。 */
         reportScene?(options: ReportSceneOptions): void;
+        /** 上报埋点事件。仅支持数字事件码（如 3001/3002），不支持自定义 data。基础库 2.8.0。 */
+        reportEvent?(eventCode: number): void;
         /** 创建激励视频广告；本项目 Bilibili 只接入默认广告位。 */
         createRewardedVideoAd?(options: { adUnitId: string }): RewardedVideoAd;
     }

@@ -229,7 +229,7 @@ export class BaseCommon implements IMiniCommon {
         return false;
     }
 
-    public reportGameCenterEvent(_event: string): void {
+    public reportEvent(_event: string, _data?: { [key: string]: any }): void {
 
     }
 

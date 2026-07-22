@@ -352,6 +352,20 @@ export class BilibiliCommon extends BaseCommon {
         });
     }
 
+    /**
+     * 上报自定义埋点事件
+     * bl.reportEvent 仅支持数字事件码（event 需传如 "3001"），不支持自定义 data，data 参数忽略
+     */
+    public reportEvent(event: string, _data?: { [key: string]: any }): void {
+        if (!bl.reportEvent) return;
+        const eventCode = Number(event);
+        if (!Number.isFinite(eventCode)) {
+            Warn(`Bilibili reportEvent 仅支持数字事件码，收到非法值: ${event}`);
+            return;
+        }
+        bl.reportEvent(eventCode);
+    }
+
     /** 是否支持启动场景值上报。 */
     public canReportScene(): boolean {
         return !!bl.reportScene && Utils.compareVersion(this.getLibVersion(), "3.99.9") >= 0;

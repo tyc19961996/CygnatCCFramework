@@ -183,6 +183,8 @@ declare namespace WechatMiniprogram {
         connectSocket(option: ConnectSocketOption): SocketTask
         /** 上报启动场景值。需要基础库 2.26.2。 */
         reportScene?(option: ReportSceneOption): void;
+        /** 上报自定义事件（事件分析）。data 的 value 只支持字符串和整数。 */
+        reportEvent?(eventId: string, data?: { [key: string]: string | number }): void;
     }
 
     /** 来源信息。从另一个小程序、公众号或 App 进入小程序时返回。否则返回 `{}`。(参见后文注意) */

@@ -915,6 +915,8 @@ declare namespace BytedanceMiniprogram {
         checkShortcut?: (input: CheckShortcutOption) => void;
         /** 上报启动场景值。 */
         reportScene?: (input: ReportSceneOption) => void;
+        /** 上报自定义分析数据。事件名不超过 110 字符；data 的 value 仅支持 number/string/boolean，最多 256 个字段。基础库 1.8.0。 */
+        reportAnalytics?: (eventName: string, data: { [key: string]: number | string | boolean }) => void;
         /** 监听开始触摸事件。 */
         onTouchStart: (
             /** 监听事件的回调函数 */
