@@ -12,7 +12,7 @@ import { CocosUtils, Log, Module, Screen,Adapter } from "../../Core";
 const { ccclass, menu, property } = _decorator;
 
 @ccclass("UIModule")
-@menu("bit/UIModule")
+@menu("cygnat/UIModule")
 export class UIModule extends Module {
 
     @property({ displayName: "底部遮罩透明度", tooltip: "半透明遮罩的默认透明度", min: 0, max: 1, step: 0.01 })

@@ -10,7 +10,7 @@ import { WindowManager } from "../core/WindowManager";
 import { Log } from "../../Core";
 const { ccclass, property, menu } = _decorator;
 @ccclass("CocosWindowContainer")
-@menu("bit/UIContainer")
+@menu("cygnat/CocosWindowContainer")
 export class CocosWindowContainer extends Component {
     @property({ displayName: "忽略顶部窗口查询", tooltip: "当通过窗口管理器获取顶部窗口时，是否忽略查询" }) ignoreQuery: boolean = false;
     @property({ displayName: "吞噬触摸事件", tooltip: "窗口组是否会吞噬触摸事件，防止层级下的窗口接收触摸事件" }) swallowTouch: boolean = false;
