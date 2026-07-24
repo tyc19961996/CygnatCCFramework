@@ -4,7 +4,7 @@
  * @Description: 小游戏一些通用方法
  */
 
-import { FeedStatusEvent, IFeedLaunchInfo, IFeedSubscribeOptions } from "./IMiniFeed";
+import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "./IMiniFeed";
 
 export interface TouchPoint {
     identifier: number;
@@ -264,4 +264,10 @@ export interface IMiniCommon {
 
     /** 取消监听 Feed 流进入/退出事件；不传 callback 时移除所有监听。需与 onFeedStatusChange 传入同一函数引用 */
     offFeedStatusChange(callback?: (res: FeedStatusEvent) => void): void;
+
+    /** 存储直玩就绪状态（仅抖音，基础库 3.67.0+，面向无 server 小游戏；后台配置了 OpenAPI 的无需调用）。有频控。resolve 是否成功 */
+    storeFeedData(options: IStoreFeedDataOptions): Promise<boolean>;
+
+    /** 获取直玩就绪状态数据（仅抖音，基础库 3.67.0+）。有频控。失败或平台不支持 resolve null */
+    getFeedData(scene: number, contentID: string): Promise<IFeedData | null>;
 }

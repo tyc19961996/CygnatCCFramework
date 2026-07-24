@@ -945,6 +945,36 @@ declare namespace BytedanceMiniprogram {
             fail?: (res: { errMsg: string; errNo?: number }) => void;
             complete?: () => void;
         }) => void;
+        /** 存储游戏直玩就绪状态。基础库 3.67.0，面向无 server 小游戏（配置了 OpenAPI 则无需调用）；有频控。 */
+        storeFeedData?: (options: {
+            /** 订阅场景 ID：1 离线收益 2 体力恢复 3 重要事件掉落 */
+            scene: number;
+            /** 满足运算公式后是否就绪：0 未就绪 1 就绪 */
+            status: 0 | 1;
+            /** 自定义文案 contentID */
+            contentID: string;
+            /** 运算公式左值，当前仅支持毫秒级时间戳 */
+            leftValue: "timeStampMs";
+            /** 运算符 */
+            operator: "=" | ">" | ">=" | "<" | "<=" | "!=";
+            /** 运算公式右值 */
+            rightValue: string;
+            /** 自定义补充字段 */
+            extra?: string;
+            success?: (res: { errMsg: string }) => void;
+            fail?: (res: { errMsg: string; errNo?: number }) => void;
+            complete?: () => void;
+        }) => void;
+        /** 获取游戏直玩就绪状态数据。基础库 3.67.0；有频控。 */
+        getFeedData?: (options: {
+            /** 订阅场景 ID：1 离线收益 2 体力恢复 3 重要事件掉落 */
+            scene: number;
+            /** 自定义文案 contentID */
+            contentID: string;
+            success?: (res: { errMsg: string; status: number; extra?: string }) => void;
+            fail?: (res: { errMsg: string; errNo?: number }) => void;
+            complete?: () => void;
+        }) => void;
         /** 监听 Feed 流进入/退出小游戏事件。基础库 3.59.0，仅推荐流直玩场景。 */
         onFeedStatusChange?: (callback: (res: { type: "feedEnter" | "feedExit" }) => void) => void;
         /** 取消监听 Feed 流进入/退出事件；不传 callback 时移除所有监听。 */

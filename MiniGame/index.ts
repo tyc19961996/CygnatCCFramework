@@ -16,6 +16,9 @@ export type {
     FeedStatusEvent,
     IFeedSubscribeOptions,
     IFeedLaunchInfo,
+    IStoreFeedDataOptions,
+    IFeedData,
+    FeedDataOperator,
 } from './interface/IMiniFeed';
 export { MiniRewardAdPlacement } from './interface/IMiniAds';
 export type {

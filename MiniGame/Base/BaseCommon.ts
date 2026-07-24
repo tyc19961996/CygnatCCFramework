@@ -6,7 +6,7 @@
 
 import { Screen } from "../../Core";
 import { IMiniCommon, LoginResult, ReportSceneOptions, SubscribeResult, TouchData } from "../interface/IMiniCommon";
-import { FeedStatusEvent, IFeedLaunchInfo, IFeedSubscribeOptions } from "../interface/IMiniFeed";
+import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "../interface/IMiniFeed";
 
 export class BaseCommon implements IMiniCommon {
 
@@ -258,6 +258,14 @@ export class BaseCommon implements IMiniCommon {
 
     public offFeedStatusChange(_callback?: (res: FeedStatusEvent) => void): void {
 
+    }
+
+    public async storeFeedData(_options: IStoreFeedDataOptions): Promise<boolean> {
+        return false;
+    }
+
+    public async getFeedData(_scene: number, _contentID: string): Promise<IFeedData | null> {
+        return null;
     }
 
     public async jumpToGameCenter(): Promise<boolean> {

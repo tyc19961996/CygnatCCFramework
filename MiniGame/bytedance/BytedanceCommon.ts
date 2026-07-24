@@ -7,7 +7,7 @@
 import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
 import { LoginResult, ReportSceneOptions, SubscribeResult } from "../interface/IMiniCommon";
-import { FeedStatusEvent, IFeedLaunchInfo, IFeedSubscribeOptions } from "../interface/IMiniFeed";
+import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "../interface/IMiniFeed";
 
 export class BytedanceCommon extends BaseCommon {
     private _launchOptions: BytedanceMiniprogram.LaunchParams = null;
@@ -344,6 +344,49 @@ export class BytedanceCommon extends BaseCommon {
     /** 取消监听 Feed 流进入/退出事件；不传 callback 时移除所有监听 */
     public offFeedStatusChange(callback?: (res: FeedStatusEvent) => void): void {
         tt.offFeedStatusChange?.(callback);
+    }
+
+    /**
+     * 存储直玩就绪状态（基础库 3.67.0+，面向无 server 小游戏）
+     * 后台配置了 OpenAPI 的无需调用；leftValue 官方当前仅支持毫秒时间戳，不传自动补 "timeStampMs"；有频控
+     */
+    public storeFeedData(options: IStoreFeedDataOptions): Promise<boolean> {
+        if (!tt.storeFeedData) return Promise.resolve(false);
+        return new Promise((resolve) => {
+            tt.storeFeedData({
+                scene: options.scene,
+                status: options.status,
+                contentID: options.contentID,
+                leftValue: options.leftValue || "timeStampMs",
+                operator: options.operator,
+                rightValue: options.rightValue,
+                extra: options.extra,
+                success: () => resolve(true),
+                fail: (res) => {
+                    Warn(`抖音存储直玩就绪状态失败 errNo:${res.errNo} errMsg:${res.errMsg}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /**
+     * 获取直玩就绪状态数据（基础库 3.67.0+）
+     * 有频控；失败或不支持返回 null
+     */
+    public getFeedData(scene: number, contentID: string): Promise<IFeedData | null> {
+        if (!tt.getFeedData) return Promise.resolve(null);
+        return new Promise((resolve) => {
+            tt.getFeedData({
+                scene: scene,
+                contentID: contentID,
+                success: (res) => resolve({ status: res.status, extra: res.extra ?? "" }),
+                fail: (res) => {
+                    Warn(`抖音获取直玩就绪状态失败 errNo:${res.errNo} errMsg:${res.errMsg}`);
+                    resolve(null);
+                }
+            });
+        });
     }
 
     public canReportScene(): boolean {
