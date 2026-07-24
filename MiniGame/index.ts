@@ -11,6 +11,12 @@ export type {
     ReportSceneOptions,
 } from './interface/IMiniCommon';
 export type { IMiniPay, IMiniPayParams } from './interface/IMiniPay';
+export { FeedSubscribeScene } from './interface/IMiniFeed';
+export type {
+    FeedStatusEvent,
+    IFeedSubscribeOptions,
+    IFeedLaunchInfo,
+} from './interface/IMiniFeed';
 export { MiniRewardAdPlacement } from './interface/IMiniAds';
 export type {
     IMiniRewardAds,

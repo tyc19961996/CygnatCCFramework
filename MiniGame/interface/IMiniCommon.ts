@@ -4,6 +4,8 @@
  * @Description: 小游戏一些通用方法
  */
 
+import { FeedStatusEvent, IFeedLaunchInfo, IFeedSubscribeOptions } from "./IMiniFeed";
+
 export interface TouchPoint {
     identifier: number;
     screenX: number;
@@ -242,4 +244,24 @@ export interface IMiniCommon {
 
     /** 登录获取 code */
     login(force?: boolean): Promise<LoginResult>;
+
+    /* ---------------- 推荐流直玩（Feed 直出游戏，仅抖音支持） ---------------- */
+
+    /** 获取推荐流直玩启动信息（仅抖音）。非推荐流直玩启动（启动 scene 尾号非 3041）或其他平台返回 null */
+    getFeedLaunchInfo(): IFeedLaunchInfo | null;
+
+    /** 是否支持推荐流直玩订阅（仅抖音，基础库 3.34.0+；allScene 全场景订阅需 3.45.0+），其他平台恒为 false */
+    canFeedSubscribe(allScene?: boolean): boolean;
+
+    /** 查询推荐流直玩订阅状态（仅抖音，需先调用 login）。resolve 是否已订阅；失败或平台不支持 resolve false */
+    checkFeedSubscribeStatus(options: IFeedSubscribeOptions): Promise<boolean>;
+
+    /** 发起推荐流直玩订阅弹窗（仅抖音，需先调用 login）。全场景订阅必须由用户点击触发（touchEnd 回调中同步调用）。resolve 订阅是否成功 */
+    requestFeedSubscribe(options: IFeedSubscribeOptions): Promise<boolean>;
+
+    /** 监听 Feed 流进入/退出小游戏事件（仅抖音，基础库 3.59.0+）。返回是否注册成功；低版本或其他平台返回 false，业务可用首次触摸事件兜底 */
+    onFeedStatusChange(callback: (res: FeedStatusEvent) => void): boolean;
+
+    /** 取消监听 Feed 流进入/退出事件；不传 callback 时移除所有监听。需与 onFeedStatusChange 传入同一函数引用 */
+    offFeedStatusChange(callback?: (res: FeedStatusEvent) => void): void;
 }

@@ -7,6 +7,7 @@
 import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
 import { LoginResult, ReportSceneOptions, SubscribeResult } from "../interface/IMiniCommon";
+import { FeedStatusEvent, IFeedLaunchInfo, IFeedSubscribeOptions } from "../interface/IMiniFeed";
 
 export class BytedanceCommon extends BaseCommon {
     private _launchOptions: BytedanceMiniprogram.LaunchParams = null;
@@ -257,6 +258,92 @@ export class BytedanceCommon extends BaseCommon {
     public reportEvent(event: string, data: { [key: string]: any } = {}): void {
         if (!tt.reportAnalytics) return;
         tt.reportAnalytics(event, data);
+    }
+
+    /* ---------------- 推荐流直玩（Feed 直出游戏） ---------------- */
+
+    /**
+     * 获取推荐流直玩启动信息
+     * 启动参数 scene 尾号 3041 为推荐流直玩启动，其余情况返回 null
+     */
+    public getFeedLaunchInfo(): IFeedLaunchInfo | null {
+        const scene = String(this._launchOptions?.scene ?? "");
+        if (!scene.endsWith("3041")) return null;
+
+        const query = (this._launchOptions?.query || {}) as Record<string, any>;
+        return {
+            scene: Number(query.feed_game_scene) || 0,
+            channel: Number(query.feed_game_channel) || 0,
+            contentId: String(query.feed_game_content_id ?? ""),
+            extra: String(query.feed_game_extra ?? ""),
+        };
+    }
+
+    /**
+     * 是否支持推荐流直玩订阅
+     * 基础库 3.34.0+；allScene 全场景订阅需 3.45.0+（通过 canIUse 判断）
+     */
+    public canFeedSubscribe(allScene: boolean = false): boolean {
+        if (!tt.checkFeedSubscribeStatus || !tt.requestFeedSubscribe) return false;
+        if (allScene && !(tt.canIUse && tt.canIUse("checkFeedSubscribeStatus.object.allScene"))) return false;
+        return true;
+    }
+
+    /**
+     * 查询推荐流直玩订阅状态（需先 login）
+     * 非全场景查询时 options.scene 必传
+     */
+    public checkFeedSubscribeStatus(options: IFeedSubscribeOptions): Promise<boolean> {
+        if (!this.canFeedSubscribe(options?.allScene)) return Promise.resolve(false);
+        return new Promise((resolve) => {
+            tt.checkFeedSubscribeStatus({
+                type: "play",
+                scene: options?.scene,
+                allScene: options?.allScene,
+                success: (res) => resolve(!!res.status),
+                fail: (res) => {
+                    Warn(`抖音查询直玩订阅状态失败 errNo:${res.errNo} errMsg:${res.errMsg}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /**
+     * 发起推荐流直玩订阅弹窗（需先 login）
+     * 全场景订阅（allScene）必须由用户点击触发——本方法需在 touchEnd 回调中被同步调用；
+     * 非全场景时 options.scene 与 options.contentIDs 必传；有频控限制，注意调用频率
+     */
+    public requestFeedSubscribe(options: IFeedSubscribeOptions): Promise<boolean> {
+        if (!this.canFeedSubscribe(options?.allScene)) return Promise.resolve(false);
+        return new Promise((resolve) => {
+            tt.requestFeedSubscribe({
+                type: "play",
+                scene: options?.scene,
+                contentIDs: options?.contentIDs,
+                allScene: options?.allScene,
+                success: (res) => resolve(!!res.success),
+                fail: (res) => {
+                    Warn(`抖音发起直玩订阅失败 errNo:${res.errNo} errMsg:${res.errMsg}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /**
+     * 监听 Feed 流进入/退出小游戏事件（基础库 3.59.0+）
+     * 直接透传业务回调给 tt，保证 off 时函数引用一致
+     */
+    public onFeedStatusChange(callback: (res: FeedStatusEvent) => void): boolean {
+        if (!tt.onFeedStatusChange) return false;
+        tt.onFeedStatusChange(callback);
+        return true;
+    }
+
+    /** 取消监听 Feed 流进入/退出事件；不传 callback 时移除所有监听 */
+    public offFeedStatusChange(callback?: (res: FeedStatusEvent) => void): void {
+        tt.offFeedStatusChange?.(callback);
     }
 
     public canReportScene(): boolean {

@@ -6,6 +6,7 @@
 
 import { Screen } from "../../Core";
 import { IMiniCommon, LoginResult, ReportSceneOptions, SubscribeResult, TouchData } from "../interface/IMiniCommon";
+import { FeedStatusEvent, IFeedLaunchInfo, IFeedSubscribeOptions } from "../interface/IMiniFeed";
 
 export class BaseCommon implements IMiniCommon {
 
@@ -230,6 +231,32 @@ export class BaseCommon implements IMiniCommon {
     }
 
     public reportEvent(_event: string, _data?: { [key: string]: any }): void {
+
+    }
+
+    /* ---------------- 推荐流直玩（仅抖音支持，默认空实现） ---------------- */
+
+    public getFeedLaunchInfo(): IFeedLaunchInfo | null {
+        return null;
+    }
+
+    public canFeedSubscribe(_allScene?: boolean): boolean {
+        return false;
+    }
+
+    public async checkFeedSubscribeStatus(_options: IFeedSubscribeOptions): Promise<boolean> {
+        return false;
+    }
+
+    public async requestFeedSubscribe(_options: IFeedSubscribeOptions): Promise<boolean> {
+        return false;
+    }
+
+    public onFeedStatusChange(_callback: (res: FeedStatusEvent) => void): boolean {
+        return false;
+    }
+
+    public offFeedStatusChange(_callback?: (res: FeedStatusEvent) => void): void {
 
     }
 

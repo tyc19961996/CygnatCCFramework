@@ -917,6 +917,38 @@ declare namespace BytedanceMiniprogram {
         reportScene?: (input: ReportSceneOption) => void;
         /** 上报自定义分析数据。事件名不超过 110 字符；data 的 value 仅支持 number/string/boolean，最多 256 个字段。基础库 1.8.0。 */
         reportAnalytics?: (eventName: string, data: { [key: string]: number | string | boolean }) => void;
+        /** 判断 API（及参数属性）在当前版本是否可用，如 "checkFeedSubscribeStatus.object.allScene"。 */
+        canIUse?: (schema: string) => boolean;
+        /** 查询推荐流直玩订阅状态。基础库 3.34.0，allScene 需 3.45.0；需先 tt.login，有频控。 */
+        checkFeedSubscribeStatus?: (options: {
+            /** 订阅 Feed 流的类型，目前只支持 'play' */
+            type: "play";
+            /** 订阅场景 ID：1 离线收益 2 体力恢复 3 重要事件掉落（非全场景下必传） */
+            scene?: number;
+            /** 是否全场景订阅 */
+            allScene?: boolean;
+            success?: (res: { errMsg: string; status: boolean }) => void;
+            fail?: (res: { errMsg: string; errNo?: number }) => void;
+            complete?: () => void;
+        }) => void;
+        /** 发起推荐流直玩订阅。基础库 3.34.0，allScene 需 3.45.0 且必须由用户点击触发（tt.onTouchEnd 回调内同步调用）；需先 tt.login，有频控。 */
+        requestFeedSubscribe?: (options: {
+            /** 订阅 Feed 流的类型，目前只支持 'play' */
+            type: "play";
+            /** 订阅场景 ID：1 离线收益 2 体力恢复 3 重要事件掉落（非全场景下必传） */
+            scene?: number;
+            /** 自定义文案 contentID 数组（非全场景下必传，后台开通直玩能力后获取） */
+            contentIDs?: string[];
+            /** 是否全场景订阅 */
+            allScene?: boolean;
+            success?: (res: { errMsg: string; success: boolean }) => void;
+            fail?: (res: { errMsg: string; errNo?: number }) => void;
+            complete?: () => void;
+        }) => void;
+        /** 监听 Feed 流进入/退出小游戏事件。基础库 3.59.0，仅推荐流直玩场景。 */
+        onFeedStatusChange?: (callback: (res: { type: "feedEnter" | "feedExit" }) => void) => void;
+        /** 取消监听 Feed 流进入/退出事件；不传 callback 时移除所有监听。 */
+        offFeedStatusChange?: (callback?: (res: { type: "feedEnter" | "feedExit" }) => void) => void;
         /** 监听开始触摸事件。 */
         onTouchStart: (
             /** 监听事件的回调函数 */
