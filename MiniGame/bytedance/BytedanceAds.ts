@@ -7,12 +7,22 @@
 import { Log, Warn } from "../../Core";
 import { BaseAds } from "../Base/BaseAds";
 import { MiniErrorCode } from "../header";
+import {
+    IMiniShowRewardAdOptions,
+    MiniAdCallback,
+    MiniRewardAdPlacement,
+} from "../interface/IMiniAds";
 
 export class BytedanceAds extends BaseAds<BytedanceMiniprogram.RewardedVideoAd, BytedanceMiniprogram.InterstitialAd> {
-    /**
-     * 显示广告
-     */
-    public showAds(res: { success: () => void, fail: (errCode: number, errMsg: string) => void }): void {
+
+    /** 展示激励广告；抖音当前只创建默认广告位实例，非 Default 广告位显式失败 */
+    public showRewardAd(options: IMiniShowRewardAdOptions, res: MiniAdCallback): void {
+        const placement = options?.placement || MiniRewardAdPlacement.Default;
+        if (placement !== MiniRewardAdPlacement.Default) {
+            Warn("抖音当前只支持默认激励广告位");
+            res.fail?.(MiniErrorCode.AD_NOT_INIT.code, MiniErrorCode.AD_NOT_INIT.msg);
+            return;
+        }
         if (this._rewardAdUnitId === "") {
             Warn(MiniErrorCode.AD_NOT_INIT.msg);
             res.fail?.(MiniErrorCode.AD_NOT_INIT.code, MiniErrorCode.AD_NOT_INIT.msg);

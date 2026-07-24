@@ -89,7 +89,8 @@ export class BaseAds<T,B> implements IMiniRewardAds {
     }
 
     /**
-     * 显示广告
+     * 显示默认激励广告（旧接口兼容入口，子类不要覆写；平台差异统一在 showRewardAd 里实现）
+     * @deprecated 新代码请用 showRewardAd
      */
     public showAds(res: MiniAdCallback): void {
         this.showRewardAd({ placement: MiniRewardAdPlacement.Default }, res);

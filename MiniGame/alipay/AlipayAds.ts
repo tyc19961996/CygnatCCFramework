@@ -47,10 +47,6 @@ export class AlipayAds extends BaseAds<AliyMiniprogram.RewardedAd, any> {
         });
     }
 
-    public showAds(res: MiniAdCallback): void {
-        this.showRewardAd({ placement: MiniRewardAdPlacement.Default }, res);
-    }
-
     public showRewardAd(options: IMiniShowRewardAdOptions, res: MiniAdCallback): void {
         const placement = options?.placement || MiniRewardAdPlacement.Default;
         const context = this._rewardAdContexts.get(placement);

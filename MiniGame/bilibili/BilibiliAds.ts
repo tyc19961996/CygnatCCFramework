@@ -21,11 +21,6 @@ import {
  */
 export class BilibiliAds extends BaseAds<BilibiliMiniprogram.RewardedVideoAd, unknown> {
 
-    /** 兼容旧接口：展示默认广告位。 */
-    public showAds(res: MiniAdCallback): void {
-        this.showRewardAd({ placement: MiniRewardAdPlacement.Default }, res);
-    }
-
     /** 展示激励广告；Bilibili 当前只支持默认广告位。 */
     public showRewardAd(options: IMiniShowRewardAdOptions, res: MiniAdCallback): void {
         const placement = options?.placement || MiniRewardAdPlacement.Default;

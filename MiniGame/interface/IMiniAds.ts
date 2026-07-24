@@ -38,6 +38,7 @@ export interface IMiniRewardAds {
 
     /**
      * 显示默认激励广告
+     * @deprecated 旧接口，仅由基类实现，等价于 showRewardAd({ placement: Default }, res)；新代码请用 showRewardAd
      */
     showAds(res: MiniAdCallback): void;
 
