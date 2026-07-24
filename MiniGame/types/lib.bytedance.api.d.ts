@@ -919,6 +919,20 @@ declare namespace BytedanceMiniprogram {
         reportAnalytics?: (eventName: string, data: { [key: string]: number | string | boolean }) => void;
         /** 判断 API（及参数属性）在当前版本是否可用，如 "checkFeedSubscribeStatus.object.allScene"。 */
         canIUse?: (schema: string) => boolean;
+        /** 请求单项能力授权（scope.userInfo / scope.camera / scope.record 等）。基础库 1.80.0；新版本在 scope 授权前会前置校验隐私协议授权。 */
+        authorize?: (options: {
+            /** 需要授权的能力 scope，如 "scope.camera" */
+            scope: string;
+            success?: (res: { errMsg: string; data?: { [scope: string]: boolean } }) => void;
+            fail?: (res: { errMsg: string; errNo?: number }) => void;
+            complete?: () => void;
+        }) => void;
+        /** 获取用户已授权的设置信息。 */
+        getSetting?: (options: {
+            success?: (res: { errMsg: string; authSetting: { [scope: string]: boolean } }) => void;
+            fail?: (res: { errMsg: string; errNo?: number }) => void;
+            complete?: () => void;
+        }) => void;
         /** 查询推荐流直玩订阅状态。基础库 3.34.0，allScene 需 3.45.0；需先 tt.login，有频控。 */
         checkFeedSubscribeStatus?: (options: {
             /** 订阅 Feed 流的类型，目前只支持 'play' */

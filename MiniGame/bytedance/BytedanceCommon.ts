@@ -4,7 +4,7 @@
  * @Description: 字节跳动小游戏工具类
  */
 
-import { Utils, Warn } from "../../Core";
+import { Log, Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
 import { LoginResult, ReportSceneOptions, SubscribeResult } from "../interface/IMiniCommon";
 import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "../interface/IMiniFeed";
@@ -258,6 +258,53 @@ export class BytedanceCommon extends BaseCommon {
     public reportEvent(event: string, data: { [key: string]: any } = {}): void {
         if (!tt.reportAnalytics) return;
         tt.reportAnalytics(event, data);
+    }
+
+    /**
+     * 请求单项能力授权（如 "scope.userInfo"、"scope.camera"、"scope.record"）
+     * 已授权直接返回 true；用户拒绝或调用失败返回 false
+     * 注意：新版本抖音在 scope 授权前会前置校验隐私协议授权
+     */
+    public async authorize(scope: string): Promise<boolean> {
+        if (!tt.authorize) return false;
+
+        // 已授权直接通过，避免重复弹窗
+        const isAuthorized = await this.isAuthorized(scope);
+        if (isAuthorized) return true;
+
+        return new Promise((resolve) => {
+            tt.authorize({
+                scope: scope,
+                success: () => {
+                    Log(`抖音请求授权 ${scope} 成功`);
+                    resolve(true);
+                },
+                fail: (res) => {
+                    Warn(`抖音请求授权 ${scope} 失败 errNo:${res.errNo} errMsg:${res.errMsg}`);
+                    resolve(false);
+                }
+            });
+        });
+    }
+
+    /** 是否已授权指定 scope */
+    public async isAuthorized(scope: string): Promise<boolean> {
+        const setting = await this.getSetting();
+        return setting?.authSetting?.[scope] ?? false;
+    }
+
+    /** 获取用户授权设置（res.authSetting: { [scope]: boolean }） */
+    public getSetting(_withSubscriptions?: boolean): Promise<any> {
+        if (!tt.getSetting) return Promise.resolve(null);
+        return new Promise((resolve) => {
+            tt.getSetting({
+                success: (res) => resolve(res),
+                fail: (res) => {
+                    Warn(`抖音获取授权设置失败 errNo:${res.errNo} errMsg:${res.errMsg}`);
+                    resolve(null);
+                }
+            });
+        });
     }
 
     /* ---------------- 推荐流直玩（Feed 直出游戏） ---------------- */
