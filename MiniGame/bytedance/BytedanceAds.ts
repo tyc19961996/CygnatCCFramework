@@ -55,13 +55,14 @@ export class BytedanceAds extends BaseAds<BytedanceMiniprogram.RewardedVideoAd, 
             if (res.count || res.isEnded) {
                 /** 广告播放完成 */
                 this._rewardSuccess?.();
+                console.log("tt video close isEnded");
             } else {
                 /** 中途退出，不发放奖励 */
                 this._rewardFail?.(MiniErrorCode.AD_EXIT.code, MiniErrorCode.AD_EXIT.msg);
             }
             this.reset();
         });
-        videoAd.onLoad(()=>{
+        videoAd.onLoad(() => {
             Log("tt ads video onload success");
         })
         return videoAd;
@@ -101,7 +102,7 @@ export class BytedanceAds extends BaseAds<BytedanceMiniprogram.RewardedVideoAd, 
     protected createInterstitialAd() {
         let interstitialAd = tt.createInterstitialAd({ adUnitId: this._interstitialAdUnitId });
         interstitialAd.onLoad(() => {
-            Log("wx ads interstitialAd onload success");
+            Log("tt ads interstitialAd onload success");
         });
         interstitialAd.onError((res) => {
             Error(JSON.stringify(res));
