@@ -204,7 +204,12 @@ export class AlipayCommon extends BaseCommon {
         return new Promise((resolve) => {
             my.getAuthUserInfo({
                 success: (res) => {
-                    resolve(res);
+                    resolve({
+                        userInfo: {
+                            nickName: res?.nickName || "",
+                            avatarUrl: res?.avatar || ""
+                        }
+                    });
                 },
                 fail: () => {
                     resolve(null);
