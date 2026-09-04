@@ -5,9 +5,11 @@
  * 窗口顶边资源栏 同组中只会有一个显示
  */
 
-import { Component } from "cc";
+import { Component, Node, Size, UITransform, Vec3 } from "cc";
 import { IHeader } from "../interface/IHeader";
 import { AdapterType } from "../interface/type";
+import { Screen } from "Core";
+import { calculateSafeAreaFrame } from "Core/engine/SafeArea";
 
 export abstract class Header<T = any> extends Component implements IHeader<T> {
     /** 窗口适配类型 */
@@ -20,6 +22,9 @@ export abstract class Header<T = any> extends Component implements IHeader<T> {
     protected onClose(): void { };
     protected onHide(): void { };
     protected onShowFromHide(): void { };
+
+    /** 窗口预制体的初始位置 */
+    private _basePosition: Vec3 = new Vec3();
 
     /**
      * 是否显示中
@@ -34,6 +39,7 @@ export abstract class Header<T = any> extends Component implements IHeader<T> {
      */
     public _init(): void {
         this.onInit();
+        this._basePosition.set(this.node.position.x, this.node.position.y, this.node.position.z);
     }
 
     /**
@@ -42,6 +48,7 @@ export abstract class Header<T = any> extends Component implements IHeader<T> {
      */
     public _close(): void {
         this.onClose();
+        this.node.destroy();
     }
 
     /**
@@ -49,20 +56,36 @@ export abstract class Header<T = any> extends Component implements IHeader<T> {
      * @internal
      */
     public _adapted(): void {
-        // this.setPosition(Screen.ScreenWidth * 0.5, Screen.ScreenHeight * 0.5);
-        // this.setPivot(0.5, 0.5, true);
-        // switch (this.adapterType) {
-        //     case AdapterType.Full:
-        //         this.setSize(Screen.ScreenWidth, Screen.ScreenHeight, true);
-        //         break;
-        //     case AdapterType.Bang:
-        //         this.setSize(Screen.SafeWidth, Screen.SafeHeight, true);
-        //         break;
-        //     default:
-        //         break;
-        // }
+
+        switch (this.adapterType) {
+            case AdapterType.Full:
+                this._setSize(this.node, Screen.ScreenWidth, Screen.ScreenHeight);
+                break;
+            case AdapterType.Bang:
+                const safeAreaFrame = calculateSafeAreaFrame(Screen.ScreenWidth, Screen.ScreenHeight, Screen.SafeArea);
+                this._setSize(this.node, safeAreaFrame.width, safeAreaFrame.height);
+                this.node.setPosition(
+                    this._basePosition.x + safeAreaFrame.offsetX,
+                    this._basePosition.y + safeAreaFrame.offsetY,
+                    this._basePosition.z,
+                );
+            default:
+                break;
+
+        }
+
         this.onAdapted();
     }
+
+    private _setSize(node: Node, width: number, height: number) {
+        const uiTrans = node.getComponent(UITransform);
+        if (!uiTrans) {
+            return;
+        }
+        uiTrans.setContentSize(new Size(width, height));
+    }
+
+
 
     /**
      * 显示

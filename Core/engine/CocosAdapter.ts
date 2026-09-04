@@ -4,10 +4,12 @@
  * @Description: 
  */
 
-import { screen as ccScreen, view } from "cc";
+import { screen as ccScreen, sys, view } from "cc";
 import { Size } from "../header";
 import { Adapter } from "./Adapter";
 import { Log } from "../utils/Logger/Log";
+import { calculateSafeAreaInsets } from "./SafeArea";
+import type { SafeAreaInsets } from "./SafeArea";
 
 export class CocosAdapter extends Adapter {
     /**
@@ -20,6 +22,10 @@ export class CocosAdapter extends Adapter {
         let width = Math.ceil(windowSize.width / view.getScaleX());
         let height = Math.ceil(windowSize.height / view.getScaleY());
         return { width, height };
+    }
+
+    protected getSafeAreaInsets(screenWidth: number, screenHeight: number): SafeAreaInsets {
+        return calculateSafeAreaInsets(screenWidth, screenHeight, sys.getSafeAreaRect(false));
     }
 
     /**

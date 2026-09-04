@@ -10,6 +10,7 @@
 
 import { BlockInputEvents, Component, Layout, Node, Size, tween, Tween, UITransform, UIOpacity, v3, Vec3, warn } from "cc";
 import { Screen } from "../../Core";
+import { calculateSafeAreaFrame } from "../../Core/engine/SafeArea";
 import { HeaderManager } from "../core/HeaderManager";
 import { WindowManager } from "../core/WindowManager";
 import { IWindow } from "../interface/IWindow";
@@ -53,6 +54,11 @@ export abstract class WindowBase<T = any, U = any> extends Component implements 
 
 
 
+    /** 窗口预制体的初始位置 */
+    private _basePosition: Vec3 = new Vec3();
+
+
+
     /**
      * 初始化方法 (框架内部使用)
      * @param swallowTouch 是否吞噬触摸事件
@@ -82,6 +88,7 @@ export abstract class WindowBase<T = any, U = any> extends Component implements 
         this.bgAlpha = WindowManager.bgAlpha;
         this._captureBaseScale();
         this.onInit();
+        this._basePosition.set(this.node.position.x, this.node.position.y, this.node.position.z);
 
     }
 
@@ -97,19 +104,28 @@ export abstract class WindowBase<T = any, U = any> extends Component implements 
             case AdapterType.Full:
                 this._setSize(this.node, Screen.ScreenWidth, Screen.ScreenHeight);
                 break;
-            case AdapterType.Bang:
-                this._setSize(this.node, Screen.SafeWidth, Screen.SafeHeight);
+            case AdapterType.Bang: {
+                const safeAreaFrame = calculateSafeAreaFrame(Screen.ScreenWidth, Screen.ScreenHeight, Screen.SafeArea);
+                this._setSize(this.node, safeAreaFrame.width, safeAreaFrame.height);
+                this.node.setPosition(
+                    this._basePosition.x + safeAreaFrame.offsetX,
+                    this._basePosition.y + safeAreaFrame.offsetY,
+                    this._basePosition.z,
+                );
                 break;
+            }
             default:
                 break;
 
         }
 
         // 吞噬触摸的节点
-
         this._setSize(this._swallowNode, Screen.ScreenWidth, Screen.ScreenHeight);
 
         this.onAdapted();
+        if (this.adapterType === AdapterType.Bang) {
+            this._swallowNode.setPosition(-this.node.position.x, -this.node.position.y, 0);
+        }
         this._captureBaseScale();
 
     }

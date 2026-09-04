@@ -8,7 +8,8 @@ import { ResolutionPolicy, view, Node, UITransform, screen } from "cc";
 import { Size } from "../header";
 import { Screen } from "./Screen";
 import { Log } from "../utils/Logger/Log";
-import { Platform } from "./Platform";
+import { calculateSafeAreaFrame } from "./SafeArea";
+import type { SafeAreaInsets } from "./SafeArea";
 
 export abstract class Adapter {
     /** 适配器实例 */
@@ -65,7 +66,6 @@ export abstract class Adapter {
      * @internal
      */
     protected resize(): void {
-        Screen.SafeAreaHeight = Platform.isMobile ? 60 : 0;
         // 屏幕像素尺寸
         const winSize = this.getScreenSize();
         const isDesignLandscape = Screen.DesignWidth > Screen.DesignHeight;
@@ -77,20 +77,22 @@ export abstract class Adapter {
             Screen.ScreenWidth = winSize.height;
             Screen.ScreenHeight = winSize.width;
         }
-        if (isDesignLandscape) {
-            // 横屏
-            /** 安全区的宽度 */
-            Screen.SafeWidth = Screen.ScreenWidth - Screen.SafeAreaHeight * 2;
-            /** 安全区的高度 */
-            Screen.SafeHeight = Screen.ScreenHeight;
-        } else {
-            // 竖屏
-            /** 安全区的宽度 */
-            Screen.SafeWidth = Screen.ScreenWidth;
-            /** 安全区的高度 */
-            Screen.SafeHeight = Screen.ScreenHeight - Screen.SafeAreaHeight * 2;
-        }
+        Screen.SafeArea = this.getSafeAreaInsets(Screen.ScreenWidth, Screen.ScreenHeight);
+        Screen.SafeAreaHeight = Math.max(
+            Screen.SafeArea.top,
+            Screen.SafeArea.bottom,
+            Screen.SafeArea.left,
+            Screen.SafeArea.right,
+        );
+        const safeAreaFrame = calculateSafeAreaFrame(Screen.ScreenWidth, Screen.ScreenHeight, Screen.SafeArea);
+        Screen.SafeWidth = safeAreaFrame.width;
+        Screen.SafeHeight = safeAreaFrame.height;
         this.printScreen();
+    }
+
+    /** Platform adapters return logical screen-coordinate insets. */
+    protected getSafeAreaInsets(screenWidth: number, screenHeight: number): SafeAreaInsets {
+        return { top: 0, bottom: 0, left: 0, right: 0 };
     }
 
     /** 
@@ -100,7 +102,7 @@ export abstract class Adapter {
     private printScreen() {
         Log(`设计分辨率: ${Screen.DesignWidth}x${Screen.DesignHeight}`);
         Log(`屏幕分辨率: ${Screen.ScreenWidth}x${Screen.ScreenHeight}`);
-        Log(`安全区域高度: ${Screen.SafeAreaHeight}`);
+        Log(`安全区域边距: top=${Screen.SafeArea.top}, bottom=${Screen.SafeArea.bottom}, left=${Screen.SafeArea.left}, right=${Screen.SafeArea.right}`);
         Log(`安全区宽高: ${Screen.SafeWidth}x${Screen.SafeHeight}`);
     }
 
