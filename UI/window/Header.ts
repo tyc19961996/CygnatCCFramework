@@ -8,8 +8,9 @@
 import { Component, Node, Size, UITransform, Vec3 } from "cc";
 import { IHeader } from "../interface/IHeader";
 import { AdapterType } from "../interface/type";
-import { Screen } from "Core";
-import { calculateSafeAreaFrame } from "Core/engine/SafeArea";
+import { Screen } from "../../Core";
+import { calculateSafeAreaFrame } from "../../Core/engine/SafeArea";
+
 
 export abstract class Header<T = any> extends Component implements IHeader<T> {
     /** 窗口适配类型 */
