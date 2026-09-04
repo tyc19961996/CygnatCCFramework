@@ -10,6 +10,7 @@ import { Screen } from "./Screen";
 import { Log } from "../utils/Logger/Log";
 import { calculateSafeAreaFrame } from "./SafeArea";
 import type { SafeAreaInsets } from "./SafeArea";
+import { Platform } from "./Platform";
 
 export abstract class Adapter {
     /** 适配器实例 */
@@ -92,7 +93,7 @@ export abstract class Adapter {
 
     /** Platform adapters return logical screen-coordinate insets. */
     protected getSafeAreaInsets(screenWidth: number, screenHeight: number): SafeAreaInsets {
-        return { top: 0, bottom: 0, left: 0, right: 0 };
+        return { top: Platform.isMobile ? 60 : 0, bottom: 0, left: 0, right: 0 };
     }
 
     /** 

@@ -24,9 +24,9 @@ export class CocosAdapter extends Adapter {
         return { width, height };
     }
 
-    protected getSafeAreaInsets(screenWidth: number, screenHeight: number): SafeAreaInsets {
-        return calculateSafeAreaInsets(screenWidth, screenHeight, sys.getSafeAreaRect(false));
-    }
+    // protected getSafeAreaInsets(screenWidth: number, screenHeight: number): SafeAreaInsets {
+    //     return calculateSafeAreaInsets(screenWidth, screenHeight, sys.getSafeAreaRect(false));
+    // }
 
     /**
      * 获取设计尺寸
