@@ -24,6 +24,11 @@ declare namespace WechatMiniprogram {
         complete?: () => void;
     }
 
+    interface VibrateShortOption extends ICommonCallBack {
+        /** 震动强度类型，基础库 2.13.0 起支持。 */
+        type: "heavy" | "medium" | "light";
+    }
+
     interface GeneralCallbackResult {
         /** 错误信息 */
         errMsg: string
@@ -1396,10 +1401,10 @@ UserInfoButton.offTap(listener) // 需传入与监听时同一个的函数对象
         shareAppMessage(option: ShareAppMessageOption): void
         /** [wx.vibrateShort(Object object)](https://developers.weixin.qq.com/minigame/dev/api/device/vibrate/wx.vibrateShort.html)
          *
-         * 需要基础库： `1.2.0`
+         * 需要基础库： `1.2.0`。震动强度 type 字段需要基础库 `2.13.0`。
          *
          * 使手机发生较短时间的振动（15 ms）。仅在 iPhone `7 / 7 Plus` 以上及 Android 机型生效 */
-        vibrateShort(): void;
+        vibrateShort(options: VibrateShortOption): void;
         /** [[InterstitialAd](https://developers.weixin.qq.com/minigame/dev/api/ad/InterstitialAd.html) wx.createInterstitialAd(Object object)](https://developers.weixin.qq.com/minigame/dev/api/ad/wx.createInterstitialAd.html)
          *
          * 需要基础库： `2.6.0`

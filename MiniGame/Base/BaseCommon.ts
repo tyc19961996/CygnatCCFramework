@@ -5,7 +5,7 @@
  */
 
 import { Screen } from "../../Core";
-import { IMiniCommon, LoginResult, ReportSceneOptions, SubscribeResult, TouchData } from "../interface/IMiniCommon";
+import { IMiniCommon, LoginResult, ReportSceneOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "../interface/IMiniFeed";
 
 export class BaseCommon implements IMiniCommon {
@@ -154,7 +154,7 @@ export class BaseCommon implements IMiniCommon {
 
     }
 
-    public vibrateShort(): void {
+    public vibrateShort(_type: VibrateShortType = "medium"): void {
 
     }
     public vibrateLong(): void {

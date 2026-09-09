@@ -6,7 +6,7 @@
 
 import { Log, Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ReportSceneOptions, SubscribeResult, TouchData } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 
 export class WechatCommon extends BaseCommon {
     private _launchOptions: WechatMiniprogram.LaunchOptionsApp = null;
@@ -118,8 +118,8 @@ export class WechatCommon extends BaseCommon {
         });
     }
 
-    public vibrateShort(): void {
-        wx.vibrateShort();
+    public vibrateShort(type: VibrateShortType = "medium"): void {
+        wx.vibrateShort({ type });
     }
 
     public vibrateLong(): void {

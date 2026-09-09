@@ -6,7 +6,7 @@
 
 import { Log, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, SubscribeResult, TouchData } from "../interface/IMiniCommon";
+import { LoginResult, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 
 
 /**
@@ -132,8 +132,8 @@ export class AlipayCommon extends BaseCommon {
     }
 
     /** 短震动 (40ms) */
-    public vibrateShort(): void {
-        my.vibrateShort?.({ type: "medium" });
+    public vibrateShort(type: VibrateShortType = "medium"): void {
+        my.vibrateShort?.({ type });
     }
 
     /** 长震动 (400ms) */

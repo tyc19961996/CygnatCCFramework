@@ -6,7 +6,7 @@
 
 import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ReportSceneOptions, SubscribeResult, TouchData } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 
 type BilibiliPlatform = 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtools';
 
@@ -101,9 +101,9 @@ export class BilibiliCommon extends BaseCommon {
     }
 
     /** 短震动。 */
-    public vibrateShort(): void {
+    public vibrateShort(type: VibrateShortType = "medium"): void {
         bl.vibrateShort?.({
-            type: "medium",
+            type,
             fail: (res) => {
                 Warn(`Bilibili 短震动失败 ${this.getErrorMessage(res)}`);
             }

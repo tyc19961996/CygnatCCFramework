@@ -9,6 +9,7 @@ export type {
     LoginResult,
     SubscribeResult,
     ReportSceneOptions,
+    VibrateShortType,
 } from './interface/IMiniCommon';
 export type { IMiniPay, IMiniPayParams } from './interface/IMiniPay';
 export { FeedSubscribeScene } from './interface/IMiniFeed';

@@ -47,6 +47,8 @@ export interface ReportSceneOptions {
     metric?: Record<string, string>;
 }
 
+export type VibrateShortType = "heavy" | "medium" | "light";
+
 export interface IMiniCommon {
     /**
      * 分享
@@ -165,7 +167,7 @@ export interface IMiniCommon {
     setClipboardData(text: string): void;
 
     /** 震动 */
-    vibrateShort(): void;
+    vibrateShort(type?: VibrateShortType): void;
     /** 长震动 */
     vibrateLong(): void;
 

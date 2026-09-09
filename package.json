@@ -1,6 +1,6 @@
 {
   "name": "cygnat-cc-framework",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A Cocos Creator TypeScript game framework.",
   "private": true,
   "type": "module",
@@ -18,7 +18,7 @@
     "README.md"
   ],
   "scripts": {
-    "test": "node --test",
+    "test": "node --test && tsc -p tsconfig.json --noEmit",
     "build": "tsc -p tsconfig.build.json && node scripts/copy-package-types.mjs && node scripts/fix-esm-extensions.mjs",
     "prepare": "npm run build",
     "pack:check": "npm pack --dry-run --ignore-scripts"

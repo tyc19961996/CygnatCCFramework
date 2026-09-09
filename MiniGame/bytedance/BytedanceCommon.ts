@@ -6,7 +6,7 @@
 
 import { Log, Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ReportSceneOptions, SubscribeResult } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, SubscribeResult, VibrateShortType } from "../interface/IMiniCommon";
 import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "../interface/IMiniFeed";
 
 export class BytedanceCommon extends BaseCommon {
@@ -85,11 +85,11 @@ export class BytedanceCommon extends BaseCommon {
     }
 
     public vibrateLong(): void {
-        tt.vibrateShort();
+        tt.vibrateLong();
     }
 
-    public vibrateShort(): void {
-        tt.vibrateLong();
+    public vibrateShort(_type: VibrateShortType = "medium"): void {
+        tt.vibrateShort();
     }
 
     public getScreenSize(): { width: number, height: number } {
