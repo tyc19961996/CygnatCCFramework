@@ -1,6 +1,6 @@
 {
   "name": "cygnat-cc-framework",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A Cocos Creator TypeScript game framework.",
   "private": true,
   "type": "module",

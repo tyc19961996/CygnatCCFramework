@@ -6,7 +6,7 @@
 
 import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ReportSceneOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 
 type KuaiShouPlatform = 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtools';
 type KuaiShouFailResult = KuaiShouMiniprogram.FailResult;
@@ -133,7 +133,7 @@ export class KuaiShouCommon extends BaseCommon {
     /**
      * 主动拉起快手转发。
      */
-    public shareAppMessage(options: { title?: string, desc?: string, imageUrl?: string, query?: string }, success: () => void, fail: (e) => void, complete: () => void): void {
+    public shareAppMessage(options: ShareAppMessageOptions, success: () => void, fail: (e) => void, complete: () => void): void {
         if (!ks.shareAppMessage) {
             fail && fail({ msg: "快手小游戏当前环境不支持分享" });
             complete && complete();

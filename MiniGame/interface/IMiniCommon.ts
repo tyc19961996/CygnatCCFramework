@@ -47,6 +47,15 @@ export interface ReportSceneOptions {
     metric?: Record<string, string>;
 }
 
+/** 小游戏分享内容。imageUrlId 仅微信小游戏支持。 */
+export interface ShareAppMessageOptions {
+    title?: string;
+    desc?: string;
+    imageUrl?: string;
+    imageUrlId?: string;
+    query?: string;
+}
+
 export type VibrateShortType = "heavy" | "medium" | "light";
 
 export interface IMiniCommon {
@@ -54,11 +63,16 @@ export interface IMiniCommon {
      * 分享
      */
     shareAppMessage(
-        options: { title?: string, desc?: string, imageUrl?: string, query?: string },
+        options: ShareAppMessageOptions,
         success?: () => void,
         fail?: (e) => void,
         complete?: () => void
     ): void;
+
+    /**
+     * 注册被动分享内容。用户触发宿主平台提供的分享入口时调用回调。
+     */
+    onShareAppMessage(callback: () => ShareAppMessageOptions): void;
 
     /**
      * 获取冷启动参数

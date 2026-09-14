@@ -6,7 +6,7 @@
 
 import { Log, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { LoginResult, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 
 
 /**
@@ -145,7 +145,7 @@ export class AlipayCommon extends BaseCommon {
      * 分享
      * 支付宝没有 shareAppMessage 主动分享接口，通过 onShareAppMessage 设置分享内容后唤起分享面板
      */
-    public shareAppMessage(options: { title?: string, desc?: string, imageUrl?: string, query?: string }, success: () => void, fail: (e) => void, complete: () => void): void {
+    public shareAppMessage(options: ShareAppMessageOptions, success: () => void, fail: (e) => void, complete: () => void): void {
         if (!my.showSharePanel) {
             fail?.({ errMsg: "支付宝小游戏当前基础库不支持分享面板" });
             complete?.();
@@ -161,6 +161,18 @@ export class AlipayCommon extends BaseCommon {
             complete: complete,
         });
         my.showSharePanel();
+    }
+
+    /** 设置被动分享内容。 */
+    public onShareAppMessage(callback: () => ShareAppMessageOptions): void {
+        my.onShareAppMessage = () => {
+            const options = callback();
+            return {
+                title: options.title,
+                desc: options.desc,
+                imageUrl: options.imageUrl,
+            };
+        };
     }
 
     /**

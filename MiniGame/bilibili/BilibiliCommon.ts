@@ -6,7 +6,7 @@
 
 import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ReportSceneOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 
 type BilibiliPlatform = 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtools';
 
@@ -121,7 +121,7 @@ export class BilibiliCommon extends BaseCommon {
 
     /** 主动分享。 */
     public shareAppMessage(
-        options: { title?: string, desc?: string, imageUrl?: string, query?: string },
+        options: ShareAppMessageOptions,
         success: () => void,
         fail: (e) => void,
         complete: () => void
@@ -140,6 +140,22 @@ export class BilibiliCommon extends BaseCommon {
             success,
             fail,
             complete,
+        });
+    }
+
+    /** 被动分享（基础库 3.8.0+）。 */
+    public onShareAppMessage(callback: () => ShareAppMessageOptions): void {
+        if (!bl.onShareAppMessage) {
+            return;
+        }
+        bl.onShareAppMessage(() => {
+            const options = callback();
+            return {
+                title: options.title,
+                desc: options.desc,
+                imageUrl: options.imageUrl,
+                query: options.query,
+            };
         });
     }
 

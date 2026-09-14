@@ -311,6 +311,8 @@ declare namespace BilibiliMiniprogram {
         vibrateLong?(options?: AsyncOptions): void;
         /** 主动分享。 */
         shareAppMessage?(options: AsyncOptions & { title?: string; desc?: string; imageUrl?: string; query?: string }): void;
+        /** 被动分享（基础库 3.8.0+）。 */
+        onShareAppMessage?(callback: () => { title?: string; desc?: string; imageUrl?: string; query?: string }): void;
         /** 请求授权。 */
         authorize?(options: AsyncOptions & { scope: string }): void;
         /** 获取授权设置。 */

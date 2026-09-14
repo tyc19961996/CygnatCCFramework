@@ -8,6 +8,7 @@ export type {
     TouchData,
     LoginResult,
     SubscribeResult,
+    ShareAppMessageOptions,
     ReportSceneOptions,
     VibrateShortType,
 } from './interface/IMiniCommon';

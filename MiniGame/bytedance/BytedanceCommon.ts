@@ -6,7 +6,7 @@
 
 import { Log, Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ReportSceneOptions, SubscribeResult, VibrateShortType } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, VibrateShortType } from "../interface/IMiniCommon";
 import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "../interface/IMiniFeed";
 
 export class BytedanceCommon extends BaseCommon {
@@ -136,7 +136,7 @@ export class BytedanceCommon extends BaseCommon {
         return null;
     }
 
-    public shareAppMessage(options: { title?: string, desc?: string, imageUrl?: string, query?: string }, success: () => void, fail: (e) => void, complete: () => void): void {
+    public shareAppMessage(options: ShareAppMessageOptions, success: () => void, fail: (e) => void, complete: () => void): void {
         tt.shareAppMessage({
             title: options.title,
             desc: options.desc,
@@ -144,6 +144,18 @@ export class BytedanceCommon extends BaseCommon {
             success: success,
             fail: fail,
             complete: complete,
+        });
+    }
+
+    public onShareAppMessage(callback: () => ShareAppMessageOptions): void {
+        tt.onShareAppMessage(() => {
+            const options = callback();
+            return {
+                title: options.title,
+                desc: options.desc,
+                imageUrl: options.imageUrl,
+                query: options.query,
+            };
         });
     }
 

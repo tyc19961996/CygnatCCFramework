@@ -3599,6 +3599,7 @@ interface My {
 		title?: string,
 		desc?: string,
 		imageUrl?: string,
+		query?: string,
 		success?: (res: any) => void,
 		fail?: (res: any) => void,
 		complete?: () => void

@@ -5,7 +5,7 @@
  */
 
 import { Screen } from "../../Core";
-import { IMiniCommon, LoginResult, ReportSceneOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { IMiniCommon, LoginResult, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "../interface/IMiniFeed";
 
 export class BaseCommon implements IMiniCommon {
@@ -161,9 +161,13 @@ export class BaseCommon implements IMiniCommon {
 
     }
 
-    public shareAppMessage(options: { title?: string, desc?: string, imageUrl?: string, query?: string }, success: () => void, fail: (e) => void, complete: () => void): void {
+    public shareAppMessage(options: ShareAppMessageOptions, success: () => void, fail: (e) => void, complete: () => void): void {
         success && success();
         complete && complete();
+    }
+
+    public onShareAppMessage(_callback: () => ShareAppMessageOptions): void {
+
     }
 
     public async authorize(scope: string): Promise<boolean> {

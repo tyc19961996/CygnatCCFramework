@@ -885,6 +885,8 @@ declare namespace BytedanceMiniprogram {
 
         /** 主动调用转发相关方法（拉起发布器、好友邀请、录屏分享等） */
         shareAppMessage: (input?: ShareAppMessageOption) => void;
+        /** 监听宿主平台提供的分享入口。 */
+        onShareAppMessage: (callback: () => ShareAppMessageOption) => void;
         /** 使手机发生较短时间的振动。安卓震动时间为 30ms，ios 震动时间为 15ms。 */
         vibrateShort: (input?: VibrateShortOption) => void;
         /** 使手机发生较长时间的振动（400 ms)。 */

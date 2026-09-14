@@ -6,7 +6,7 @@
 
 import { Log, Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ReportSceneOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { LoginResult, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 
 export class WechatCommon extends BaseCommon {
     private _launchOptions: WechatMiniprogram.LaunchOptionsApp = null;
@@ -236,14 +236,33 @@ export class WechatCommon extends BaseCommon {
         return null;
     }
 
-    public shareAppMessage(options: { title?: string, desc?: string, imageUrl?: string, query?: string }, success: () => void, fail: (e) => void, complete: () => void): void {
-        wx.shareAppMessage({
+    public shareAppMessage(options: ShareAppMessageOptions, success: () => void, fail: (e) => void, complete: () => void): void {
+        const shareOptions: WechatMiniprogram.ShareAppMessageOption = {
             title: options.title,
             imageUrl: options.imageUrl,
             query: options.query,
-        });
+        };
+        if (options.imageUrlId !== undefined) {
+            shareOptions.imageUrlId = options.imageUrlId;
+        }
+        wx.shareAppMessage(shareOptions);
         success && success();
         complete && complete();
+    }
+
+    public onShareAppMessage(callback: () => ShareAppMessageOptions): void {
+        wx.onShareAppMessage(() => {
+            const options = callback();
+            const shareOptions: WechatMiniprogram.ShareAppMessageOption = {
+                title: options.title,
+                imageUrl: options.imageUrl,
+                query: options.query,
+            };
+            if (options.imageUrlId !== undefined) {
+                shareOptions.imageUrlId = options.imageUrlId;
+            }
+            return shareOptions;
+        });
     }
 
     public async authorize(scope: string): Promise<boolean> {

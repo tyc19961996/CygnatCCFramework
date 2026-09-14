@@ -1399,6 +1399,8 @@ UserInfoButton.offTap(listener) // 需传入与监听时同一个的函数对象
         * ## 注意事项
         * - 转发图片说明：imageUrl，imageUrlId 都存在时，优先使用 imageUrl。 imageUrl，imageUrlId 都不填时使用游戏画面截图。 */
         shareAppMessage(option: ShareAppMessageOption): void
+        /** [wx.onShareAppMessage(function callback)](https://developers.weixin.qq.com/minigame/dev/api/share/wx.onShareAppMessage.html) */
+        onShareAppMessage(callback: () => ShareAppMessageOption): void
         /** [wx.vibrateShort(Object object)](https://developers.weixin.qq.com/minigame/dev/api/device/vibrate/wx.vibrateShort.html)
          *
          * 需要基础库： `1.2.0`。震动强度 type 字段需要基础库 `2.13.0`。
