@@ -106,13 +106,15 @@ function _tryGetArgs<T>(n: Node, o: Object, info: Info, onArray: Hdlr<T>) {
 }
 
 function _bind(obj: Object, node: Node, sign: string = '$') {
-    const ds = _collObj(obj, '$');
+    const ds = _collObj(obj, sign);
     const ns = _collNodesD(node, sign, []);
     ds.ppts['self'] && _handle(node, obj, ds.ppts['self'], pptHdls);
     for (let i = 0; i < ns.length; i++) _tryHandle(ns[i], obj, ds.ppts, pptHdls);
     ds.fns['self'] && _handle(node, obj, ds.fns['self'], fnHdls);
     for (let i = 0; i < ns.length; i++) _tryHandle(ns[i], obj, ds.fns, fnHdls);
 }
+
+const autoBindCache = new WeakMap<Function, Map<string, InfoADs>>();
 
 function _collNodesW(root: Node, sign: string): Node[] {
     const stack: Node[][] = [[root]];
@@ -154,7 +156,21 @@ function _handle(node: Node, obj: Object, infos: Info[], hdls: Hdlrs) {
 
 function _collObj(obj: Object, sign: string): InfoADs {
     if (obj.constructor === Object) return _collObjDict(obj, sign);
-    return obj.constructor['__AB_DICT__'] || (obj.constructor['__AB_DICT__'] = _collObjDict(obj, sign));
+
+    const ctor = obj.constructor as Function;
+    let cacheBySign = autoBindCache.get(ctor);
+    if (!cacheBySign) {
+        cacheBySign = new Map();
+        autoBindCache.set(ctor, cacheBySign);
+    }
+
+    let dict = cacheBySign.get(sign);
+    if (!dict) {
+        dict = _collObjDict(obj, sign);
+        cacheBySign.set(sign, dict);
+    }
+
+    return dict;
 }
 
 class _ { _() { } }
