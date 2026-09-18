@@ -106,7 +106,7 @@ function _tryGetArgs<T>(n: Node, o: Object, info: Info, onArray: Hdlr<T>) {
 }
 
 function _bind(obj: Object, node: Node, sign: string = '$') {
-    const ds = _collObj(obj, sign);
+    const ds = _collObj(obj, '$');
     const ns = _collNodesD(node, sign, []);
     ds.ppts['self'] && _handle(node, obj, ds.ppts['self'], pptHdls);
     for (let i = 0; i < ns.length; i++) _tryHandle(ns[i], obj, ds.ppts, pptHdls);

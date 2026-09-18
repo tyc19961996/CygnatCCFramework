@@ -56,22 +56,18 @@ test('binds subclass fields after a parent class has been bound', () => {
   assert.equal(subclass.$background, background);
 });
 
-test('keeps binding dictionaries separate for different signs', () => {
-  class CustomSignUI {
+test('uses the dollar sign for fields when nodes use a custom sign', () => {
+  class CustomNodeSignUI {
     constructor(node) {
       this.node = node;
       this.$title = null;
-      this['@title'] = null;
     }
   }
 
-  const dollarTitle = new TestNode('$title');
   const atTitle = new TestNode('@title');
-  const ui = new CustomSignUI(new TestNode('root', [dollarTitle, atTitle]));
+  const ui = new CustomNodeSignUI(new TestNode('root', [atTitle]));
 
-  AutoBind.bind(ui);
-  assert.equal(ui.$title, dollarTitle);
   AutoBind.bind(ui, '@');
 
-  assert.equal(ui['@title'], atTitle);
+  assert.equal(ui.$title, atTitle);
 });
