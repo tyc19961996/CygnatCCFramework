@@ -235,7 +235,6 @@ export abstract class WindowBase<T = any, U = any> extends Component implements 
     public _show(userdata?: T, transition?: IWindowTransitionOptions): void {
 
         this._stopUiTweens();
-        this.node.active = true;
 
         const kind = transition?.kind ?? WindowTransitionKind.None;
         const dur = this._transitionDuration(transition);
@@ -258,6 +257,7 @@ export abstract class WindowBase<T = any, U = any> extends Component implements 
             }
         }
 
+        this.node.active = true;
         this.onShow(userdata);
 
 

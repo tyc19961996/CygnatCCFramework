@@ -157,6 +157,7 @@ export class WindowGroup {
      */
     private async createWindow(bundle: string, name: string, prefab: Prefab): Promise<WindowBase> {
         const window = instantiate(prefab);
+        window.active = false;
         const windowBase = window.getComponent(WindowBase);
         windowBase.name = name;
         windowBase._init(this._swallowTouch);
