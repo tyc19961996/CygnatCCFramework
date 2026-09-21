@@ -40,6 +40,19 @@ export class HeaderManager {
     }
 
     /**
+     * 根据当前窗口与覆盖层的位置重新调整所有已缓存 header 的深度。
+     * @internal
+     */
+    public static adjustHeaderDepths(): void {
+        for (const [headerName, windowName] of this._cacheHeaderTopWindow) {
+            if (!this._headers.has(headerName) || !WindowManager.getWindow(windowName)) {
+                continue;
+            }
+            this.adjustHeaderPosition(headerName, windowName);
+        }
+    }
+
+    /**
      * 为窗口请求一个header
      * @param windowName 窗口名
      * @param headerInfo header信息

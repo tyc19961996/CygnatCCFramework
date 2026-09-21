@@ -74,6 +74,10 @@ export class WindowManager {
             const uiTrans = this._alphaGraph.getComponent(UITransform);
             uiTrans.setContentSize(new Size(Screen.ScreenWidth, Screen.ScreenHeight));
         }
+        // 窗口组触摸吞噬节点适配
+        this._groups.forEach((group: WindowGroup) => {
+            group.onScreenResize();
+        });
         // 所有窗口适配
         this._windows.forEach((window: IWindow) => {
             window._adapted();
@@ -174,7 +178,7 @@ export class WindowManager {
         const info = InfoPool.get(name);
         const group = this.getWindowGroup(info.group);
         group.removeWindow(name, closeTransition, () => {
-            this.adjustAlphaGraph();
+            this.adjustOverlayLayers();
             let topWindow = this.getTopWindow<IWindow, any>();
             if (topWindow && !topWindow.isTop()) {
                 topWindow._toTop();
@@ -273,6 +277,7 @@ export class WindowManager {
         if (topWindow && !topWindow.isTop()) {
             topWindow._toTop();
         }
+        this.adjustOverlayLayers();
     }
 
     /**
@@ -340,6 +345,19 @@ export class WindowManager {
             // 没有找到需要遮罩的窗口，隐藏遮罩
             this._alphaGraph.active = false;
         }
+    }
+
+    /**
+     * 统一调整半透明遮罩、窗口组触摸吞噬节点和 header 的层级。
+     * 每一步都会改变 sibling index，因此必须按固定顺序执行。
+     * @internal
+     */
+    public static adjustOverlayLayers(): void {
+        this.adjustAlphaGraph();
+        for (const group of this._groups.values()) {
+            group.adjustSwallowGraph();
+        }
+        HeaderManager.adjustHeaderDepths();
     }
 
 

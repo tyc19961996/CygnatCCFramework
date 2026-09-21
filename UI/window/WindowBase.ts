@@ -8,7 +8,7 @@
 
  */
 
-import { BlockInputEvents, Component, Layout, Node, Size, tween, Tween, UITransform, UIOpacity, v3, Vec3, warn } from "cc";
+import { Component, Node, Size, tween, Tween, UITransform, UIOpacity, v3, Vec3 } from "cc";
 import { Screen } from "../../Core";
 import { calculateSafeAreaFrame } from "../../Core/engine/SafeArea";
 import { HeaderManager } from "../core/HeaderManager";
@@ -40,11 +40,6 @@ export abstract class WindowBase<T = any, U = any> extends Component implements 
 
 
     /** @internal */
-    private _swallowNode: Node = null; // 吞噬触摸的节点
-
-
-
-    /** @internal */
     private _isTop: boolean = true;
 
 
@@ -65,24 +60,7 @@ export abstract class WindowBase<T = any, U = any> extends Component implements 
      * @param bgAlpha 底部遮罩的透明度
      * @internal
      */
-    public _init(swallowTouch: boolean): void {
-
-        // 窗口根节点上启用的 Layout 会把下面注入的全屏吞噬节点纳入排版，导致窗口被撑满/错位
-        const layout = this.node.getComponent(Layout);
-        if (layout && layout.enabled) {
-            warn(`[Window] ${this.node.name} 根节点挂有启用的 Layout，会与框架注入的吞噬触摸节点冲突（窗口可能被撑满）。请把 Layout 移到内容子节点或禁用它。`);
-        }
-
-        // 窗口本身可能留有安全区的边, 所以需要一个全屏的节点来吞噬触摸事件
-
-        let bgNode = new Node();
-        bgNode.name = "swallow";
-        bgNode.addComponent(UITransform);
-        this.node.addChild(bgNode);
-        bgNode.setSiblingIndex(0);
-        bgNode.addComponent(BlockInputEvents);
-        this._swallowNode = bgNode;
-        this._swallowNode.active = swallowTouch;
+    public _init(_swallowTouch: boolean): void {
 
         this._isTop = true;
         this.bgAlpha = WindowManager.bgAlpha;
@@ -119,13 +97,7 @@ export abstract class WindowBase<T = any, U = any> extends Component implements 
 
         }
 
-        // 吞噬触摸的节点
-        this._setSize(this._swallowNode, Screen.ScreenWidth, Screen.ScreenHeight);
-
         this.onAdapted();
-        if (this.adapterType === AdapterType.Bang) {
-            this._swallowNode.setPosition(-this.node.position.x, -this.node.position.y, 0);
-        }
         this._captureBaseScale();
 
     }

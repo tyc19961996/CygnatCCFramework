@@ -4,7 +4,7 @@
  * @Description: 窗口组 (在同一个窗口容器的上的窗口)
  */
 
-import { instantiate, Node, Prefab } from "cc";
+import { BlockInputEvents, instantiate, Node, Prefab, Size, UITransform } from "cc";
 import { IWindow } from "../interface/IWindow";
 import { EReleaseType, IShowWindowExtra, IWindowTransitionOptions, WindowTransitionKind, WindowType } from "../interface/type";
 import { WindowBase } from "../window/WindowBase";
@@ -13,7 +13,7 @@ import { IWindowInfo } from "./types";
 import { WindowManager } from "./WindowManager";
 import { AssetLoader } from "./AssetLoader";
 import { PerUtils } from "../../Core/utils/PerUtils";
-import { Log } from "../../Core";
+import { Screen } from "../../Core";
 
 export class WindowGroup {
     /** @internal */
@@ -27,6 +27,9 @@ export class WindowGroup {
 
     /** @internal */
     private _swallowTouch: boolean = false; // 吞噬触摸事件
+
+    /** @internal */
+    private _swallowGraph: Node = null; // 独立于窗口缩放的全屏触摸吞噬节点
 
     /** @internal */
     private _windowNames: string[] = []; // 窗口名列表 顺序为窗口显示的层级 (最后一个显示在最上层)
@@ -70,6 +73,44 @@ export class WindowGroup {
         this._ignore = ignoreQuery;
         this._swallowTouch = swallowTouch;
         this._windowNames = [];
+
+        if (this._swallowTouch) {
+            this._swallowGraph = new Node("swallow");
+            this._swallowGraph.addComponent(UITransform);
+            this._swallowGraph.addComponent(BlockInputEvents);
+            this._swallowGraph.active = false;
+            this._root.addChild(this._swallowGraph);
+            this.onScreenResize();
+        }
+    }
+
+    /** 更新触摸吞噬节点的全屏尺寸。 */
+    public onScreenResize(): void {
+        const transform = this._swallowGraph?.getComponent(UITransform);
+        transform?.setContentSize(new Size(Screen.ScreenWidth, Screen.ScreenHeight));
+    }
+
+    /** 将触摸吞噬节点放到当前顶部窗口正下方。 */
+    public adjustSwallowGraph(): void {
+        if (!this._swallowGraph || this.size === 0) {
+            if (this._swallowGraph) {
+                this._swallowGraph.active = false;
+            }
+            return;
+        }
+
+        const topWindow = this.getTopWindow<WindowBase>();
+        const windowNode = topWindow?.node;
+        if (!windowNode || windowNode.parent !== this._root) {
+            this._swallowGraph.active = false;
+            return;
+        }
+
+        const windowIndex = windowNode.getSiblingIndex();
+        const swallowIndex = this._swallowGraph.getSiblingIndex();
+        const newIndex = swallowIndex >= windowIndex ? windowIndex : windowIndex - 1;
+        this._swallowGraph.setSiblingIndex(newIndex);
+        this._swallowGraph.active = true;
     }
 
     /**
@@ -123,7 +164,7 @@ export class WindowGroup {
         this.moveWindowToTop(window, extra, () => {
             window._show(userdata, extra?.openTransition);
             HeaderManager.showHeader(window.name);
-            WindowManager.adjustAlphaGraph();
+            WindowManager.adjustOverlayLayers();
             afterPresent?.();
         });
     }
