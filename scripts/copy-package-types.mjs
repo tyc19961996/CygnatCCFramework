@@ -6,7 +6,8 @@ const miniGameTypeFiles = [
   "lib.bilibili.api.d.ts",
   "lib.bytedance.api.d.ts",
   "lib.kuaishou.api.d.ts",
-  "lib.wx.api.d.ts"
+  "lib.wx.api.d.ts",
+  "lib.oppo.api.d.ts"
 ];
 
 const sourceDir = join("MiniGame", "types");

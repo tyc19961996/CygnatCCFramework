@@ -21,6 +21,14 @@ export interface TouchData {
 export interface LoginResult {
     success: boolean;
     code: string;
+    /** OPPO 登录凭证。 */
+    token?: string;
+    /** OPPO 用户标识。 */
+    uid?: string;
+    /** OPPO 用户昵称。 */
+    nickName?: string;
+    /** OPPO 用户头像地址。 */
+    avatar?: string;
     /** 是否已登录（仅抖音返回） */
     isLogin?: boolean;
     /** 匿名登录凭证（仅抖音返回） */

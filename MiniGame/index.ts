@@ -57,3 +57,7 @@ export { KuaiShouCommon } from './kuaishou/KuaiShouCommon';
 export { BytedanceAds } from './bytedance/BytedanceAds';
 export { BytedanceCommon } from './bytedance/BytedanceCommon';
 export { BytedancePay } from './bytedance/BytedancePay';
+
+/** OPPO 小游戏 */
+export { OppoAds } from './oppo/OppoAds';
+export { OppoCommon } from './oppo/OppoCommon';

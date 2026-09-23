@@ -23,6 +23,8 @@ export enum PlatformType {
     KuaiShou = 8,
     /** Bilibili 小游戏 */
     Bilibili = 9,
+    /** OPPO 小游戏 */
+    Oppo = 10,
     /** 其他都为Browser */
     Browser = 1001,
 }
@@ -107,6 +109,12 @@ export class Platform {
     public static isBilibili: boolean = false;
 
     /**
+     * 是否为 OPPO 小游戏
+     * @type {boolean}
+     */
+    public static isOppo: boolean = false;
+
+    /**
      * 平台类型
      * @type {PlatformType}
      */
@@ -177,6 +185,10 @@ export class PlatformInitializer {
                     Platform.isBytedance = true;
                     Platform.platform = PlatformType.Bytedance;
                     break
+                case sys.Platform.OPPO_MINI_GAME:
+                    Platform.isOppo = true;
+                    Platform.platform = PlatformType.Oppo;
+                    break;
                 case sys.Platform.HUAWEI_QUICK_GAME:
                     Platform.isHuaweiQuick = true;
                     Platform.platform = PlatformType.HuaweiQuick;

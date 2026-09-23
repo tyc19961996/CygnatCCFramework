@@ -15,6 +15,8 @@ import { BilibiliCommon } from "./bilibili/BilibiliCommon";
 import { BytedanceAds } from "./bytedance/BytedanceAds";
 import { BytedanceCommon } from "./bytedance/BytedanceCommon";
 import { BytedancePay } from "./bytedance/BytedancePay";
+import { OppoAds } from "./oppo/OppoAds";
+import { OppoCommon } from "./oppo/OppoCommon";
 import { IMiniRewardAds } from "./interface/IMiniAds";
 import { IMiniCommon } from "./interface/IMiniCommon";
 import { IMiniPay } from "./interface/IMiniPay";
@@ -44,6 +46,8 @@ export class MiniHelper {
                 this._common = new AlipayCommon();
             } else if (Platform.isBytedance) {
                 this._common = new BytedanceCommon();
+            } else if (Platform.isOppo) {
+                this._common = new OppoCommon();
             }else{
                 this._common = new BaseCommon();
             }
@@ -63,6 +67,8 @@ export class MiniHelper {
                 this._ad = new AlipayAds();
             } else if (Platform.isBytedance) {
                 this._ad = new BytedanceAds();
+            } else if (Platform.isOppo) {
+                this._ad = new OppoAds();
             }else{
                 this._ad = new BaseAds<any,any>();
             }

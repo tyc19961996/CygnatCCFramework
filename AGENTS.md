@@ -4,7 +4,7 @@
 
 ## 项目简介
 
-CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.5`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
+CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.6`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
 
 运行时由宿主 Cocos Creator 提供 `cc` 与 `cc/env` 模块。仓库中的 `types/` 只提供编译期声明，不能当作 Node.js 运行时实现。发布包的入口是 `dist/header.js`，公开类型入口是 `dist/header.d.ts`。
 
@@ -99,6 +99,7 @@ npm run pack:check
 - 业务行为变化要有回归测试或类型契约证明；只涉及文档的改动至少检查 Markdown 渲染结构、链接和命令是否与仓库一致。
 - 修改装饰器、公共索引、平台类型或构建脚本时，必须同时检查编译输出和发布包内容。
 - 不要直接修改历史提交，也不要用强制推送改写共享分支历史。需要修正历史行为时新增一个中文提交说明原因。
+- 不要把单独的设计文档、实施计划或阶段性代码作为独立提交。只有完整需求实现并完成验证后，才向宿主询问是否提交；宿主主动要求提交时立即按中文提交规则执行。未得到提交指示时保留为工作区改动。
 
 ## 文档、计划与 Git 语言规则
 
@@ -124,10 +125,12 @@ npm run pack:check
 
 ## 当前状态与变更记忆
 
-基线日期：2026-09-23。当前分支为 `main`，包版本为 `0.3.5`。以下是最近已经落地、后续改动必须保留的行为：
+基线日期：2026-09-23。当前分支为 `main`，包版本为 `0.3.6`。以下是最近已经落地、后续改动必须保留的行为：
 
 | 日期 | 已落地行为 | 主要位置 | 已有验证 |
 | --- | --- | --- | --- |
+| 2026-09-23 | 已实现 OPPO 小游戏最小独立适配器：平台识别、系统基础能力、OPPO token 登录、激励广告和插屏广告；未实现的能力继续走基类兜底。版本提升到 `0.3.6`，准备提交。 | `Core/engine/Platform.ts`、`MiniGame/oppo/`、`MiniGame/MiniHelper.ts`、`MiniGame/types/lib.oppo.api.d.ts`、`package.json`、`package-lock.json` | `npm test`（30 项通过）、`npm run build`、`npm run pack:check` |
+| 2026-09-23 | 记录提交边界：设计文档、实施计划和阶段性改动不单独提交，完整需求验证后再询问宿主提交。 | `AGENTS.md` | 规则检查 |
 | 2026-09-23 | 建立仓库级协作约定，固定项目边界、验证流程、长期记忆维护方式，以及文档、计划和 Git 提交的中文规则。 | `AGENTS.md` | `git diff --check`、`npm test`、`npm run build`、`npm run pack:check` |
 | 2026-09-21 | 新窗口在 Header 异步准备期间保持 inactive；打开缩放、渐变和无动效的初始状态在节点激活前准备，避免首帧闪现。 | `UI/core/WindowGroup.ts`、`UI/window/WindowBase.ts` | `tests/window-show-transition.test.mjs` |
 | 2026-09-21 | 吞噬触摸节点从窗口内部移到窗口组；它不再跟随窗口缩放，并放在窗口组顶部窗口下方。 | `UI/core/WindowGroup.ts`、`UI/window/WindowBase.ts` | `tests/window-swallow-layer.test.mjs` |

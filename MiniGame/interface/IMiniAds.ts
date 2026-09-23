@@ -20,6 +20,10 @@ export interface IMiniRewardAdInitConfig {
     defaultRewardAdId?: string;
     rewardAdIds?: Partial<Record<MiniRewardAdPlacement, string>>;
     interstitialAdId?: string;
+    /** 需要应用级广告初始化的平台使用。 */
+    appId?: string;
+    /** 应用级广告初始化是否开启调试日志。 */
+    isDebug?: boolean;
 }
 
 export interface IMiniShowRewardAdOptions {
