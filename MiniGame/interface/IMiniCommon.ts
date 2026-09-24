@@ -266,7 +266,7 @@ export interface IMiniCommon {
     /** 上报启动场景值（微信、Bilibili、快手、抖音支持，调用前可先判断 canReportScene） */
     reportScene(options: ReportSceneOptions): Promise<boolean>;
 
-    /** 登录获取 code */
+    /** 登录获取服务端凭证；OPPO 的 code 返回用于服务端换取用户信息的 token。 */
     login(force?: boolean): Promise<LoginResult>;
 
     /* ---------------- 推荐流直玩（Feed 直出游戏，仅抖音支持） ---------------- */

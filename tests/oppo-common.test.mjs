@@ -60,7 +60,7 @@ test("OppoCommon maps qg.login token and user fields", async () => {
 
     assert.deepEqual(result, {
         success: true,
-        code: "optional-code",
+        code: "oppo-token",
         token: "oppo-token",
         uid: "uid-1",
         nickName: "玩家",

@@ -129,6 +129,7 @@ npm run pack:check
 
 | 日期 | 已落地行为 | 主要位置 | 已有验证 |
 | --- | --- | --- | --- |
+| 2026-09-24 | OPPO 登录的统一 `LoginResult.code` 优先返回 token，供业务服务器换取 openid 等用户信息；同时保留 `token` 字段。 | `MiniGame/oppo/OppoCommon.ts`、`MiniGame/interface/IMiniCommon.ts`、`tests/oppo-common.test.mjs` | 待本次提交前重新验证 |
 | 2026-09-23 | 已实现 OPPO 小游戏最小独立适配器：平台识别、系统基础能力、OPPO token 登录、激励广告和插屏广告；未实现的能力继续走基类兜底。版本提升到 `0.3.6`，准备提交。 | `Core/engine/Platform.ts`、`MiniGame/oppo/`、`MiniGame/MiniHelper.ts`、`MiniGame/types/lib.oppo.api.d.ts`、`package.json`、`package-lock.json` | `npm test`（30 项通过）、`npm run build`、`npm run pack:check` |
 | 2026-09-23 | 记录提交边界：设计文档、实施计划和阶段性改动不单独提交，完整需求验证后再询问宿主提交。 | `AGENTS.md` | 规则检查 |
 | 2026-09-23 | 建立仓库级协作约定，固定项目边界、验证流程、长期记忆维护方式，以及文档、计划和 Git 提交的中文规则。 | `AGENTS.md` | `git diff --check`、`npm test`、`npm run build`、`npm run pack:check` |

@@ -81,7 +81,8 @@ export class OppoCommon extends BaseCommon {
                     const data = result?.data || {};
                     resolve({
                         success: true,
-                        code: data.code == null ? "" : String(data.code),
+                        // 统一 code 作为服务端换取 openid 等信息的凭证；OPPO 优先使用 token。
+                        code: data.token || (data.code == null ? "" : String(data.code)),
                         token: data.token,
                         uid: data.uid,
                         nickName: data.nickName,

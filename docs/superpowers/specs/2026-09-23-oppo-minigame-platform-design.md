@@ -40,7 +40,7 @@ MiniHelper.ad().showInterstitialAd(callbacks);
 
 ## 登录数据流
 
-OPPO `qg.login` 返回的核心凭证是 `data.token`，它不能被当作其他平台的 `code`。`LoginResult` 增加可选的 `token`、`uid`、`nickName` 和 `avatar` 字段，保留原有字段以兼容其他平台。
+OPPO `qg.login` 返回的核心凭证是 `data.token`。为了保持业务层通过统一 `LoginResult.code` 取服务端登录凭证的习惯，OPPO 适配器让 `code` 优先返回 token，同时保留可选的 `token`、`uid`、`nickName` 和 `avatar` 字段。
 
 客户端只负责调用 `qg.login` 并把结果返回给业务层；业务服务器负责使用 token 调用 OPPO 登录验证接口换取最终用户身份。客户端不保存服务端密钥，也不在适配器中实现服务端鉴权。
 

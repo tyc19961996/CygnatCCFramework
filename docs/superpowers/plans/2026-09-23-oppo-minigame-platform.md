@@ -91,7 +91,7 @@
 
 - [ ] **步骤 4：实现退出、剪贴板和震动。** `exitMiniProgram` 调用 `qg.exitApplication`（存在时）；`setClipboardData` 调用 `qg.setClipboardData` 并把失败信息写入日志；`vibrateShort`、`vibrateLong` 调用对应 API（不存在时安全返回）。
 
-- [ ] **步骤 5：实现登录。** `login` 返回 Promise，调用 `qg.login`；成功时从 `res.data` 读取 `token`、`uid`、`nickName`、`avatar`、`code`，失败时统一读取 `errCode/errMsg` 或 `code/msg`，不抛出平台异常。
+- [ ] **步骤 5：实现登录。** `login` 返回 Promise，调用 `qg.login`；成功时从 `res.data` 读取 `token`、`uid`、`nickName`、`avatar`、`code`，并让统一结果的 `code` 优先返回 token，供服务端换取 openid 等信息；失败时统一读取 `errCode/errMsg` 或 `code/msg`，不抛出平台异常。
 
 - [ ] **步骤 6：接入 `MiniHelper` 和公共导出。** 在 OPPO 分支返回 `new OppoCommon()`；从 `MiniGame/index.ts` 导出 `OppoCommon`、`OppoAds` 和更新后的 `LoginResult`。
 
