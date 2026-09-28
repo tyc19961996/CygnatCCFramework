@@ -25,10 +25,17 @@ export type {
 export { MiniRewardAdPlacement } from './interface/IMiniAds';
 export type {
     IMiniRewardAds,
+    IMiniBannerAds,
     IMiniRewardAdInitConfig,
     IMiniShowRewardAdOptions,
+    IMiniShowBannerAdOptions,
+    IMiniBannerAdOptions,
     IMiniAdsListener,
+    IMiniBannerAdsListener,
     MiniAdCallback,
+    MiniBannerAdCallback,
+    MiniBannerAdSize,
+    MiniBannerAdStyle,
 } from './interface/IMiniAds';
 
 /** 平台基类（未匹配到具体平台时的兜底实现，可继承扩展） */

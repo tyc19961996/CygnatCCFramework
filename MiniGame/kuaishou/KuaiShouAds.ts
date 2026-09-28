@@ -8,12 +8,18 @@ import { Error, Log, Warn } from "../../Core";
 import { BaseAds } from "../Base/BaseAds";
 import { MiniErrorCode } from "../header";
 import {
+    IMiniShowBannerAdOptions,
     IMiniShowRewardAdOptions,
     MiniAdCallback,
     MiniRewardAdPlacement,
 } from "../interface/IMiniAds";
 
-export class KuaiShouAds extends BaseAds<KuaiShouMiniprogram.RewardedVideoAd, KuaiShouMiniprogram.InterstitialAd> {
+export class KuaiShouAds extends BaseAds<KuaiShouMiniprogram.RewardedVideoAd, KuaiShouMiniprogram.InterstitialAd, KuaiShouMiniprogram.BannerAd> {
+
+    protected createBannerAd(options: IMiniShowBannerAdOptions): KuaiShouMiniprogram.BannerAd {
+        if (!ks.createBannerAd || !this._bannerAdUnitId) return null;
+        return ks.createBannerAd(this.getBannerCreateOptions(options));
+    }
 
     /** 展示激励广告；快手当前只创建默认广告位实例，非 Default 广告位显式失败 */
     public showRewardAd(options: IMiniShowRewardAdOptions, res: MiniAdCallback): void {

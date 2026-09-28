@@ -62,6 +62,36 @@ declare namespace OppoMinigame {
         destroy?(): void;
     }
 
+    interface BannerAdStyle {
+        left?: number;
+        top?: number;
+        width?: number;
+        height?: number;
+    }
+
+    interface BannerAdErrorEvent extends ErrorResult {
+        errorCode?: number;
+        errorMessage?: string;
+    }
+
+    interface BannerAd {
+        style?: BannerAdStyle;
+        show(): Promise<void> | void;
+        hide(): Promise<void> | void;
+        destroy(): void;
+        onLoad?(callback: () => void): void;
+        onError?(callback: (error: BannerAdErrorEvent) => void): void;
+        onResize?(callback: (size: { width: number; height: number }) => void): void;
+        onClose?(callback: () => void): void;
+        onShow?(callback: () => void): void;
+    }
+
+    interface CreateBannerAdOption {
+        adUnitId: string;
+        style?: BannerAdStyle;
+        adIntervals?: number;
+    }
+
     interface QG {
         getLaunchOptionsSync?(): LaunchOptions;
         onShow?(callback: (options: LaunchOptions) => void): void;
@@ -98,6 +128,7 @@ declare namespace OppoMinigame {
         }): void;
         createRewardedVideoAd?(options: { adUnitId: string }): RewardedVideoAd;
         createInterstitialAd?(options: { adUnitId: string }): InterstitialAd;
+        createBannerAd?(options: CreateBannerAdOption): BannerAd;
     }
 }
 

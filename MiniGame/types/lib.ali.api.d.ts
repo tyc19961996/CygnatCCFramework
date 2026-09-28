@@ -2572,6 +2572,44 @@ declare namespace AliyMiniprogram {
 		onClose(listener: (res: { isEnded: boolean }) => void);
 	}
 
+	/** Banner 广告样式。 */
+	interface BannerAdStyle {
+		left?: number;
+		top?: number;
+		width?: number;
+		height?: number;
+	}
+
+	/** Banner 广告错误结果。 */
+	interface BannerAdErrorEvent {
+		errCode?: number;
+		errorCode?: number;
+		code?: number;
+		errMsg?: string;
+		errorMessage?: string;
+		msg?: string;
+		error?: number;
+	}
+
+	/** Banner 广告实例。 */
+	interface BannerAd {
+		style?: BannerAdStyle;
+		show(): Promise<any> | void;
+		hide(): Promise<any> | void;
+		destroy(): void;
+		onLoad?(listener: () => void): void;
+		onError?(listener: (result: BannerAdErrorEvent) => void): void;
+		onResize?(listener: (size: { width: number; height: number }) => void): void;
+		onClose?(listener: () => void): void;
+		onShow?(listener: () => void): void;
+	}
+
+	interface CreateBannerAdOption {
+		adUnitId: string;
+		style?: BannerAdStyle;
+		adIntervals?: number;
+	}
+
 	interface AppLaunchOptions {
 		/** 启动小游戏的 query 参数 */
 		query: _PlainObject;
@@ -3610,6 +3648,8 @@ interface My {
 
 	/** 创建激励广告组件 */
 	createRewardedAd(res: { adUnitId: ad_unitId, multiton: multiton }): AliyMiniprogram.RewardedAd;
+	/** 创建 Banner 广告组件。 */
+	createBannerAd?(res: AliyMiniprogram.CreateBannerAdOption): AliyMiniprogram.BannerAd;
 
 	getAccountInfoSync(): AliyMiniprogram.AccountInfo;
 

@@ -9,6 +9,7 @@ import { BaseAds } from "../Base/BaseAds";
 import { MiniErrorCode } from "../header";
 import {
     IMiniRewardAdInitConfig,
+    IMiniShowBannerAdOptions,
     IMiniShowRewardAdOptions,
     MiniAdCallback,
     MiniRewardAdPlacement,
@@ -22,18 +23,27 @@ type AliRewardAdContext = {
     fail: ((errCode: number, errMsg: string) => void) | null;
 };
 
-export class AlipayAds extends BaseAds<AliyMiniprogram.RewardedAd, any> {
+export class AlipayAds extends BaseAds<AliyMiniprogram.RewardedAd, any, AliyMiniprogram.BannerAd> {
 
     private _rewardAdContexts: Map<MiniRewardAdPlacement, AliRewardAdContext> = new Map();
     private _showingPlacement: MiniRewardAdPlacement | null = null;
 
-    public init(rewardAdUnitId: string, interstitialUnitId?: string): void;
+    public init(rewardAdUnitId: string, interstitialUnitId?: string, bannerAdUnitId?: string): void;
     public init(config: IMiniRewardAdInitConfig): void;
-    public init(rewardAdUnitIdOrConfig: string | IMiniRewardAdInitConfig, interstitialUnitId?: string): void {
-        const config = this.normalizeInitConfig(rewardAdUnitIdOrConfig, interstitialUnitId);
+    public init(
+        rewardAdUnitIdOrConfig: string | IMiniRewardAdInitConfig,
+        interstitialUnitId?: string,
+        bannerAdUnitId?: string,
+    ): void {
+        const config = this.normalizeInitConfig(rewardAdUnitIdOrConfig, interstitialUnitId, bannerAdUnitId);
         this._rewardAdUnitIds = config.rewardAdIds || {};
         this._rewardAdUnitId = this._rewardAdUnitIds[MiniRewardAdPlacement.Default] || "";
         this._interstitialAdUnitId = config.interstitialAdId || "";
+        const previousBannerAdUnitId = this._bannerAdUnitId;
+        this._bannerAdUnitId = config.bannerAdId || "";
+        if (previousBannerAdUnitId !== this._bannerAdUnitId) {
+            this.destroyBannerAd();
+        }
 
         Object.keys(this._rewardAdUnitIds).forEach((placementKey) => {
             const placement = placementKey as MiniRewardAdPlacement;
@@ -84,6 +94,11 @@ export class AlipayAds extends BaseAds<AliyMiniprogram.RewardedAd, any> {
 
     protected createVideoAd(): AliyMiniprogram.RewardedAd {
         return null;
+    }
+
+    protected createBannerAd(options: IMiniShowBannerAdOptions): AliyMiniprogram.BannerAd {
+        if (!my.createBannerAd || !this._bannerAdUnitId) return null;
+        return my.createBannerAd(this.getBannerCreateOptions(options));
     }
 
     private createRewardAdContext(placement: MiniRewardAdPlacement, adUnitId: string): AliRewardAdContext {

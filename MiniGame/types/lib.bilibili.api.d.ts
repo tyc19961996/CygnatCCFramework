@@ -281,6 +281,41 @@ declare namespace BilibiliMiniprogram {
         offError?(callback?: (res: RewardedVideoAdErrorEvent) => void): void;
     }
 
+    /** Banner 广告样式。 */
+    interface BannerAdStyle {
+        left?: number;
+        top?: number;
+        width?: number;
+        height?: number;
+    }
+
+    /** Banner 广告错误结果。 */
+    interface BannerAdErrorEvent extends CallbackResult {
+        errorCode?: number;
+        errorMessage?: string;
+        code?: number;
+        msg?: string;
+    }
+
+    /** Banner 广告实例。 */
+    interface BannerAd {
+        style?: BannerAdStyle;
+        show(): Promise<void> | void;
+        hide(): Promise<void> | void;
+        destroy(): void;
+        onLoad?(callback: () => void): void;
+        onError?(callback: (res: BannerAdErrorEvent) => void): void;
+        onResize?(callback: (size: { width: number; height: number }) => void): void;
+        onClose?(callback: () => void): void;
+        onShow?(callback: () => void): void;
+    }
+
+    interface CreateBannerAdOption {
+        adUnitId: string;
+        style?: BannerAdStyle;
+        adIntervals?: number;
+    }
+
     /** Bilibili 小游戏全局 bl 对象。 */
     interface BL {
         /** 获取冷启动参数。 */
@@ -339,6 +374,8 @@ declare namespace BilibiliMiniprogram {
         reportEvent?(eventCode: number): void;
         /** 创建激励视频广告；本项目 Bilibili 只接入默认广告位。 */
         createRewardedVideoAd?(options: { adUnitId: string }): RewardedVideoAd;
+        /** 创建 Banner 广告；低版本可能不存在。 */
+        createBannerAd?(options: CreateBannerAdOption): BannerAd;
     }
 }
 

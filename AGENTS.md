@@ -129,6 +129,7 @@ npm run pack:check
 
 | 日期 | 已落地行为 | 主要位置 | 已有验证 |
 | --- | --- | --- | --- |
+| 2026-09-28 | MiniGame 广告新增统一 Banner 初始化、惰性创建、显示/隐藏/销毁、尺寸与错误监听；微信、支付宝、Bilibili、快手、字节跳动和 OPPO 均接入 `createBannerAd`，并同步六份宿主类型声明。 | `MiniGame/interface/IMiniAds.ts`、`MiniGame/Base/BaseAds.ts`、六个平台 `*Ads.ts`、`MiniGame/types/`、`tests/minigame-banner.*` | `npm test`（34 项通过）、`npm run build`、工作区临时 npm 缓存重试 `npm pack --dry-run --ignore-scripts`、`git diff --check`；提交：新增(MiniGame)：接入 Banner 广告接口与六平台适配 |
 | 2026-09-24 | OPPO 登录的统一 `LoginResult.code` 优先返回 token，供业务服务器换取 openid 等用户信息；同时保留 `token` 字段。 | `MiniGame/oppo/OppoCommon.ts`、`MiniGame/interface/IMiniCommon.ts`、`tests/oppo-common.test.mjs` | 待本次提交前重新验证 |
 | 2026-09-23 | 已实现 OPPO 小游戏最小独立适配器：平台识别、系统基础能力、OPPO token 登录、激励广告和插屏广告；未实现的能力继续走基类兜底。版本提升到 `0.3.6`，准备提交。 | `Core/engine/Platform.ts`、`MiniGame/oppo/`、`MiniGame/MiniHelper.ts`、`MiniGame/types/lib.oppo.api.d.ts`、`package.json`、`package-lock.json` | `npm test`（30 项通过）、`npm run build`、`npm run pack:check` |
 | 2026-09-23 | 记录提交边界：设计文档、实施计划和阶段性改动不单独提交，完整需求验证后再询问宿主提交。 | `AGENTS.md` | 规则检查 |

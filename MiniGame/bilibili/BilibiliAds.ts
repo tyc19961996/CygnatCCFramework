@@ -8,6 +8,7 @@ import { Error, Log, Warn } from "../../Core";
 import { BaseAds } from "../Base/BaseAds";
 import { MiniErrorCode } from "../header";
 import {
+    IMiniShowBannerAdOptions,
     IMiniShowRewardAdOptions,
     MiniAdCallback,
     MiniRewardAdPlacement,
@@ -19,7 +20,12 @@ import {
  * 当前业务只接入默认激励广告位。
  * 如果上层传入非 Default placement，会明确走失败回调。
  */
-export class BilibiliAds extends BaseAds<BilibiliMiniprogram.RewardedVideoAd, unknown> {
+export class BilibiliAds extends BaseAds<BilibiliMiniprogram.RewardedVideoAd, unknown, BilibiliMiniprogram.BannerAd> {
+
+    protected createBannerAd(options: IMiniShowBannerAdOptions): BilibiliMiniprogram.BannerAd {
+        if (!bl.createBannerAd || !this._bannerAdUnitId) return null;
+        return bl.createBannerAd(this.getBannerCreateOptions(options));
+    }
 
     /** 展示激励广告；Bilibili 当前只支持默认广告位。 */
     public showRewardAd(options: IMiniShowRewardAdOptions, res: MiniAdCallback): void {

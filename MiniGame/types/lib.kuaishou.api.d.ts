@@ -473,6 +473,39 @@ declare namespace KuaiShouMiniprogram {
         offClose(callback?: (event: RewardedVideoAdCloseEvent) => void): void;
     }
 
+    /** Banner 广告样式。 */
+    interface BannerAdStyle {
+        left?: number;
+        top?: number;
+        width?: number;
+        height?: number;
+    }
+
+    /** Banner 广告错误结果。 */
+    interface BannerAdErrorEvent extends AdErrorEvent {
+        errCode?: number;
+        errMsg?: string;
+    }
+
+    /** Banner 广告实例。 */
+    interface BannerAd {
+        style?: BannerAdStyle;
+        show(): Promise<void> | void;
+        hide(): Promise<void> | void;
+        destroy(): void;
+        onLoad?(callback: () => void): void;
+        onError?(callback: (event: BannerAdErrorEvent) => void): void;
+        onResize?(callback: (size: { width: number; height: number }) => void): void;
+        onClose?(callback: () => void): void;
+        onShow?(callback: () => void): void;
+    }
+
+    interface CreateBannerAdOptions {
+        adUnitId: string;
+        style?: BannerAdStyle;
+        adIntervals?: number;
+    }
+
     interface KS {
         /**
          * 获取小游戏启动参数。
@@ -588,6 +621,9 @@ declare namespace KuaiShouMiniprogram {
          * 创建插屏广告实例。
          */
         createInterstitialAd(options: CreateInterstitialAdOptions): InterstitialAd;
+
+        /** 创建 Banner 广告实例。 */
+        createBannerAd?(options: CreateBannerAdOptions): BannerAd;
     }
 }
 

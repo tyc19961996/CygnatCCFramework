@@ -846,6 +846,43 @@ declare namespace BytedanceMiniprogram {
         adUnitId: string;
     }
 
+    /** Banner 广告样式。 */
+    interface BannerAdStyle {
+        left?: number;
+        top?: number;
+        width?: number;
+        height?: number;
+    }
+
+    /** Banner 广告错误结果。 */
+    interface BannerAdErrorEvent {
+        errCode?: number;
+        errorCode?: number;
+        code?: number;
+        errMsg?: string;
+        errorMessage?: string;
+        msg?: string;
+    }
+
+    /** Banner 广告实例。 */
+    interface BannerAd {
+        style?: BannerAdStyle;
+        show(): Promise<any> | void;
+        hide(): Promise<any> | void;
+        destroy(): void;
+        onLoad?(callback: OnLoadCallback): void;
+        onError?(callback: (result: BannerAdErrorEvent) => void): void;
+        onResize?(callback: (size: { width: number; height: number }) => void): void;
+        onClose?(callback: () => void): void;
+        onShow?(callback: () => void): void;
+    }
+
+    interface CreateBannerAdOption {
+        adUnitId: string;
+        style?: BannerAdStyle;
+        adIntervals?: number;
+    }
+
 
     interface TT {
         getEnvInfoSync(): EnvInfo;
@@ -1048,6 +1085,8 @@ declare namespace BytedanceMiniprogram {
         createInterstitialAd: (
             input: CreateInterstitialAdOption,
         ) => InterstitialAd;
+        /** 创建 Banner 广告。 */
+        createBannerAd?: (input: CreateBannerAdOption) => BannerAd;
     }
 
 }

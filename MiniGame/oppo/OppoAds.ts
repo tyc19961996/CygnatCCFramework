@@ -5,19 +5,28 @@ import { BaseAds } from "../Base/BaseAds";
 import { MiniErrorCode } from "../header";
 import {
     IMiniRewardAdInitConfig,
+    IMiniShowBannerAdOptions,
     IMiniShowRewardAdOptions,
     MiniAdCallback,
     MiniRewardAdPlacement,
 } from "../interface/IMiniAds";
 
-export class OppoAds extends BaseAds<OppoMinigame.RewardedVideoAd, OppoMinigame.InterstitialAd> {
+export class OppoAds extends BaseAds<OppoMinigame.RewardedVideoAd, OppoMinigame.InterstitialAd, OppoMinigame.BannerAd> {
     private _adServiceInitialized = false;
 
-    public init(rewardAdUnitId: string, interstitialUnitId?: string): void;
+    public init(rewardAdUnitId: string, interstitialUnitId?: string, bannerAdUnitId?: string): void;
     public init(config: IMiniRewardAdInitConfig): void;
-    public init(rewardAdUnitIdOrConfig: string | IMiniRewardAdInitConfig, interstitialUnitId?: string): void {
+    public init(
+        rewardAdUnitIdOrConfig: string | IMiniRewardAdInitConfig,
+        interstitialUnitId?: string,
+        bannerAdUnitId?: string,
+    ): void {
         const config = typeof rewardAdUnitIdOrConfig === "string"
-            ? { defaultRewardAdId: rewardAdUnitIdOrConfig, interstitialAdId: interstitialUnitId }
+            ? {
+                defaultRewardAdId: rewardAdUnitIdOrConfig,
+                interstitialAdId: interstitialUnitId,
+                bannerAdId: bannerAdUnitId,
+            }
             : (rewardAdUnitIdOrConfig || {});
 
         if (config.appId && qg.initAdService && !this._adServiceInitialized) {
@@ -29,7 +38,7 @@ export class OppoAds extends BaseAds<OppoMinigame.RewardedVideoAd, OppoMinigame.
             this._adServiceInitialized = true;
         }
 
-        super.init(rewardAdUnitIdOrConfig as any, interstitialUnitId);
+        super.init(rewardAdUnitIdOrConfig as any, interstitialUnitId, bannerAdUnitId);
     }
 
     public showRewardAd(options: IMiniShowRewardAdOptions, res: MiniAdCallback): void {
@@ -71,6 +80,11 @@ export class OppoAds extends BaseAds<OppoMinigame.RewardedVideoAd, OppoMinigame.
             this.reset();
         });
         return videoAd;
+    }
+
+    protected createBannerAd(options: IMiniShowBannerAdOptions): OppoMinigame.BannerAd {
+        if (!qg.createBannerAd || !this._bannerAdUnitId) return null;
+        return qg.createBannerAd(this.getBannerCreateOptions(options));
     }
 
     public showInterstitialAd(res?: { success?: () => void; fail?: (errCode: number, errMsg: string) => void }): void {

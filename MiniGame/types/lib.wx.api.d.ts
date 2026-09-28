@@ -818,6 +818,43 @@ declare namespace WechatMiniprogram {
         show(): Promise<any>
     }
 
+    /** Banner 广告样式。 */
+    interface BannerAdStyle {
+        left?: number;
+        top?: number;
+        width?: number;
+        height?: number;
+    }
+
+    /** Banner 广告错误结果。 */
+    interface BannerAdErrorEvent {
+        errCode?: number;
+        errorCode?: number;
+        code?: number;
+        errMsg?: string;
+        errorMessage?: string;
+        msg?: string;
+    }
+
+    /** Banner 广告实例。 */
+    interface BannerAd {
+        style?: BannerAdStyle;
+        show(): Promise<any> | void;
+        hide(): Promise<any> | void;
+        destroy(): void;
+        onLoad?(listener: () => void): void;
+        onError?(listener: (result: BannerAdErrorEvent) => void): void;
+        onResize?(listener: (size: { width: number; height: number }) => void): void;
+        onClose?(listener: () => void): void;
+        onShow?(listener: () => void): void;
+    }
+
+    interface CreateBannerAdOption {
+        adUnitId: string;
+        style?: BannerAdStyle;
+        adIntervals?: number;
+    }
+
     interface RequestSubscribeMessageFailCallbackResult {
         /** 接口调用失败错误码 */
         errCode: number
@@ -1412,7 +1449,9 @@ UserInfoButton.offTap(listener) // 需传入与监听时同一个的函数对象
          * 需要基础库： `2.6.0`
          *
          * 创建插屏广告组件。请通过 [wx.getSystemInfoSync()](https://developers.weixin.qq.com/minigame/dev/api/base/system/wx.getSystemInfoSync.html) 返回对象的 SDKVersion 判断基础库版本号后再使用该 API。每次调用该方法创建插屏广告都会返回一个全新的实例（小程序端的插屏广告实例不允许跨页面使用）。 */
-        createInterstitialAd(option: CreateInterstitialAdOption): InterstitialAd
+         createInterstitialAd(option: CreateInterstitialAdOption): InterstitialAd
+         /** 创建 Banner 广告组件。 */
+         createBannerAd?(option: CreateBannerAdOption): BannerAd
         /** [wx.vibrateLong(Object object)](https://developers.weixin.qq.com/minigame/dev/api/device/vibrate/wx.vibrateLong.html)
         *
         * 需要基础库： `1.2.0`
