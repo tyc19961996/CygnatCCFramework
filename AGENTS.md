@@ -4,7 +4,7 @@
 
 ## 项目简介
 
-CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.8`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
+CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.9`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
 
 运行时由宿主 Cocos Creator 提供 `cc` 与 `cc/env` 模块。仓库中的 `types/` 只提供编译期声明，不能当作 Node.js 运行时实现。发布包的入口是 `dist/header.js`，公开类型入口是 `dist/header.d.ts`。
 
@@ -129,6 +129,8 @@ npm run pack:check
 
 | 日期 | 已落地行为 | 主要位置 | 已有验证 |
 | --- | --- | --- | --- |
+| 2026-09-30 | 微信开放页面管理器能力随包版本 `0.3.9` 交付；提供 `createPageManager()`、公共管理器类型、其他平台 `null` 兜底及严格模式事件类型兼容。 | `MiniGame/`、`tests/minigame-page-manager.*`、`package.json`、`package-lock.json`、对应设计与计划 | `npm test`（45 项通过、类型检查通过）、严格事件回调类型检查、`npm run build`、临时 npm 缓存下 `npm run pack:check`（604 个文件）、`git diff --check`；提交：新增(MiniGame)：接入微信开放页面管理器并升级到 0.3.9 |
+| 2026-09-30 | 微信新增开放页面管理器统一入口 `createPageManager()`，返回宿主原实例供业务调用 `load/show/on/off/destroy`；其他平台和低版本宿主返回 `null`。改动尚未提交。 | `MiniGame/interface/IMiniPageManager.ts`、`MiniGame/interface/IMiniCommon.ts`、`MiniGame/MiniHelper.ts`、`MiniGame/Base/BaseCommon.ts`、`MiniGame/wechat/WechatCommon.ts`、微信宿主声明、`tests/minigame-page-manager.*`、对应设计与计划 | 运行时及严格类型契约先红后绿；`npm test`（45 项通过、类型检查通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（604 个文件）、`git diff --check` |
 | 2026-09-30 | 小游戏跨应用跳转接口与微信 `shortLink` 随包版本 `0.3.8` 一同交付。 | `MiniGame/`、`tests/minigame-navigation.*`、`package.json`、`package-lock.json`、对应设计与计划 | `npm test`（42 项通过、类型检查通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（600 个文件）、`git diff --check`；提交：新增(MiniGame)：接入跨应用跳转并升级到 0.3.8 |
 | 2026-09-30 | 微信 `navigateToMiniProgram` 补充 `shortLink`，允许不传 `appId` 和 `path`；其他平台收到只有短链接的请求时返回 `false`，不调用宿主。改动尚未提交。 | `MiniGame/interface/IMiniCommon.ts`、`MiniGame/wechat/WechatCommon.ts`、其他三个跳转适配器、`MiniGame/types/lib.wx.api.d.ts`、`tests/minigame-navigation.*`、对应设计与计划 | 先红后绿；`npm test`（42 项通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（600 个文件）、`git diff --check` |
 | 2026-09-30 | MiniGame 统一接入跳转其他小程序或小游戏：微信、支付宝、Bilibili、抖音使用各自宿主接口；Bilibili 要求 `vAppId`，抖音小游戏仅支持小游戏站；快手和 OPPO 保持不支持兜底。改动尚未提交。 | `MiniGame/interface/IMiniCommon.ts`、`MiniGame/MiniHelper.ts`、`MiniGame/Base/BaseCommon.ts`、四个平台 `*Common.ts`、三份宿主声明、`tests/minigame-navigation.*`、对应设计与计划 | 先红后绿；`npm test`（40 项通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（600 个文件）、`git diff --check` |

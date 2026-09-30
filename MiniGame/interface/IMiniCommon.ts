@@ -5,6 +5,7 @@
  */
 
 import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "./IMiniFeed";
+import { MiniPageManager } from "./IMiniPageManager";
 
 export interface TouchPoint {
     identifier: number;
@@ -87,6 +88,9 @@ export type NavigateToMiniProgramOptions = NavigateToMiniProgramBaseOptions & (
 export type VibrateShortType = "heavy" | "medium" | "light";
 
 export interface IMiniCommon {
+    /** 创建微信开放页面管理器；不支持或创建失败时返回 null。旧版自行实现接口的适配器可不提供。 */
+    createPageManager?(): MiniPageManager | null;
+
     /** 跳转到同平台其他小程序或小游戏；宿主失败或不支持时返回 false。需由用户操作直接触发。旧版自行实现接口的适配器可不提供。 */
     navigateToMiniProgram?(options: NavigateToMiniProgramOptions): Promise<boolean>;
 

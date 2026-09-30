@@ -13,6 +13,7 @@ export type {
     ReportSceneOptions,
     VibrateShortType,
 } from './interface/IMiniCommon';
+export type { MiniPageManager, MiniPageManagerLoadOptions, MiniPageManagerShowOptions } from './interface/IMiniPageManager';
 export type { IMiniPay, IMiniPayParams } from './interface/IMiniPay';
 export { FeedSubscribeScene } from './interface/IMiniFeed';
 export type {

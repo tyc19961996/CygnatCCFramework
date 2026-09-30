@@ -7,8 +7,19 @@
 import { Log, Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
 import { LoginResult, NavigateToMiniProgramOptions, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { MiniPageManager } from "../interface/IMiniPageManager";
 
 export class WechatCommon extends BaseCommon {
+    public createPageManager(): MiniPageManager | null {
+        if (!wx.createPageManager) return null;
+        try {
+            return wx.createPageManager() ?? null;
+        } catch (error) {
+            Warn(`微信创建开放页面管理器异常：${String(error)}`);
+            return null;
+        }
+    }
+
     public navigateToMiniProgram(options: NavigateToMiniProgramOptions): Promise<boolean> {
         if (!wx.navigateToMiniProgram || (!options.appId && !options.shortLink)) return Promise.resolve(false);
         return new Promise((resolve) => {

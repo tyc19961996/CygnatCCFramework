@@ -41,6 +41,26 @@ declare namespace WechatMiniprogram {
         complete?: (res: GeneralCallbackResult) => void;
     }
 
+    interface PageManagerLoadOption {
+        openlink: string;
+        extraData?: Record<string, unknown>;
+        query?: Record<string, unknown>;
+    }
+
+    interface PageManagerShowOption {
+        openlink?: string;
+        extraData?: Record<string, unknown>;
+        query?: Record<string, unknown>;
+    }
+
+    interface PageManager {
+        load(option: PageManagerLoadOption): Promise<unknown>;
+        show(option?: PageManagerShowOption): Promise<unknown>;
+        on(eventName: string, callback: (...args: any[]) => void): void;
+        off(eventName: string, callback?: (...args: any[]) => void): void;
+        destroy(): void;
+    }
+
     interface GeneralCallbackResult {
         /** 错误信息 */
         errMsg: string
@@ -1422,6 +1442,8 @@ UserInfoButton.offTap(listener) // 需传入与监听时同一个的函数对象
 
     interface Wx {
         getLaunchOptionsSync(): LaunchOptionsApp;
+        /** 基础库 3.6.7 起支持微信开放页面管理器。 */
+        createPageManager?: () => PageManager;
         /** 跳转其他小程序或小游戏；小游戏需在 game.json 配置目标 appId。 */
         navigateToMiniProgram?: (options: NavigateToMiniProgramOption) => void;
         getEnterOptionsSync(): LaunchOptionsApp;
