@@ -4,7 +4,7 @@
 
 ## 项目简介
 
-CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.6`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
+CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.8`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
 
 运行时由宿主 Cocos Creator 提供 `cc` 与 `cc/env` 模块。仓库中的 `types/` 只提供编译期声明，不能当作 Node.js 运行时实现。发布包的入口是 `dist/header.js`，公开类型入口是 `dist/header.d.ts`。
 
@@ -129,6 +129,9 @@ npm run pack:check
 
 | 日期 | 已落地行为 | 主要位置 | 已有验证 |
 | --- | --- | --- | --- |
+| 2026-09-30 | 小游戏跨应用跳转接口与微信 `shortLink` 随包版本 `0.3.8` 一同交付。 | `MiniGame/`、`tests/minigame-navigation.*`、`package.json`、`package-lock.json`、对应设计与计划 | `npm test`（42 项通过、类型检查通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（600 个文件）、`git diff --check`；提交：新增(MiniGame)：接入跨应用跳转并升级到 0.3.8 |
+| 2026-09-30 | 微信 `navigateToMiniProgram` 补充 `shortLink`，允许不传 `appId` 和 `path`；其他平台收到只有短链接的请求时返回 `false`，不调用宿主。改动尚未提交。 | `MiniGame/interface/IMiniCommon.ts`、`MiniGame/wechat/WechatCommon.ts`、其他三个跳转适配器、`MiniGame/types/lib.wx.api.d.ts`、`tests/minigame-navigation.*`、对应设计与计划 | 先红后绿；`npm test`（42 项通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（600 个文件）、`git diff --check` |
+| 2026-09-30 | MiniGame 统一接入跳转其他小程序或小游戏：微信、支付宝、Bilibili、抖音使用各自宿主接口；Bilibili 要求 `vAppId`，抖音小游戏仅支持小游戏站；快手和 OPPO 保持不支持兜底。改动尚未提交。 | `MiniGame/interface/IMiniCommon.ts`、`MiniGame/MiniHelper.ts`、`MiniGame/Base/BaseCommon.ts`、四个平台 `*Common.ts`、三份宿主声明、`tests/minigame-navigation.*`、对应设计与计划 | 先红后绿；`npm test`（40 项通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（600 个文件）、`git diff --check` |
 | 2026-09-28 | MiniGame 广告新增统一 Banner 初始化、惰性创建、显示/隐藏/销毁、尺寸与错误监听；微信、支付宝、Bilibili、快手、字节跳动和 OPPO 均接入 `createBannerAd`，并同步六份宿主类型声明。 | `MiniGame/interface/IMiniAds.ts`、`MiniGame/Base/BaseAds.ts`、六个平台 `*Ads.ts`、`MiniGame/types/`、`tests/minigame-banner.*` | `npm test`（34 项通过）、`npm run build`、工作区临时 npm 缓存重试 `npm pack --dry-run --ignore-scripts`、`git diff --check`；提交：新增(MiniGame)：接入 Banner 广告接口与六平台适配 |
 | 2026-09-24 | OPPO 登录的统一 `LoginResult.code` 优先返回 token，供业务服务器换取 openid 等用户信息；同时保留 `token` 字段。 | `MiniGame/oppo/OppoCommon.ts`、`MiniGame/interface/IMiniCommon.ts`、`tests/oppo-common.test.mjs` | 待本次提交前重新验证 |
 | 2026-09-23 | 已实现 OPPO 小游戏最小独立适配器：平台识别、系统基础能力、OPPO token 登录、激励广告和插屏广告；未实现的能力继续走基类兜底。版本提升到 `0.3.6`，准备提交。 | `Core/engine/Platform.ts`、`MiniGame/oppo/`、`MiniGame/MiniHelper.ts`、`MiniGame/types/lib.oppo.api.d.ts`、`package.json`、`package-lock.json` | `npm test`（30 项通过）、`npm run build`、`npm run pack:check` |
@@ -146,7 +149,7 @@ npm run pack:check
 目前需要特别记住的工程事实：
 
 - `npm test` 会把 `tests/*.typecheck.ts` 一并纳入 TypeScript 检查；修改小游戏接口时不要只验证运行时测试。
-- `npm run build` 会复制五个平台的小游戏声明到 `dist/MiniGame/types/`，再修正相对 ESM 导入；任何新平台声明都要检查复制脚本。
+- `npm run build` 会复制六个平台的小游戏声明到 `dist/MiniGame/types/`，再修正相对 ESM 导入；任何新平台声明都要检查复制脚本。
 - Cocos 运行时相关测试多数通过源码结构或转译 stub 验证，Node 测试通过不等于编辑器内所有场景已经运行验证。
 - `Net/socket/Socket.ts` 当前未从公共 `Net` 命名空间导出；如要开放它，需要先补接口设计、类型和测试。
 - 根入口封装是 2026-07-17 之后的稳定边界，业务代码不要导入内部文件路径。

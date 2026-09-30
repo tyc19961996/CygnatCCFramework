@@ -34,7 +34,7 @@ export class MiniHelper {
     /** 支付 */
     private static _pay: IMiniPay = null;
 
-    public static common<T extends IMiniCommon>(): T {
+    public static common<T extends IMiniCommon>(): T & Required<Pick<IMiniCommon, "navigateToMiniProgram">> {
         if (!this._common) {
             if (Platform.isWX) {
                 this._common = new WechatCommon();
@@ -52,7 +52,7 @@ export class MiniHelper {
                 this._common = new BaseCommon();
             }
         }
-        return this._common as T;
+        return this._common as T & Required<Pick<IMiniCommon, "navigateToMiniProgram">>;
     }
 
     public static ad<T extends IMiniRewardAds>(): T {

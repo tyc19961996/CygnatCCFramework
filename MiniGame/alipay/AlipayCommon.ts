@@ -6,7 +6,7 @@
 
 import { Log, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { LoginResult, NavigateToMiniProgramOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 
 
 /**
@@ -18,6 +18,27 @@ interface IAliNavigateParams {
 }
 
 export class AlipayCommon extends BaseCommon {
+    public navigateToMiniProgram(options: NavigateToMiniProgramOptions): Promise<boolean> {
+        if (!my.navigateToMiniProgram || !options.appId) return Promise.resolve(false);
+        return new Promise((resolve) => {
+            try {
+                my.navigateToMiniProgram({
+                    appId: options.appId,
+                    ...(options.path !== undefined ? { path: options.path } : {}),
+                    ...(options.extraData !== undefined ? { extraData: options.extraData } : {}),
+                    success: () => resolve(true),
+                    fail: (res) => {
+                        Warn(`支付宝跳转小程序失败 code:${res.error} msg:${res.errorMessage}`);
+                        resolve(false);
+                    },
+                });
+            } catch (error) {
+                Warn(`支付宝跳转小程序异常：${String(error)}`);
+                resolve(false);
+            }
+        });
+    }
+
 
     /** 游戏中心 openURL 跳转链接（Android 用，iOS 需追加 %26startMultApp%3DYES；链接需在开放平台控制台加入 openURL 白名单） */
     private static readonly GAME_CENTER_OPEN_URL: string = "alipays://platformapi/startapp?appId=2060090000285522&url=https%3A%2F%2Frender.alipay.com%2Fp%2Fyuyan%2F180020010001210691%2Findex.html%3FcaprMode%3Dsync&sourceAppId=2021003125685383&sourceUrl=alipays%3A%2F%2Fplatformapi%2Fstartapp%3FappId%3D2021003125685383%26url%3Dhttps%253A%252F%252Frender.alipay.com%252Fp%252Fyuyan%252F180020010001206617%252Findex.html%253FcaprMode%253Dsync%26chInfo%3Dreturnvisit%26sms%3DYES%26appClearTop%3Dfalse";

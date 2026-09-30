@@ -25,6 +25,14 @@ declare namespace BilibiliMiniprogram {
         complete?: (res: CallbackResult) => void;
     }
 
+    interface NavigateToMiniProgramOptions extends AsyncOptions {
+        appId: string;
+        vAppId: string;
+        path?: string;
+        extraData?: Record<string, unknown>;
+        envVersion?: "dev" | "predev" | "precheck";
+    }
+
     /** 冷启动/热启动参数。 */
     interface LaunchOptions {
         /** 启动场景值。 */
@@ -318,6 +326,8 @@ declare namespace BilibiliMiniprogram {
 
     /** Bilibili 小游戏全局 bl 对象。 */
     interface BL {
+        /** 跳转其他小游戏；目标需写入 game.json 名单。 */
+        navigateToMiniProgram?(options: NavigateToMiniProgramOptions): void;
         /** 获取冷启动参数。 */
         getLaunchOptionsSync?(): LaunchOptions;
         /** 获取最近一次进入参数。 */

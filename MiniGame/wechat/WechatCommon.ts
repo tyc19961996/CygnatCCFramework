@@ -6,9 +6,32 @@
 
 import { Log, Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { LoginResult, NavigateToMiniProgramOptions, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 
 export class WechatCommon extends BaseCommon {
+    public navigateToMiniProgram(options: NavigateToMiniProgramOptions): Promise<boolean> {
+        if (!wx.navigateToMiniProgram || (!options.appId && !options.shortLink)) return Promise.resolve(false);
+        return new Promise((resolve) => {
+            try {
+                wx.navigateToMiniProgram({
+                    ...(options.appId !== undefined ? { appId: options.appId } : {}),
+                    ...(options.path !== undefined ? { path: options.path } : {}),
+                    ...(options.extraData !== undefined ? { extraData: options.extraData } : {}),
+                    ...(options.wechatEnvVersion !== undefined ? { envVersion: options.wechatEnvVersion } : {}),
+                    ...(options.shortLink !== undefined ? { shortLink: options.shortLink } : {}),
+                    success: () => resolve(true),
+                    fail: (res) => {
+                        Warn(`微信跳转小程序失败 errMsg:${res.errMsg}`);
+                        resolve(false);
+                    },
+                });
+            } catch (error) {
+                Warn(`微信跳转小程序异常：${String(error)}`);
+                resolve(false);
+            }
+        });
+    }
+
     private _launchOptions: WechatMiniprogram.LaunchOptionsApp = null;
     private _accountInfo: WechatMiniprogram.AccountInfo = null;
 

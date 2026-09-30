@@ -6,7 +6,7 @@
 
 import { Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { LoginResult, NavigateToMiniProgramOptions, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 
 type BilibiliPlatform = 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtools';
 
@@ -17,6 +17,33 @@ type BilibiliPlatform = 'ios' | 'android' | 'ohos' | 'windows' | 'mac' | 'devtoo
  * 会返回 false/null，而不是抛错打断游戏主流程。
  */
 export class BilibiliCommon extends BaseCommon {
+    public navigateToMiniProgram(options: NavigateToMiniProgramOptions): Promise<boolean> {
+        if (!bl.navigateToMiniProgram || !options.appId) return Promise.resolve(false);
+        if (!options.bilibiliVAppId) {
+            Warn("Bilibili 跳转小游戏失败：缺少 vAppId");
+            return Promise.resolve(false);
+        }
+        return new Promise((resolve) => {
+            try {
+                bl.navigateToMiniProgram({
+                    appId: options.appId,
+                    vAppId: options.bilibiliVAppId,
+                    ...(options.path !== undefined ? { path: options.path } : {}),
+                    ...(options.extraData !== undefined ? { extraData: options.extraData } : {}),
+                    ...(options.bilibiliEnvVersion !== undefined ? { envVersion: options.bilibiliEnvVersion } : {}),
+                    success: () => resolve(true),
+                    fail: (res) => {
+                        Warn(`Bilibili 跳转小游戏失败 errMsg:${res.errMsg ?? res.msg}`);
+                        resolve(false);
+                    },
+                });
+            } catch (error) {
+                Warn(`Bilibili 跳转小游戏异常：${String(error)}`);
+                resolve(false);
+            }
+        });
+    }
+
     /** 冷启动参数缓存。 */
     private _launchOptions: BilibiliMiniprogram.LaunchOptions = null;
     /** 系统信息缓存，避免频繁调用同步平台 API。 */

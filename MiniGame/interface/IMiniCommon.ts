@@ -64,9 +64,32 @@ export interface ShareAppMessageOptions {
     query?: string;
 }
 
+/** 跳转到同平台的其他小程序或小游戏。专用字段只传给对应宿主。 */
+interface NavigateToMiniProgramBaseOptions {
+    path?: string;
+    extraData?: Record<string, unknown>;
+    /** 微信目标版本；正式版游戏只能打开正式版目标。 */
+    wechatEnvVersion?: "develop" | "trial" | "release";
+    /** Bilibili 目标小游戏的 vAppId，Bilibili 跳转必填。 */
+    bilibiliVAppId?: string;
+    /** Bilibili 目标版本；不传时打开正式版。 */
+    bilibiliEnvVersion?: "dev" | "predev" | "precheck";
+    /** 抖音小游戏仅支持跳转到小游戏站。 */
+    bytedanceEnvVersion?: "current" | "latest";
+}
+
+/** 微信可只传 shortLink；其他平台仍需要 appId。 */
+export type NavigateToMiniProgramOptions = NavigateToMiniProgramBaseOptions & (
+    { appId: string; shortLink?: string } |
+    { appId?: never; shortLink: string }
+);
+
 export type VibrateShortType = "heavy" | "medium" | "light";
 
 export interface IMiniCommon {
+    /** 跳转到同平台其他小程序或小游戏；宿主失败或不支持时返回 false。需由用户操作直接触发。旧版自行实现接口的适配器可不提供。 */
+    navigateToMiniProgram?(options: NavigateToMiniProgramOptions): Promise<boolean>;
+
     /**
      * 分享
      */

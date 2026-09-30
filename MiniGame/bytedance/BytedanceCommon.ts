@@ -6,10 +6,32 @@
 
 import { Log, Utils, Warn } from "../../Core";
 import { BaseCommon } from "../Base/BaseCommon";
-import { LoginResult, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, VibrateShortType } from "../interface/IMiniCommon";
+import { LoginResult, NavigateToMiniProgramOptions, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, VibrateShortType } from "../interface/IMiniCommon";
 import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "../interface/IMiniFeed";
 
 export class BytedanceCommon extends BaseCommon {
+    public navigateToMiniProgram(options: NavigateToMiniProgramOptions): Promise<boolean> {
+        if (!tt.navigateToMiniProgram || !options.appId) return Promise.resolve(false);
+        return new Promise((resolve) => {
+            try {
+                tt.navigateToMiniProgram({
+                    appId: options.appId,
+                    ...(options.path !== undefined ? { path: options.path } : {}),
+                    ...(options.extraData !== undefined ? { extraData: options.extraData } : {}),
+                    ...(options.bytedanceEnvVersion !== undefined ? { envVersion: options.bytedanceEnvVersion } : {}),
+                    success: () => resolve(true),
+                    fail: (res) => {
+                        Warn(`抖音跳转小游戏站失败 errNo:${res.errNo} errMsg:${res.errMsg}`);
+                        resolve(false);
+                    },
+                });
+            } catch (error) {
+                Warn(`抖音跳转小游戏站异常：${String(error)}`);
+                resolve(false);
+            }
+        });
+    }
+
     private _launchOptions: BytedanceMiniprogram.LaunchParams = null;
 
     private _systemInfo: BytedanceMiniprogram.SystemInfo = null;

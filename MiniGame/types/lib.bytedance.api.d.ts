@@ -25,6 +25,16 @@ declare namespace BytedanceMiniprogram {
         errNo?: number;
     }
 
+    interface NavigateToMiniProgramOption {
+        appId: string;
+        path?: string;
+        extraData?: Record<string, unknown>;
+        envVersion?: "current" | "latest";
+        success?: GeneralSuccessCallback;
+        fail?: GeneralFailCallback;
+        complete?: GeneralCompleteCallback;
+    }
+
     interface ShortcutStatus {
         /** 是否已经添加了桌面快捷方式 */
         exist: boolean;
@@ -885,6 +895,8 @@ declare namespace BytedanceMiniprogram {
 
 
     interface TT {
+        /** 小游戏仅支持跳转到小游戏站，需在触摸结束回调中同步调用。 */
+        navigateToMiniProgram?: (options: NavigateToMiniProgramOption) => void;
         getEnvInfoSync(): EnvInfo;
         getSystemInfoSync(): SystemInfo;
         getLaunchOptionsSync(): LaunchParams;

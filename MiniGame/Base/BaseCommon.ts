@@ -5,10 +5,14 @@
  */
 
 import { Screen } from "../../Core";
-import { IMiniCommon, LoginResult, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { IMiniCommon, LoginResult, NavigateToMiniProgramOptions, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "../interface/IMiniFeed";
 
 export class BaseCommon implements IMiniCommon {
+
+    public navigateToMiniProgram(_options: NavigateToMiniProgramOptions): Promise<boolean> {
+        return Promise.resolve(false);
+    }
 
     protected _userInfoButton: any = null;
 

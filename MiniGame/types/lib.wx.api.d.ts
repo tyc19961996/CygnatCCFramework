@@ -29,6 +29,18 @@ declare namespace WechatMiniprogram {
         type: "heavy" | "medium" | "light";
     }
 
+    interface NavigateToMiniProgramOption {
+        appId?: string;
+        path?: string;
+        extraData?: Record<string, unknown>;
+        envVersion?: "develop" | "trial" | "release";
+        /** 小程序链接；提供后可省略 appId 和 path，需基础库 2.18.1 或更新版本。 */
+        shortLink?: string;
+        success?: (res: GeneralCallbackResult) => void;
+        fail?: (res: GeneralCallbackResult) => void;
+        complete?: (res: GeneralCallbackResult) => void;
+    }
+
     interface GeneralCallbackResult {
         /** 错误信息 */
         errMsg: string
@@ -1410,6 +1422,8 @@ UserInfoButton.offTap(listener) // 需传入与监听时同一个的函数对象
 
     interface Wx {
         getLaunchOptionsSync(): LaunchOptionsApp;
+        /** 跳转其他小程序或小游戏；小游戏需在 game.json 配置目标 appId。 */
+        navigateToMiniProgram?: (options: NavigateToMiniProgramOption) => void;
         getEnterOptionsSync(): LaunchOptionsApp;
         getWindowInfo(): WindowInfo;
         getAppBaseInfo(): AppBaseInfo;

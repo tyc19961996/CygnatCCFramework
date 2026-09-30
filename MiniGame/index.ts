@@ -9,6 +9,7 @@ export type {
     LoginResult,
     SubscribeResult,
     ShareAppMessageOptions,
+    NavigateToMiniProgramOptions,
     ReportSceneOptions,
     VibrateShortType,
 } from './interface/IMiniCommon';
