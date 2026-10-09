@@ -129,6 +129,7 @@ npm run pack:check
 
 | 日期 | 已落地行为 | 主要位置 | 已有验证 |
 | --- | --- | --- | --- |
+| 2026-10-09 | 包版本提升到 `0.3.10`；通过类型契约固化广告接口边界：`IMiniBannerAds` 只暴露 Banner 能力，不包含 `init`，聚合接口 `IMiniRewardAds` 继续保留统一广告初始化以兼容现有调用。 | `package.json`、`package-lock.json`、`tests/minigame-banner.typecheck.ts` | `npm test`（45 项通过、类型检查通过）、`npm run build`、`npm run pack:check`（604 个文件）、`git diff --check`；提交：发布(MiniGame)：固化 Banner 接口边界并升级到 0.3.10 |
 | 2026-09-30 | 微信开放页面管理器能力随包版本 `0.3.9` 交付；提供 `createPageManager()`、公共管理器类型、其他平台 `null` 兜底及严格模式事件类型兼容。 | `MiniGame/`、`tests/minigame-page-manager.*`、`package.json`、`package-lock.json`、对应设计与计划 | `npm test`（45 项通过、类型检查通过）、严格事件回调类型检查、`npm run build`、临时 npm 缓存下 `npm run pack:check`（604 个文件）、`git diff --check`；提交：新增(MiniGame)：接入微信开放页面管理器并升级到 0.3.9 |
 | 2026-09-30 | 微信新增开放页面管理器统一入口 `createPageManager()`，返回宿主原实例供业务调用 `load/show/on/off/destroy`；其他平台和低版本宿主返回 `null`。改动尚未提交。 | `MiniGame/interface/IMiniPageManager.ts`、`MiniGame/interface/IMiniCommon.ts`、`MiniGame/MiniHelper.ts`、`MiniGame/Base/BaseCommon.ts`、`MiniGame/wechat/WechatCommon.ts`、微信宿主声明、`tests/minigame-page-manager.*`、对应设计与计划 | 运行时及严格类型契约先红后绿；`npm test`（45 项通过、类型检查通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（604 个文件）、`git diff --check` |
 | 2026-09-30 | 小游戏跨应用跳转接口与微信 `shortLink` 随包版本 `0.3.8` 一同交付。 | `MiniGame/`、`tests/minigame-navigation.*`、`package.json`、`package-lock.json`、对应设计与计划 | `npm test`（42 项通过、类型检查通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（600 个文件）、`git diff --check`；提交：新增(MiniGame)：接入跨应用跳转并升级到 0.3.8 |

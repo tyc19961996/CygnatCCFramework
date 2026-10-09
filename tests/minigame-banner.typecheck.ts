@@ -34,10 +34,13 @@ const listener: IMiniBannerAdsListener = {
 
 const ads: IMiniRewardAds = MiniHelper.ad();
 const bannerAds: IMiniBannerAds = ads;
+type BannerInitMustNotExist = "init" extends keyof IMiniBannerAds ? never : true;
+const bannerInitMustNotExist: BannerInitMustNotExist = true;
 ads.init(config);
 ads.init("reward-id", "interstitial-id", "banner-id");
 bannerAds.setBannerAdsListener(listener);
 bannerAds.showBannerAd(options, callback);
 bannerAds.hideBannerAd();
 bannerAds.destroyBannerAd();
+void bannerInitMustNotExist;
 void aliasOptions;
