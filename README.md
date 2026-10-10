@@ -45,6 +45,8 @@ UI.WindowManager.showWindowByName("MainWindow");
 
 ## HarmonyOS NEXT 原生广告
 
+完整的依赖安装、Cocos 构建、原生接线、真机运行、更新和排障步骤见[鸿蒙 NEXT 广告使用指南](docs/harmony-ads.md)。
+
 框架在 OPENHARMONY 上提供激励视频和插屏广告适配，业务侧仍使用统一入口：
 
 ```ts
