@@ -19,6 +19,7 @@ import { OppoAds } from "./oppo/OppoAds";
 import { OppoCommon } from "./oppo/OppoCommon";
 import { IMiniRewardAds } from "./interface/IMiniAds";
 import { HarmonyAds } from "./harmony/HarmonyAds";
+import { HarmonyCommon } from "./harmony/HarmonyCommon";
 import { IMiniCommon } from "./interface/IMiniCommon";
 import { IMiniPay } from "./interface/IMiniPay";
 import { KuaiShouAds } from "./kuaishou/KuaiShouAds";
@@ -37,7 +38,9 @@ export class MiniHelper {
 
     public static common<T extends IMiniCommon>(): T & Required<Pick<IMiniCommon, "navigateToMiniProgram" | "createPageManager">> {
         if (!this._common) {
-            if (Platform.isWX) {
+            if (Platform.isHarmonyOS) {
+                this._common = new HarmonyCommon();
+            } else if (Platform.isWX) {
                 this._common = new WechatCommon();
             } else if (Platform.isBilibili) {
                 this._common = new BilibiliCommon();

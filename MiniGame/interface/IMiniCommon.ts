@@ -22,6 +22,8 @@ export interface TouchData {
 export interface LoginResult {
     success: boolean;
     code: string;
+    /** 鸿蒙 NEXT 游戏玩家标识，必须与服务端通过授权码获得的标识核对。 */
+    gamePlayerId?: string;
     /** OPPO 登录凭证。 */
     token?: string;
     /** OPPO 用户标识。 */

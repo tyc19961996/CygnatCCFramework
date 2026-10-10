@@ -73,3 +73,7 @@ export { OppoCommon } from './oppo/OppoCommon';
 
 /** HarmonyOS NEXT */
 export { HarmonyAds } from './harmony/HarmonyAds';
+export { HarmonyCommon } from './harmony/HarmonyCommon';
+export { HarmonyAccount } from './harmony/HarmonyAccount';
+export { HarmonyAccountErrorCode } from './interface/IHarmonyAccount';
+export type { HarmonyPlayerRole, HarmonyAccountChangedEvent } from './interface/IHarmonyAccount';

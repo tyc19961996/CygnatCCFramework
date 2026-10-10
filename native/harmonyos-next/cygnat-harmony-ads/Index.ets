@@ -22,3 +22,5 @@ export {
   getHarmonyAdsProtocolVersion,
   submitHarmonyAdRequest
 } from './src/main/ets/HarmonyAdsWorkerQueue';
+
+export { initializeHarmonyAccount, handleHarmonyAccountRequest, disposeHarmonyAccount } from './src/main/ets/HarmonyAccountService';

@@ -113,3 +113,7 @@ npm test
 ```powershell
 npm run pack:check
 ```
+
+## 鸿蒙 NEXT 游戏登录
+
+官方账号登录、主动切换、账号失效通知与角色上报详见 [鸿蒙 NEXT 游戏登录接入指南](docs/harmony-account.md)。安装器支持先接线、后填写公开 ID；Client Secret 只由服务端管理。

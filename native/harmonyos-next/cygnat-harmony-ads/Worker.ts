@@ -15,3 +15,6 @@ export {
   getHarmonyAdsProtocolVersion,
   submitHarmonyAdRequest
 } from './src/main/ets/HarmonyAdsWorkerQueue';
+
+export { configureHarmonyAccountWorker, getHarmonyAccountProtocolVersion, submitHarmonyAccountRequest, enqueueHarmonyAccountEvent, drainHarmonyAccountEvents } from './src/main/ets/HarmonyAccountWorkerQueue';
+export { initializeHarmonyAccountFromAbility, disposeHarmonyAccountFromAbility, getHarmonyAccountLifecycleGeneration } from './src/main/ets/HarmonyAccountLifecycle';

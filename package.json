@@ -17,6 +17,9 @@
     "dist",
     "native/harmonyos-next",
     "scripts/install-harmony-ads.mjs",
+    "scripts/install-harmony-account.mjs",
+    "scripts/harmony-account-installation.mjs",
+    "docs/harmony-account.md",
     "docs/harmony-ads.md",
     "README.md"
   ],

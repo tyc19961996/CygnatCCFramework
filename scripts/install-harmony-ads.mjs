@@ -12,6 +12,7 @@ import {
 } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { accountPatches, analyzeAccountMetadata, resolveAccountAbility } from "./harmony-account-installation.mjs";
 
 const INSTALLER_VERSION = 1;
 const PROTOCOL_VERSION = 1;
@@ -366,13 +367,20 @@ function adoptEquivalentUnmanagedBlock(text, definition) {
     if (propertyMatches.length !== 1) return null;
     const property = propertyMatches[0];
     const equivalentMatches = [...text.matchAll(
-        /^([ \t]*)(?:"arkOptions"|'arkOptions'|arkOptions)[ \t]*:\s*\{\s*(?:"runtimeOnly"|'runtimeOnly'|runtimeOnly)[ \t]*:\s*\{\s*(?:"sources"|'sources'|sources)[ \t]*:\s*\[\s*(['"])\.\/src\/main\/ets\/cygnat\/CygnatHarmonyAdsBridge\.ets\2\s*,?\s*\]\s*,?\s*\}\s*,?\s*\}[ \t]*,?/gm,
+        /^([ \t]*)(?:"arkOptions"|'arkOptions'|arkOptions)[ \t]*:\s*\{\s*(?:"runtimeOnly"|'runtimeOnly'|runtimeOnly)[ \t]*:\s*\{\s*(?:"sources"|'sources'|sources)[ \t]*:\s*\[([^\]]*)\]\s*,?\s*\}\s*,?\s*\}[ \t]*,?/gm,
     )].filter((candidate) => (
         candidate.index + candidate[1].length === property.index
     ));
     if (equivalentMatches.length !== 1) return null;
 
     const equivalent = equivalentMatches[0];
+    const sourceArray = equivalent[2].trim().replace(/,\s*$/, "");
+    const sourceTokens = sourceArray.split(",").map((token) => token.trim());
+    if (!sourceTokens.every((token) => /^(['"])\.\/src\/main\/ets\/cygnat\/CygnatHarmony(?:Ads|Account)Bridge\.ets\1$/.test(token))) return null;
+    const installedSources = sourceTokens.map((token) => token.slice(1, -1)).sort();
+    const expectedSources = [...definition.block.matchAll(/['"](\.\/src\/main\/ets\/cygnat\/CygnatHarmony(?:Ads|Account)Bridge\.ets)['"]/g)].map((match) => match[1]).sort();
+    const adsOnly = installedSources.length === 1 && installedSources[0].endsWith("CygnatHarmonyAdsBridge.ets");
+    if (JSON.stringify(installedSources) !== JSON.stringify(expectedSources) && !(expectedSources.length === 2 && adsOnly)) return null;
 
     const equivalentEnd = equivalent.index + equivalent[0].length;
     if (equivalent.index <= openIndex || equivalentEnd > closingIndex) return null;
@@ -399,6 +407,14 @@ function patchManagedBlock(text, definition) {
         const start = normalized.indexOf(startMarker);
         const end = normalized.indexOf(endMarker, start) + endMarker.length;
         const installed = normalized.slice(start, end);
+        if (startMarker.includes("cygnat-harmony-account:")) {
+            // 账号各块共享函数名时只检查同职责块之外的内容，拒绝重复接线。
+            const outside = (normalized.slice(0, start) + normalized.slice(end))
+                .replace(/\/\/ <cygnat-harmony-account:[^>]+>[\s\S]*?\/\/ <\/cygnat-harmony-account:[^>]+>/g, "");
+            if (definition.forbidden.some((token) => outside.includes(token))) {
+                return { conflict: definition.name + " 在托管块外存在重复配置" };
+            }
+        }
         if (installed !== definition.block) {
             const legacyBlocks = definition.legacyBlocks || [];
             if (legacyBlocks.includes(installed)) {
@@ -498,7 +514,7 @@ function createResult(status, changes, messages = []) {
     };
 }
 
-async function analyzeInstallation(project) {
+async function analyzeInstallation(project, accountOptions) {
     const extensionRoot = path.join(project, "native", "extensions");
     const destination = path.join(extensionRoot, "cygnat-harmony-ads");
     const manifestPath = path.join(extensionRoot, ".cygnat-harmony-ads-install.json");
@@ -515,6 +531,48 @@ async function analyzeInstallation(project) {
     const changes = [];
     const conflicts = [];
     const hostWrites = [];
+    const previousManifest = await readJson(manifestPath);
+    const account = accountOptions?.appId ? accountOptions : previousManifest?.account || accountOptions;
+    const patches = structuredClone(PATCHES);
+    const hostFiles = { ...HOST_FILES };
+    let accountBridge = null;
+    if (account) {
+        const loginPatches = accountPatches();
+        patches.page.push(...loginPatches.page);
+        patches.worker.push(...loginPatches.worker);
+        patches.ability = loginPatches.ability;
+        const oldBlock = patches.build[0].block;
+        const combined = oldBlock.replace("'./src/main/ets/cygnat/CygnatHarmonyAdsBridge.ets'", "'./src/main/ets/cygnat/CygnatHarmonyAdsBridge.ets',\n          './src/main/ets/cygnat/CygnatHarmonyAccountBridge.ets'");
+        patches.build[0].block = combined;
+        patches.build[0].legacyBlocks = [oldBlock];
+        try {
+            const ability = await resolveAccountAbility(project);
+            hostFiles.ability = ability.relativePath;
+            patches.ability[1].anchor = ability.anchor;
+            patches.ability[3].anchor = ability.anchor;
+            if (ability.disposeAnchor) {
+                patches.ability[4].anchor = ability.disposeAnchor;
+                patches.ability[4].block = '    // <cygnat-harmony-account:ability-dispose>\n    disposeHarmonyAccountFromAbility();\n    // </cygnat-harmony-account:ability-dispose>';
+            }
+            if (ability.relativePath.endsWith(".ts")) {
+                const legacy = patches.ability[0].block;
+                patches.ability[0].block = legacy.replace("import { initializeHarmonyAccount } from '@cygnat/harmony-ads';", "import { initializeHarmonyAccountFromAbility as initializeHarmonyAccount } from '@cygnat/harmony-ads/Worker';");
+                patches.ability[0].legacyBlocks = [legacy];
+            }
+            const metadataWrite = account.appId && account.clientId ? await analyzeAccountMetadata(project, account, previousManifest?.account) : null;
+            if (metadataWrite) { hostWrites.push(metadataWrite); changes.push("配置鸿蒙登录公开 ID 与网络权限"); }
+            const source = await readFile(path.join(REPOSITORY_ROOT, "native", "harmonyos-next", "glue", "CygnatHarmonyAccountBridge.ets"), "utf8");
+            const target = path.join(entryRoot, "src", "main", "ets", "cygnat", "CygnatHarmonyAccountBridge.ets");
+            const exists = await pathExists(target);
+            const installed = exists ? await readFile(target, "utf8") : null;
+            if (installed !== null && installed.replace(/\r\n/g, "\n") !== source.replace(/\r\n/g, "\n") && hashContents(installed) !== previousManifest?.accountBridgeHash) {
+                conflicts.push("鸿蒙账号反射端点已存在且不是受管版本");
+            } else {
+                accountBridge = { path: target, contents: source, hash: hashContents(source), changed: installed !== source };
+                if (accountBridge.changed) changes.push("写入鸿蒙账号反射端点");
+            }
+        } catch (error) { conflicts.push("鸿蒙登录配置：" + error.message); }
+    }
     const frameworkPackage = await readJson(path.join(REPOSITORY_ROOT, "package.json"));
     if (!frameworkPackage || typeof frameworkPackage.version !== "string") {
         conflicts.push("无法读取框架 package.json 版本");
@@ -531,7 +589,7 @@ async function analyzeInstallation(project) {
         conflicts.push("框架包内缺少 Harmony 广告原生源码：" + error.message);
     }
 
-    for (const [key, relativePath] of Object.entries(HOST_FILES)) {
+    for (const [key, relativePath] of Object.entries(hostFiles)) {
         const absolutePath = path.join(project, relativePath);
         let text;
         try {
@@ -543,7 +601,7 @@ async function analyzeInstallation(project) {
 
         let updated = text;
         let fileChanged = false;
-        for (const definition of PATCHES[key]) {
+        for (const definition of patches[key]) {
             const result = patchManagedBlock(updated, definition);
             if (result.conflict) {
                 conflicts.push(relativePath + "：" + result.conflict);
@@ -611,6 +669,7 @@ async function analyzeInstallation(project) {
         sourceHash,
         installedHash: sourceHash,
         bridgeHash,
+        ...(account ? { account, accountBridgeHash: accountBridge?.hash || "" } : {}),
     }, null, 2) + "\n";
     let manifestNeedsWrite = false;
     if (!manifestExists) {
@@ -635,6 +694,8 @@ async function analyzeInstallation(project) {
         destinationNeedsCopy,
         bridgeNeedsWrite,
         manifestNeedsWrite,
+        accountBridge,
+        account,
         changes,
         conflicts,
     };
@@ -660,24 +721,29 @@ async function copyManagedLibrary(analysis) {
     });
 }
 
-export async function runInstaller({ project, mode = "check" }) {
+export async function runInstaller({ project, mode = "check", account }) {
     if (!project || typeof project !== "string") {
         throw new TypeError("project 必须是 Cocos 客户端根目录");
     }
     if (!["check", "dry-run", "apply"].includes(mode)) {
         throw new TypeError("mode 只能是 check、dry-run 或 apply");
     }
+    if (account && (typeof account.appId !== "string" || typeof account.clientId !== "string" || Boolean(account.appId.trim()) !== Boolean(account.clientId.trim()))) {
+        throw new TypeError("鸿蒙公开 appId 和 clientId 必须同时提供，或均留空仅接线；不能使用包名代替");
+    }
+    if (account) account = { appId: account.appId.trim(), clientId: account.clientId.trim() };
 
     const resolvedProject = path.resolve(project);
-    const analysis = await analyzeInstallation(resolvedProject);
+    const analysis = await analyzeInstallation(resolvedProject, account);
+    const messages = analysis.account && !analysis.account.appId && !analysis.account.clientId ? ["登录源码接线模式：App ID、Client ID、Game Service 与 bizID 待配置；未写入任何占位 ID"] : [];
     if (analysis.conflicts.length > 0) {
         return createResult("conflict", analysis.changes, analysis.conflicts);
     }
     if (analysis.changes.length === 0) {
-        return createResult("ok", []);
+        return createResult("ok", [], messages);
     }
     if (mode !== "apply") {
-        return createResult("changes-required", analysis.changes);
+        return createResult("changes-required", analysis.changes, messages);
     }
 
     if (analysis.destinationNeedsCopy) {
@@ -690,6 +756,10 @@ export async function runInstaller({ project, mode = "check" }) {
         await mkdir(path.dirname(analysis.bridgePath), { recursive: true });
         await writeFile(analysis.bridgePath, analysis.sourceBridge, "utf8");
     }
+    if (analysis.accountBridge?.changed) {
+        await mkdir(path.dirname(analysis.accountBridge.path), { recursive: true });
+        await writeFile(analysis.accountBridge.path, analysis.accountBridge.contents, "utf8");
+    }
     if (analysis.manifestNeedsWrite) {
         await mkdir(path.dirname(analysis.manifestPath), { recursive: true });
         await writeFile(analysis.manifestPath, analysis.expectedManifest, "utf8");
@@ -699,7 +769,7 @@ export async function runInstaller({ project, mode = "check" }) {
         status: "ok",
         changed: true,
         changes: analysis.changes,
-        messages: [],
+        messages,
     };
 }
 
