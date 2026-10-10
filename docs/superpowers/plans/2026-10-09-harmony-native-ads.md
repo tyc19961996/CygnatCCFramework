@@ -126,3 +126,19 @@ export interface HarmonyAdEvent {
 - Cocos Creator 已重新生成游戏脚本，HAP 内 `Resources/src/chunks/bundle.js` 与 Creator 新产物 SHA-256 一致。
 - 用户已在 nova12 Pro 真机确认激励视频和插屏可以正常展示；奖励发放、提前关闭、异常回调和超时恢复尚未逐项验收。
 - 包版本保持 `0.3.10`；本任务以单个中文本地提交交付，不推送、不发布。
+
+## 2026-10-10：桥接换行差异回归修复
+
+**问题：** 从 Git 安装框架后，残留桥接与包内模板可能仅有 LF/CRLF 差异；删除整个 `native/extensions` 后清单丢失，原始文本比较错误地把该差异判为非受管端点。
+
+**范围：** `scripts/install-harmony-ads.mjs`、`tests/harmony-ads-installer.test.mjs`、`docs/harmony-ads.md` 和 `AGENTS.md`。只调整反射端点的换行等价比较，保持版本、公开协议和其他源码保护；不修改游戏工程或依赖。
+
+- [x] 先添加 LF、CRLF、混合换行及有清单时换行变化的回归，确认四项均以原冲突失败。
+- [x] 仅在桥接比较中归一化 LF/CRLF；应用时写回包内原始内容，保证清单哈希对应实际字节。
+- [x] 验证 check/dry-run 零写入、恢复后 check 与重复 apply 幂等、真实内容冲突无部分写入，以及 HAR 字节保护保持不变；安装器专项 16/16 通过。
+- [x] 补充使用指南中的换行误判排障说明。
+- [x] 运行完整 `npm test`、`npm run build`、打包检查和 `git diff --check`，回填实际结果。
+
+**实际验证：** 安装器专项 16/16 通过；`npm test` 共 77 项通过，TypeScript 全量检查通过；`npm run build` 成功；临时 npm 缓存下 `npm pack --dry-run --ignore-scripts --json` 成功（628 个文件，包含修正后的安装器、桥接模板和指南）；指南与计划的 Markdown 代码围栏、相对链接及 `git diff --check` 均通过。本次未改变运行时协议或广告服务，未重建 HAP 或新增真机验收。
+
+提交状态：本次修复以本地提交 `修复(MiniGame)：避免鸿蒙桥接换行差异误报冲突` 交付，尚未推送。

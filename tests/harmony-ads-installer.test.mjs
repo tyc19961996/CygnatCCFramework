@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -262,6 +263,149 @@ test("installer reclaims Creator-reformatted managed arkOptions and regenerated 
     const repeated = await runInstaller({ project, mode: "apply" });
     assert.equal(repeated.status, "ok");
     assert.equal(repeated.changed, false);
+});
+
+for (const lineEnding of ["LF", "CRLF", "混合换行"]) {
+    test(`安装器在清单丢失后可以重新接入只有 ${lineEnding} 差异的桥接`, async () => {
+        const project = await createFixture(`恢复桥接 ${lineEnding}`);
+        assert.equal((await runInstaller({ project, mode: "apply" })).status, "ok");
+        const extensionRoot = path.join(project, "native", "extensions");
+        const manifestPath = path.join(extensionRoot, ".cygnat-harmony-ads-install.json");
+        const libraryIndex = path.join(extensionRoot, "cygnat-harmony-ads", "Index.ets");
+        const bridgePath = path.join(
+            project, "native", "engine", "harmonyos-next", "entry",
+            "src", "main", "ets", "cygnat", "CygnatHarmonyAdsBridge.ets",
+        );
+        const sourceBridge = await readFile(path.join(
+            process.cwd(), "native", "harmonyos-next", "glue", "CygnatHarmonyAdsBridge.ets",
+        ), "utf8");
+        const lfBridge = sourceBridge.replace(/\r\n/g, "\n");
+        const remainingBridge = lineEnding === "LF" ? lfBridge
+            : lineEnding === "CRLF" ? lfBridge.replace(/\n/g, "\r\n")
+                : lfBridge.replace("\n", "\r\n");
+        await rm(extensionRoot, { recursive: true, force: true });
+        await writeFile(bridgePath, remainingBridge);
+        const before = await snapshotProject(project);
+
+        for (const mode of ["check", "dry-run"]) {
+            const result = await runInstaller({ project, mode });
+            assert.equal(result.status, "changes-required", result.messages.join("\n"));
+            assert.deepEqual(await snapshotProject(project), before);
+            assert.equal(await readFile(bridgePath, "utf8"), remainingBridge);
+            await assert.rejects(readFile(manifestPath), { code: "ENOENT" });
+            await assert.rejects(readFile(libraryIndex), { code: "ENOENT" });
+        }
+
+        const restored = await runInstaller({ project, mode: "apply" });
+        assert.equal(restored.status, "ok", restored.messages.join("\n"));
+        assert.equal(restored.changed, true);
+        const bridgeBytes = await readFile(bridgePath);
+        assert.deepEqual(bridgeBytes, Buffer.from(sourceBridge));
+        const manifestBytes = await readFile(manifestPath);
+        const manifest = JSON.parse(manifestBytes.toString("utf8"));
+        assert.equal(manifest.bridgeHash, createHash("sha256").update(bridgeBytes).digest("hex"));
+
+        const installed = await snapshotProject(project);
+        for (const mode of ["check", "apply"]) {
+            const repeated = await runInstaller({ project, mode });
+            assert.equal(repeated.status, "ok");
+            assert.equal(repeated.changed, false);
+            assert.deepEqual(await snapshotProject(project), installed);
+            assert.deepEqual(await readFile(bridgePath), bridgeBytes);
+            assert.deepEqual(await readFile(manifestPath), manifestBytes);
+        }
+    });
+}
+
+test("安装器可以修复有清单但仅换行变化的桥接并保持字节哈希一致", async () => {
+    const project = await createFixture("有清单的桥接换行变化");
+    assert.equal((await runInstaller({ project, mode: "apply" })).status, "ok");
+    const bridgePath = path.join(
+        project, "native", "engine", "harmonyos-next", "entry",
+        "src", "main", "ets", "cygnat", "CygnatHarmonyAdsBridge.ets",
+    );
+    const manifestPath = path.join(project, "native", "extensions", ".cygnat-harmony-ads-install.json");
+    const sourceBridge = await readFile(bridgePath, "utf8");
+    const lfBridge = sourceBridge.replace(/\r\n/g, "\n");
+    const changedBridge = sourceBridge === lfBridge ? lfBridge.replace(/\n/g, "\r\n") : lfBridge;
+    assert.notEqual(changedBridge, sourceBridge);
+    await writeFile(bridgePath, changedBridge);
+    const manifestBefore = await readFile(manifestPath);
+
+    for (const mode of ["check", "dry-run"]) {
+        const result = await runInstaller({ project, mode });
+        assert.equal(result.status, "changes-required", result.messages.join("\n"));
+        assert.equal(await readFile(bridgePath, "utf8"), changedBridge);
+        assert.deepEqual(await readFile(manifestPath), manifestBefore);
+    }
+
+    assert.equal((await runInstaller({ project, mode: "apply" })).status, "ok");
+    const actualBridge = await readFile(bridgePath);
+    assert.deepEqual(actualBridge, Buffer.from(sourceBridge));
+    const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+    assert.equal(manifest.bridgeHash, createHash("sha256").update(actualBridge).digest("hex"));
+    assert.equal((await runInstaller({ project, mode: "check" })).status, "ok");
+    assert.equal((await runInstaller({ project, mode: "apply" })).changed, false);
+});
+
+test("安装器在清单丢失后仍拒绝桥接真实内容变化且不部分写入", async () => {
+    const project = await createFixture("桥接真实内容变化");
+    const workerPath = path.join(
+        project, "native", "engine", "harmonyos-next", "entry",
+        "src", "main", "ets", "workers", "cocos_worker.ts",
+    );
+    const cleanWorker = await readFile(workerPath);
+    assert.equal((await runInstaller({ project, mode: "apply" })).status, "ok");
+    const extensionRoot = path.join(project, "native", "extensions");
+    const bridgePath = path.join(
+        project, "native", "engine", "harmonyos-next", "entry",
+        "src", "main", "ets", "cygnat", "CygnatHarmonyAdsBridge.ets",
+    );
+    const sourceBridge = (await readFile(bridgePath, "utf8")).replace(/\r\n/g, "\n");
+    await rm(extensionRoot, { recursive: true, force: true });
+    await writeFile(workerPath, cleanWorker);
+
+    for (const customizedBridge of [
+        sourceBridge.replace("return submitHarmonyAdRequest(requestJson);", "return false;"),
+        sourceBridge.replace("\n", " \n"),
+        sourceBridge.replace("\n", "\r"),
+    ]) {
+        assert.notEqual(customizedBridge.replace(/\r\n/g, "\n"), sourceBridge);
+        await writeFile(bridgePath, customizedBridge);
+        const before = await snapshotProject(project);
+
+        for (const mode of ["check", "dry-run", "apply"]) {
+            const result = await runInstaller({ project, mode });
+            assert.equal(result.status, "conflict");
+            assert.ok(result.messages.some((message) => message.includes("反射端点已存在且不是受管版本")));
+            assert.deepEqual(await snapshotProject(project), before);
+            assert.equal(await readFile(bridgePath, "utf8"), customizedBridge);
+            await assert.rejects(readFile(path.join(extensionRoot, "cygnat-harmony-ads", "Index.ets")), {
+                code: "ENOENT",
+            });
+            await assert.rejects(readFile(path.join(extensionRoot, ".cygnat-harmony-ads-install.json")), {
+                code: "ENOENT",
+            });
+        }
+    }
+});
+
+test("桥接换行容错不放宽已安装 HAR 源码的字节保护", async () => {
+    const project = await createFixture("HAR 换行仍受保护");
+    assert.equal((await runInstaller({ project, mode: "apply" })).status, "ok");
+    const installedIndex = path.join(project, "native", "extensions", "cygnat-harmony-ads", "Index.ets");
+    const sourceIndex = await readFile(installedIndex, "utf8");
+    const lfIndex = sourceIndex.replace(/\r\n/g, "\n");
+    const customizedIndex = sourceIndex === lfIndex ? lfIndex.replace(/\n/g, "\r\n") : lfIndex;
+    assert.notEqual(customizedIndex, sourceIndex);
+    await writeFile(installedIndex, customizedIndex);
+    const before = await snapshotProject(project);
+
+    const result = await runInstaller({ project, mode: "apply" });
+    assert.equal(result.status, "conflict");
+    assert.ok(result.messages.some((message) => message.includes("源码存在用户修改")));
+    assert.deepEqual(await snapshotProject(project), before);
+    assert.equal(await readFile(installedIndex, "utf8"), customizedIndex);
 });
 
 test("installer rejects unknown templates and broken managed markers without partial writes", async () => {

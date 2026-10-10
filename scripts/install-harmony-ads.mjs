@@ -593,7 +593,9 @@ async function analyzeInstallation(project) {
         const installedBridge = await readFile(bridgePath, "utf8");
         const installedBridgeHash = hashContents(installedBridge);
         if (installedBridge !== sourceBridge) {
-            if (manifest && manifest.bridgeHash === installedBridgeHash) {
+            // 只忽略桥接的 LF/CRLF 差异；应用时写回包内原始内容，让清单哈希与实际字节一致。
+            const sameBridge = installedBridge.replace(/\r\n/g, "\n") === sourceBridge.replace(/\r\n/g, "\n");
+            if (sameBridge || (manifest && manifest.bridgeHash === installedBridgeHash)) {
                 bridgeNeedsWrite = true;
                 changes.push("更新 Cocos ArkTS 反射端点");
             } else {
