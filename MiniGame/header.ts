@@ -22,6 +22,14 @@ export const MiniErrorCode = {
     AD_EXIT: { code: -97002, msg: "广告中途退出" },
     /** 广告正在播放中 不允许重复调用 */
     AD_PLAYING: { code: -97003, msg: "广告正在播放中 不允许重复调用" },
+    /** 鸿蒙广告桥接不可用 */
+    AD_BRIDGE_UNAVAILABLE: { code: -97004, msg: "鸿蒙广告桥接不可用" },
+    /** 鸿蒙广告协议版本不匹配 */
+    AD_PROTOCOL_MISMATCH: { code: -97005, msg: "鸿蒙广告协议版本不匹配" },
+    /** 鸿蒙广告请求超时 */
+    AD_TIMEOUT: { code: -97006, msg: "鸿蒙广告请求超时" },
+    /** 鸿蒙原生广告执行失败 */
+    AD_NATIVE_ERROR: { code: -97007, msg: "鸿蒙原生广告执行失败" },
 }
 
 /** 统一价格限制列表 (微信、支付宝和字节 取交集) */

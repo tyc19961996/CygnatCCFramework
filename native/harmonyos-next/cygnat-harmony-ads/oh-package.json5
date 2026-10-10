@@ -1,0 +1,9 @@
+{
+  "name": "@cygnat/harmony-ads",
+  "version": "0.3.10",
+  "description": "CygnatCCFramework HarmonyOS NEXT Ads Kit bridge.",
+  "main": "Index.ets",
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {}
+}

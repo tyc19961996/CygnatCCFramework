@@ -36,6 +36,7 @@
     "library",
     "local",
     "node_modules",
+    "native",
     "temp"
   ]
 }

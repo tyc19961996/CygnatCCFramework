@@ -4,7 +4,7 @@
 
 ## 项目简介
 
-CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.9`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
+CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.10`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
 
 运行时由宿主 Cocos Creator 提供 `cc` 与 `cc/env` 模块。仓库中的 `types/` 只提供编译期声明，不能当作 Node.js 运行时实现。发布包的入口是 `dist/header.js`，公开类型入口是 `dist/header.d.ts`。
 
@@ -125,10 +125,11 @@ npm run pack:check
 
 ## 当前状态与变更记忆
 
-基线日期：2026-09-23。当前分支为 `main`，包版本为 `0.3.6`。以下是最近已经落地、后续改动必须保留的行为：
+基线日期：2026-09-23。当前分支为 `main`，包版本为 `0.3.10`。以下是最近已经落地、后续改动必须保留的行为：
 
 | 日期 | 已落地行为 | 主要位置 | 已有验证 |
 | --- | --- | --- | --- |
+| 2026-10-10 | OPENHARMONY 新增不假成功的激励视频与插屏适配；随包交付 Ads Kit 源码 HAR、纯 TS Worker 子入口、同步反射端点和幂等安装器。安装器可重新收编 Creator 重排后语义等价的根级唯一 `arkOptions`，拒绝重复或未知配置；展示超时保留原生广告所有权以隔离无请求 ID 的迟到广播。版本保持 `0.3.10`。 | `Core/engine/Platform.ts`、`MiniGame/harmony/`、`MiniGame/MiniHelper.ts`、`native/harmonyos-next/`、`scripts/install-harmony-ads.mjs`、`tests/harmony-ads-*`、README 与对应设计/计划 | `npm test`（71 项通过、类型检查通过）、`npm run build`、`npm run pack:check`（627 个文件）、DevEco API 24 `assembleHar`、真实宿主 `assembleHap`（20.020 秒）、r2 tgz 离线安装与游戏消费回归 6/6、Creator 产物与 HAP 内游戏 JS 哈希一致；用户在 nova12 Pro 确认激励视频和插屏可正常展示，奖励发放、提前关闭及异常路径尚未逐项验收；提交：新增(MiniGame)：接入鸿蒙 NEXT 原生广告 |
 | 2026-10-09 | 包版本提升到 `0.3.10`；通过类型契约固化广告接口边界：`IMiniBannerAds` 只暴露 Banner 能力，不包含 `init`，聚合接口 `IMiniRewardAds` 继续保留统一广告初始化以兼容现有调用。 | `package.json`、`package-lock.json`、`tests/minigame-banner.typecheck.ts` | `npm test`（45 项通过、类型检查通过）、`npm run build`、`npm run pack:check`（604 个文件）、`git diff --check`；提交：发布(MiniGame)：固化 Banner 接口边界并升级到 0.3.10 |
 | 2026-09-30 | 微信开放页面管理器能力随包版本 `0.3.9` 交付；提供 `createPageManager()`、公共管理器类型、其他平台 `null` 兜底及严格模式事件类型兼容。 | `MiniGame/`、`tests/minigame-page-manager.*`、`package.json`、`package-lock.json`、对应设计与计划 | `npm test`（45 项通过、类型检查通过）、严格事件回调类型检查、`npm run build`、临时 npm 缓存下 `npm run pack:check`（604 个文件）、`git diff --check`；提交：新增(MiniGame)：接入微信开放页面管理器并升级到 0.3.9 |
 | 2026-09-30 | 微信新增开放页面管理器统一入口 `createPageManager()`，返回宿主原实例供业务调用 `load/show/on/off/destroy`；其他平台和低版本宿主返回 `null`。改动尚未提交。 | `MiniGame/interface/IMiniPageManager.ts`、`MiniGame/interface/IMiniCommon.ts`、`MiniGame/MiniHelper.ts`、`MiniGame/Base/BaseCommon.ts`、`MiniGame/wechat/WechatCommon.ts`、微信宿主声明、`tests/minigame-page-manager.*`、对应设计与计划 | 运行时及严格类型契约先红后绿；`npm test`（45 项通过、类型检查通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（604 个文件）、`git diff --check` |

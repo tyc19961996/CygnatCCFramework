@@ -70,3 +70,6 @@ export { BytedancePay } from './bytedance/BytedancePay';
 /** OPPO 小游戏 */
 export { OppoAds } from './oppo/OppoAds';
 export { OppoCommon } from './oppo/OppoCommon';
+
+/** HarmonyOS NEXT */
+export { HarmonyAds } from './harmony/HarmonyAds';

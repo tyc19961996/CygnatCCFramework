@@ -18,6 +18,7 @@ import { BytedancePay } from "./bytedance/BytedancePay";
 import { OppoAds } from "./oppo/OppoAds";
 import { OppoCommon } from "./oppo/OppoCommon";
 import { IMiniRewardAds } from "./interface/IMiniAds";
+import { HarmonyAds } from "./harmony/HarmonyAds";
 import { IMiniCommon } from "./interface/IMiniCommon";
 import { IMiniPay } from "./interface/IMiniPay";
 import { KuaiShouAds } from "./kuaishou/KuaiShouAds";
@@ -57,7 +58,9 @@ export class MiniHelper {
 
     public static ad<T extends IMiniRewardAds>(): T {
         if (!this._ad) {
-            if (Platform.isWX) {
+            if (Platform.isHarmonyOS) {
+                this._ad = new HarmonyAds();
+            } else if (Platform.isWX) {
                 this._ad = new WechatAds();
             } else if (Platform.isBilibili) {
                 this._ad = new BilibiliAds();

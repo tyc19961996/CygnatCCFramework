@@ -1,0 +1,11 @@
+{
+  "module": {
+    "name": "cygnat_harmony_ads",
+    "type": "har",
+    "deviceTypes": [
+      "default",
+      "tablet",
+      "2in1"
+    ]
+  }
+}

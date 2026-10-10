@@ -163,7 +163,9 @@ export class PlatformInitializer {
                 break;
         }
 
-        if (window['bl']) {
+        if (Platform.isHarmonyOS) {
+            Platform.platform = PlatformType.HarmonyOS;
+        } else if (window['bl']) {
             Platform.isBilibili = true;
             Platform.platform = PlatformType.Bilibili;
         } else {
