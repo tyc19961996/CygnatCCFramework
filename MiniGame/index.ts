@@ -4,6 +4,7 @@ export { MiniErrorCode, PriceLimitList } from './header';
 /** 接口 */
 export type {
     IMiniCommon,
+    MiniSystemInfo,
     TouchPoint,
     TouchData,
     LoginResult,

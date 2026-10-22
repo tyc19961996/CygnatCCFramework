@@ -387,7 +387,7 @@ export class KuaiShouCommon extends BaseCommon {
         });
     }
 
-    private getSystemInfo(): KuaiShouMiniprogram.SystemInfo {
+    public getSystemInfo(): KuaiShouMiniprogram.SystemInfo | null {
         if (this._systemInfo) {
             return this._systemInfo;
         }

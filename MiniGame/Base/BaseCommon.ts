@@ -5,11 +5,15 @@
  */
 
 import { Screen } from "../../Core";
-import { IMiniCommon, LoginResult, NavigateToMiniProgramOptions, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
+import { IMiniCommon, LoginResult, MiniSystemInfo, NavigateToMiniProgramOptions, ReportSceneOptions, ShareAppMessageOptions, SubscribeResult, TouchData, VibrateShortType } from "../interface/IMiniCommon";
 import { FeedStatusEvent, IFeedData, IFeedLaunchInfo, IFeedSubscribeOptions, IStoreFeedDataOptions } from "../interface/IMiniFeed";
 import { MiniPageManager } from "../interface/IMiniPageManager";
 
 export class BaseCommon implements IMiniCommon {
+
+    public getSystemInfo(): MiniSystemInfo | null {
+        return null;
+    }
 
     public createPageManager(): MiniPageManager | null {
         return null;

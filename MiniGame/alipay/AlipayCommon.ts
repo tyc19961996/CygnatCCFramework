@@ -524,7 +524,7 @@ export class AlipayCommon extends BaseCommon {
         return 0;
     }
 
-    private getSystemInfo(): getSystemInfoSyncReturn {
+    public getSystemInfo(): getSystemInfoSyncReturn | null {
         if (this._systemInfo) {
             return this._systemInfo;
         }

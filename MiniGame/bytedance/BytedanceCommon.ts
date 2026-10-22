@@ -146,7 +146,7 @@ export class BytedanceCommon extends BaseCommon {
         return null;
     }
 
-    private getSystemInfo(): BytedanceMiniprogram.SystemInfo {
+    public getSystemInfo(): BytedanceMiniprogram.SystemInfo | null {
         if (this._systemInfo) {
             return this._systemInfo;
         }

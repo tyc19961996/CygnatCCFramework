@@ -451,7 +451,7 @@ export class BilibiliCommon extends BaseCommon {
     }
 
     /** 获取并缓存系统信息。 */
-    private getSystemInfo(): BilibiliMiniprogram.SystemInfo {
+    public getSystemInfo(): BilibiliMiniprogram.SystemInfo | null {
         if (this._systemInfo) {
             return this._systemInfo;
         }

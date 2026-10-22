@@ -89,7 +89,39 @@ export type NavigateToMiniProgramOptions = NavigateToMiniProgramBaseOptions & (
 
 export type VibrateShortType = "heavy" | "medium" | "light";
 
+/** 宿主系统信息的常用字段；字段是否存在取决于平台，不补造缺失数据。 */
+export interface MiniSystemInfo {
+    /** 设备品牌、型号及操作系统版本。 */
+    brand?: string;
+    model?: string;
+    system?: string;
+    /** 宿主返回的平台原值，不限定为 getPlatform() 的枚举。 */
+    platform?: string;
+    /** 宿主版本及基础库版本。 */
+    version?: string;
+    SDKVersion?: string;
+    language?: string;
+    /** 屏幕、窗口尺寸及设备像素比，沿用宿主单位。 */
+    screenWidth?: number;
+    screenHeight?: number;
+    windowWidth?: number;
+    windowHeight?: number;
+    pixelRatio?: number;
+    statusBarHeight?: number;
+    safeArea?: {
+        left: number;
+        right: number;
+        top: number;
+        bottom: number;
+        width: number;
+        height: number;
+    };
+}
+
 export interface IMiniCommon {
+    /** 同步获取并缓存宿主系统信息；不支持时返回 null。旧版自行实现接口的适配器可不提供。 */
+    getSystemInfo?(): MiniSystemInfo | null;
+
     /** 创建微信开放页面管理器；不支持或创建失败时返回 null。旧版自行实现接口的适配器可不提供。 */
     createPageManager?(): MiniPageManager | null;
 

@@ -101,7 +101,7 @@ export class OppoCommon extends BaseCommon {
         });
     }
 
-    private getSystemInfo(): OppoMinigame.SystemInfo {
+    public getSystemInfo(): OppoMinigame.SystemInfo {
         if (this._systemInfo) return this._systemInfo;
         this._systemInfo = qg.getSystemInfoSync?.() || {};
         return this._systemInfo;

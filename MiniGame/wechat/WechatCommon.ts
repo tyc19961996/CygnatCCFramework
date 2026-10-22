@@ -258,7 +258,7 @@ export class WechatCommon extends BaseCommon {
         return null;
     }
 
-    private getSystemInfo(): WechatMiniprogram.SystemInfo {
+    public getSystemInfo(): WechatMiniprogram.SystemInfo | null {
         if (this._systemInfo) {
             return this._systemInfo;
         }

@@ -36,7 +36,7 @@ export class MiniHelper {
     /** 支付 */
     private static _pay: IMiniPay = null;
 
-    public static common<T extends IMiniCommon>(): T & Required<Pick<IMiniCommon, "navigateToMiniProgram" | "createPageManager">> {
+    public static common<T extends IMiniCommon>(): T & Required<Pick<IMiniCommon, "navigateToMiniProgram" | "createPageManager" | "getSystemInfo">> {
         if (!this._common) {
             if (Platform.isHarmonyOS) {
                 this._common = new HarmonyCommon();
@@ -56,7 +56,7 @@ export class MiniHelper {
                 this._common = new BaseCommon();
             }
         }
-        return this._common as T & Required<Pick<IMiniCommon, "navigateToMiniProgram" | "createPageManager">>;
+        return this._common as T & Required<Pick<IMiniCommon, "navigateToMiniProgram" | "createPageManager" | "getSystemInfo">>;
     }
 
     public static ad<T extends IMiniRewardAds>(): T {
