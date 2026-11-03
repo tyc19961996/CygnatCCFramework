@@ -1,4 +1,9 @@
 import { MiniErrorCode } from "../header";
+import type {
+    IMiniNativeTemplateAdsListener,
+    IMiniShowNativeTemplateAdOptions,
+    MiniNativeTemplateAdCallback,
+} from "../interface/IMiniNativeTemplateAds";
 import {
     IMiniAdsListener,
     IMiniBannerAdsListener,
@@ -36,6 +41,7 @@ export class BaseAds<T, B, C = any> implements IMiniRewardAds {
     protected _rewardListener: IMiniAdsListener = null;
     protected _interstitialListener: IMiniAdsListener = null;
     protected _bannerListener: IMiniBannerAdsListener = null;
+    protected _nativeTemplateListener: IMiniNativeTemplateAdsListener = null;
 
     /** 广告成功回调 */
     protected _rewardSuccess: () => void;
@@ -277,6 +283,21 @@ export class BaseAds<T, B, C = any> implements IMiniRewardAds {
     /** 设置 Banner 监听器。 */
     public setBannerAdsListener(listener: IMiniBannerAdsListener): void {
         this._bannerListener = listener || null;
+    }
+
+    /** 未适配的平台明确返回失败。 */
+    public showNativeTemplateAd(_options?: IMiniShowNativeTemplateAdOptions, res?: MiniNativeTemplateAdCallback): void {
+        const message = "当前平台不支持原生模板广告";
+        res?.fail?.(MiniErrorCode.AD_NOT_INIT.code, message);
+        this._nativeTemplateListener?.onError?.(MiniErrorCode.AD_NOT_INIT.code, message);
+    }
+
+    public hideNativeTemplateAd(): void {}
+
+    public destroyNativeTemplateAd(): void {}
+
+    public setNativeTemplateAdsListener(listener: IMiniNativeTemplateAdsListener): void {
+        this._nativeTemplateListener = listener || null;
     }
 
     showInterstitialAd(res?: { success?: () => void; fail?: (errCode: number, errMsg: string) => void }): void {

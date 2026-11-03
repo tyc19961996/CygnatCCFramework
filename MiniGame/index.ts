@@ -27,6 +27,14 @@ export type {
 } from './interface/IMiniFeed';
 export { MiniRewardAdPlacement } from './interface/IMiniAds';
 export type {
+    IMiniNativeTemplateAds,
+    IMiniShowNativeTemplateAdOptions,
+    IMiniNativeTemplateAdsListener,
+    MiniNativeTemplateAdStyle,
+    MiniNativeTemplateAdCallback,
+    MiniNativeTemplateAdClickEvent,
+} from './interface/IMiniNativeTemplateAds';
+export type {
     IMiniRewardAds,
     IMiniBannerAds,
     IMiniRewardAdInitConfig,

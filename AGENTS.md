@@ -4,7 +4,7 @@
 
 ## 项目简介
 
-CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.11`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
+CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.12`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
 
 运行时由宿主 Cocos Creator 提供 `cc` 与 `cc/env` 模块。仓库中的 `types/` 只提供编译期声明，不能当作 Node.js 运行时实现。发布包的入口是 `dist/header.js`，公开类型入口是 `dist/header.d.ts`。
 
@@ -125,10 +125,13 @@ npm run pack:check
 
 ## 当前状态与变更记忆
 
-基线日期：2026-09-23。当前分支为 `main`，包版本为 `0.3.11`。以下是最近已经落地、后续改动必须保留的行为：
+基线日期：2026-09-23。当前分支为 `main`，包版本为 `0.3.12`。以下是最近已经落地、后续改动必须保留的行为：
 
 | 日期 | 已落地行为 | 主要位置 | 已有验证 |
 | --- | --- | --- | --- |
+| 2026-11-03 | 用户授权提交完整 OPPO 原生模板广告并提升版本到 `0.3.12`，同步包清单和锁文件，保留四类广告接口及旧自定义适配器兼容。 | 本次 OPPO 模板广告源码、类型、测试和中文说明/设计/计划，`package.json`、`package-lock.json`；提交主题：新增(MiniGame)：接入 OPPO 原生模板广告并升级到 0.3.12 | 版本更新后 `npm test`（129 项、全量类型通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（656 文件、版本 0.3.12）、`git diff --check`；OPPO 真机待验证 |
+| 2026-11-03 | 新增 OPPO 原生模板广告统一初始化、惰性展示、隐藏、销毁及五类事件；过滤高度、复用/重建实例、取消在途展示并隔离迟到回调，非 OPPO 明确失败，旧自定义适配器保持类型兼容。版本 `0.3.11`，尚未提交。 | `IMiniNativeTemplateAds.ts`、广告聚合接口、`BaseAds.ts`、`OppoAds.ts`、`MiniHelper.ts`、公共索引、OPPO 声明、两份回归、README 与设计/计划 | 首轮七项运行时与类型契约先红后绿；最终 `npm test`（129 项、全量类型通过）、build、临时 npm 缓存下 pack:check（656 文件）、包根入口 bundler 严格类型消费、OPPO 声明复制检查、独立审查、文档检查与 `git diff --check`；未做 OPPO 真机验证 |
+| 2026-11-03 | 核对 OPPO 官方原生模板广告文档，记录基于 `qg.createCustomAd` 的接入设计；方案待用户确认，尚未实施或提交，版本保持 `0.3.11`。 | `docs/superpowers/specs/2026-11-03-oppo-native-template-ad-design.md` | 官方 Markdown 参数与生命周期核对、文档代码围栏及链接检查、`git diff --check`；未运行代码测试 |
 | 2026-10-22 | 用户授权将系统信息公共接口随包版本 `0.3.11` 提交；同步包清单和锁文件，保留六个平台具体类型、缓存、空值分支与基类兜底。 | 本次系统信息源码、测试和中文设计/计划、`package.json`、`package-lock.json`；提交主题：新增(MiniGame)：公开系统信息接口并升级到 0.3.11 | 版本更新后 `npm test`（120 项、全量类型通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（652 文件、版本 0.3.11）、`git diff --check` |
 | 2026-10-22 | 公开系统信息接口：六个平台现有 `getSystemInfo` 改为 public，保留宿主具体返回类型和缓存，五个平台声明原有 null 分支；`IMiniCommon` 增加可选方法以兼容旧适配器，`MiniHelper.common()` 保证可直接调用；公开通用 `MiniSystemInfo`，基类与鸿蒙无桥接时返回 null。版本仍为 `0.3.10`，尚未提交。 | 六平台 `*Common.ts`、`BaseCommon.ts`、`IMiniCommon.ts`、`MiniHelper.ts`、模块索引、`tests/minigame-system-info.*` 与对应设计/计划 | 公共类型、基类与严格空值消费回归先红后绿；`npm test`（120 项、全量类型通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（652 文件）、生成声明和严格消费类型检查、文档结构与链接检查、`git diff --check`；未做真机验证 |
 | 2026-10-10 | 用户授权将完整鸿蒙登录 r4 提交并上传，提交范围限定框架账号接口、原生生命周期、安装器、回归与中文指南；保留既有换行修复提交，目标为既有 `origin/main`，版本仍为 `0.3.10`。 | 本次鸿蒙登录全部框架文件；提交主题：新增(MiniGame)：接入鸿蒙 NEXT 游戏登录并修复初始化时序 | 已有 113 项/类型/build/pack/HAR 与真机生命周期证据；提交前 scope 审核、远端引用核对、`git diff --check`；npm 不发布、服务器不部署，本人授权成功与业务登录仍待验收 |

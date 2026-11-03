@@ -18,6 +18,7 @@ import { BytedancePay } from "./bytedance/BytedancePay";
 import { OppoAds } from "./oppo/OppoAds";
 import { OppoCommon } from "./oppo/OppoCommon";
 import { IMiniRewardAds } from "./interface/IMiniAds";
+import type { IMiniNativeTemplateAds } from "./interface/IMiniNativeTemplateAds";
 import { HarmonyAds } from "./harmony/HarmonyAds";
 import { HarmonyCommon } from "./harmony/HarmonyCommon";
 import { IMiniCommon } from "./interface/IMiniCommon";
@@ -59,7 +60,7 @@ export class MiniHelper {
         return this._common as T & Required<Pick<IMiniCommon, "navigateToMiniProgram" | "createPageManager" | "getSystemInfo">>;
     }
 
-    public static ad<T extends IMiniRewardAds>(): T {
+    public static ad<T extends IMiniRewardAds>(): T & IMiniNativeTemplateAds {
         if (!this._ad) {
             if (Platform.isHarmonyOS) {
                 this._ad = new HarmonyAds();
@@ -79,7 +80,7 @@ export class MiniHelper {
                 this._ad = new BaseAds<any,any>();
             }
         }
-        return this._ad as T;
+        return this._ad as T & IMiniNativeTemplateAds;
     }
 
     public static pay<T extends IMiniPay>(): T {

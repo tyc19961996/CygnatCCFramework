@@ -4,6 +4,8 @@
  * @Description: 小游戏广告接口
  */
 
+import type { IMiniNativeTemplateAds } from "./IMiniNativeTemplateAds";
+
 /** 激励广告位。Default 用于兼容旧业务。 */
 export enum MiniRewardAdPlacement {
     Default = "default",
@@ -22,6 +24,8 @@ export interface IMiniRewardAdInitConfig {
     interstitialAdId?: string;
     /** Banner 广告位 ID。 */
     bannerAdId?: string;
+    /** 原生模板广告位 ID，当前仅 OPPO 支持。 */
+    nativeTemplateAdId?: string;
     /** 需要应用级广告初始化的平台使用。 */
     appId?: string;
     /** 应用级广告初始化是否开启调试日志。 */
@@ -85,8 +89,8 @@ export interface IMiniBannerAds {
     setBannerAdsListener(listener: IMiniBannerAdsListener): void;
 }
 
-/** 激励视频广告及 Banner 广告。 */
-export interface IMiniRewardAds extends IMiniBannerAds {
+/** 广告聚合接口；模板能力保持可选，以兼容旧的自定义适配器。 */
+export interface IMiniRewardAds extends IMiniBannerAds, Partial<IMiniNativeTemplateAds> {
     /**
      * 广告初始化。
      *

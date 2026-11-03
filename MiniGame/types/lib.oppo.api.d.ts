@@ -92,6 +92,39 @@ declare namespace OppoMinigame {
         adIntervals?: number;
     }
 
+    interface CustomAdStyle {
+        top?: number;
+        left?: number;
+        width?: number;
+    }
+
+    interface CreateCustomAdOption {
+        adUnitId: string;
+        style?: CustomAdStyle;
+    }
+
+    interface CustomAdClickEvent {
+        code?: number;
+        msg?: string;
+    }
+
+    interface CustomAd {
+        style?: CustomAdStyle;
+        show(): Promise<void>;
+        hide(): void;
+        destroy(): void;
+        onLoad(callback: () => void): void;
+        offLoad(callback?: (() => void) | null): void;
+        onShow(callback: () => void): void;
+        offShow(callback?: (() => void) | null): void;
+        onHide(callback: () => void): void;
+        offHide(callback?: (() => void) | null): void;
+        onError(callback: (error: ErrorResult) => void): void;
+        offError(callback?: ((error: ErrorResult) => void) | null): void;
+        onClick(callback: (event: CustomAdClickEvent) => void): void;
+        offClick(callback?: ((event: CustomAdClickEvent) => void) | null): void;
+    }
+
     interface QG {
         getLaunchOptionsSync?(): LaunchOptions;
         onShow?(callback: (options: LaunchOptions) => void): void;
@@ -129,6 +162,7 @@ declare namespace OppoMinigame {
         createRewardedVideoAd?(options: { adUnitId: string }): RewardedVideoAd;
         createInterstitialAd?(options: { adUnitId: string }): InterstitialAd;
         createBannerAd?(options: CreateBannerAdOption): BannerAd;
+        createCustomAd?(options: CreateCustomAdOption): CustomAd;
     }
 }
 

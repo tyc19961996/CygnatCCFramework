@@ -43,6 +43,37 @@ UI.WindowManager.showWindowByName("MainWindow");
 
 如果需要把框架中的类直接挂到编辑器节点，建议在游戏项目的 `assets` 目录创建薄包装组件并继承框架类。Cocos Creator 通常能更稳定地扫描项目资源中的编辑器组件。
 
+## OPPO 原生模板广告
+
+MiniGame 提供激励视频、插屏、Banner 和原生模板四类广告接口；具体支持情况取决于平台，原生模板目前仅 OPPO 实现，其他平台调用时明确返回失败。
+
+```ts
+import { MiniGame } from "cygnat-cc-framework";
+
+const ads = MiniGame.MiniHelper.ad();
+// 与其他广告一起初始化；再次 init 会释放现有模板实例。
+ads.init({ nativeTemplateAdId: "游戏自己的 OPPO 模板广告位" });
+ads.setNativeTemplateAdsListener({
+  onLoad: () => console.log("模板加载成功"),
+  onShow: () => console.log("模板已显示"),
+  onHide: () => console.log("模板已隐藏或被用户关闭"),
+  onClick: (event) => console.log("模板点击", event.code, event.msg),
+  onError: (code, message) => console.warn("模板广告错误", code, message),
+});
+ads.showNativeTemplateAd({ style: { width: 328 } }, {
+  success: () => console.log("展示成功"),
+  fail: (code, message) => console.warn("展示失败或请求被取消", code, message),
+});
+
+// 业务需要隐藏或释放时分别调用：
+// ads.hideNativeTemplateAd();
+// ads.destroyNativeTemplateAd();
+```
+
+接口使用 OPPO 的 `qg.createCustomAd`，由 `show()` 自动请求加载。`style` 仅支持 `top`、`left`、`width`，单位 dp；高度由模板比例决定，不传样式时采用宿主默认布局。广告区域必须完整位于屏幕内，平台还会限制最小模板尺寸。相同样式复用实例，改变样式则销毁重建；展示请求未完成时再次展示返回正在播放错误，隐藏或销毁会取消该请求。
+
+展示成功回调只代表展示成功，不发放奖励。原生模板最低平台版本为 1094，左图右文竖版最低为 1103，业务应配置相应的 `minPlatformVersion`，并按官方建议将广告请求间隔控制在至少两秒。详见 [OPPO 官方原生模板广告文档](https://ie-activity-cn.heytapimage.com/static/minigame/CN/docs/index.html#/develop/ad/native-template-ad)。框架的 Node 回归不替代真机填充、布局和关闭验证。
+
 ## HarmonyOS NEXT 原生广告
 
 完整的依赖安装、Cocos 构建、原生接线、真机运行、更新和排障步骤见[鸿蒙 NEXT 广告使用指南](docs/harmony-ads.md)。
