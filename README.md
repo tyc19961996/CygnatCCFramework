@@ -124,6 +124,16 @@ Cocos 反射端点固定为 `entry/src/main/ets/cygnat/CygnatHarmonyAdsBridge`�
 
 源码 HAR 已通过 DevEco API 24 的 `assembleHar`，真实宿主也已完成 `assembleHap`；npm tgz 离线安装后的 `apply`、`check`、重复执行和游戏消费回归均已验证。Cocos Creator 已重新生成游戏脚本，HAP 内游戏 JS 与 Creator 产物哈希一致。用户已在 nova12 Pro 真机确认激励视频和插屏可以正常展示；该结论只覆盖两类广告的展示链路，奖励发放、提前关闭、异常回调和超时恢复仍需分别验收。
 
+## 233 乐园 APK 广告
+
+Android 渠道包通过随包的 Java 桥接接入 233 乐园激励视频、插屏和 Banner 接口，业务使用 `MiniGame.MiniHelper.ad()`。Banner 当前在渠道侧关闭。Creator 生成 Android 工程后，运行安装器完成原生接线，后续 Build 和 Make 可复用配置。
+
+```powershell
+node node_modules/cygnat-cc-framework/scripts/install-apk233-ads.mjs --project . --aar "路径/mpg-cm-v1.1.1.aar" --apply
+```
+
+AAR 下载、安装检查和真机自测见[233 乐园 APK 原生广告接入](docs/apk233-ads.md)。
+
 ## 开发与验证
 
 安装依赖并构建：

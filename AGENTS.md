@@ -4,7 +4,7 @@
 
 ## 项目简介
 
-CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.12`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
+CygnatCCFramework 是面向 Cocos Creator 的 TypeScript 游戏框架，当前包版本为 `0.3.13`。框架把常用能力按命名空间组织起来，提供核心工具、资源加载、事件、UI 窗口、小游戏平台适配、ECS 和网络请求等能力。
 
 运行时由宿主 Cocos Creator 提供 `cc` 与 `cc/env` 模块。仓库中的 `types/` 只提供编译期声明，不能当作 Node.js 运行时实现。发布包的入口是 `dist/header.js`，公开类型入口是 `dist/header.d.ts`。
 
@@ -125,10 +125,12 @@ npm run pack:check
 
 ## 当前状态与变更记忆
 
-基线日期：2026-09-23。当前分支为 `main`，包版本为 `0.3.12`。以下是最近已经落地、后续改动必须保留的行为：
+基线日期：2026-09-23。当前分支为 `main`，包版本为 `0.3.13`。以下是最近已经落地、后续改动必须保留的行为：
 
 | 日期 | 已落地行为 | 主要位置 | 已有验证 |
 | --- | --- | --- | --- |
+| 2026-11-10 | 新增 233 APK Android 接线安装器，提供预演、安装和状态检查，随框架版本 `0.3.13` 交付。标准 Creator 3.8.5 模板接线可随项目保留并复用。 | `scripts/install-apk233-ads.mjs`、`tests/apk233-installer.test.mjs`、`docs/apk233-ads.md` | `npm test`、构建、包清单及差异检查通过。用真实 Creator 3.8.5 模板和官方 AAR 验证首次安装、检查和重复执行。 |
+| 2026-11-10 | 新增 233 乐园 Android APK 渠道。广告沿用框架统一入口，通用能力走 Base，Banner 需显式配置。 | `Core/engine/Platform.ts`、`MiniGame/apk233/`、`native/android-233/`、`docs/apk233-ads.md` | `npm test` 138 项及类型检查、`npm run build`、`npm run pack:check`、`git diff --check`。官方 v1.1.1 AAR 签名编译与 JVM 生命周期模拟通过，真机实播待验收。 |
 | 2026-11-03 | 用户授权提交完整 OPPO 原生模板广告并提升版本到 `0.3.12`，同步包清单和锁文件，保留四类广告接口及旧自定义适配器兼容。 | 本次 OPPO 模板广告源码、类型、测试和中文说明/设计/计划，`package.json`、`package-lock.json`；提交主题：新增(MiniGame)：接入 OPPO 原生模板广告并升级到 0.3.12 | 版本更新后 `npm test`（129 项、全量类型通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（656 文件、版本 0.3.12）、`git diff --check`；OPPO 真机待验证 |
 | 2026-11-03 | 新增 OPPO 原生模板广告统一初始化、惰性展示、隐藏、销毁及五类事件；过滤高度、复用/重建实例、取消在途展示并隔离迟到回调，非 OPPO 明确失败，旧自定义适配器保持类型兼容。版本 `0.3.11`，尚未提交。 | `IMiniNativeTemplateAds.ts`、广告聚合接口、`BaseAds.ts`、`OppoAds.ts`、`MiniHelper.ts`、公共索引、OPPO 声明、两份回归、README 与设计/计划 | 首轮七项运行时与类型契约先红后绿；最终 `npm test`（129 项、全量类型通过）、build、临时 npm 缓存下 pack:check（656 文件）、包根入口 bundler 严格类型消费、OPPO 声明复制检查、独立审查、文档检查与 `git diff --check`；未做 OPPO 真机验证 |
 | 2026-11-03 | 核对 OPPO 官方原生模板广告文档，记录基于 `qg.createCustomAd` 的接入设计；方案待用户确认，尚未实施或提交，版本保持 `0.3.11`。 | `docs/superpowers/specs/2026-11-03-oppo-native-template-ad-design.md` | 官方 Markdown 参数与生命周期核对、文档代码围栏及链接检查、`git diff --check`；未运行代码测试 |

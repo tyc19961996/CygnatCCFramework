@@ -184,6 +184,7 @@ test("OPENHARMONY remains HarmonyOS instead of falling through to Browser", asyn
     };
     const runtimeSource = source
         .replace(/import\s*\{\s*sys\s*\}\s*from\s*["']cc["'];?/, "const sys = globalThis.__harmonyPlatformSys;")
+        .replace(/import\s*\{\s*getApk233BridgeVersion\s*\}\s*from\s*["']\.\/Apk233AdsBridge["'];?/, "const getApk233BridgeVersion = () => 0;")
         .replace(/import\s*\{\s*Log\s*\}\s*from\s*["']\.\.\/utils\/Logger\/Log["'];?/, "const Log = () => undefined;");
     const { outputText } = typescript.transpileModule(runtimeSource, {
         compilerOptions: { module: typescript.ModuleKind.ESNext, target: typescript.ScriptTarget.ES2019 },

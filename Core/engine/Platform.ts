@@ -5,6 +5,7 @@
  */
 
 import { sys } from "cc";
+import { getApk233BridgeVersion } from "./Apk233AdsBridge";
 import { Log } from "../utils/Logger/Log";
 
 export enum PlatformType {
@@ -25,6 +26,8 @@ export enum PlatformType {
     Bilibili = 9,
     /** OPPO 小游戏 */
     Oppo = 10,
+    /** 233 乐园 Android APK 渠道 */
+    Apk233 = 11,
     /** 其他都为Browser */
     Browser = 1001,
 }
@@ -114,6 +117,9 @@ export class Platform {
      */
     public static isOppo: boolean = false;
 
+    /** 是否为 233 乐园 Android APK 渠道 */
+    public static isApk233: boolean = false;
+
     /**
      * 平台类型
      * @type {PlatformType}
@@ -163,7 +169,12 @@ export class PlatformInitializer {
                 break;
         }
 
-        if (Platform.isHarmonyOS) {
+        Platform.isApk233 = sys.isNative && sys.platform === sys.Platform.ANDROID
+            && getApk233BridgeVersion() > 0;
+
+        if (Platform.isApk233) {
+            Platform.platform = PlatformType.Apk233;
+        } else if (Platform.isHarmonyOS) {
             Platform.platform = PlatformType.HarmonyOS;
         } else if (window['bl']) {
             Platform.isBilibili = true;

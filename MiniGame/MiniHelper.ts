@@ -8,6 +8,7 @@ import { Platform } from "../Core";
 import { AlipayAds } from "./alipay/AlipayAds";
 import { AlipayCommon } from "./alipay/AlipayCommon";
 import { AlipayPay } from "./alipay/AlipayPay";
+import { Apk233Ads } from "./apk233/Apk233Ads";
 import { BaseAds } from "./Base/BaseAds";
 import { BaseCommon } from "./Base/BaseCommon";
 import { BilibiliAds } from "./bilibili/BilibiliAds";
@@ -62,7 +63,9 @@ export class MiniHelper {
 
     public static ad<T extends IMiniRewardAds>(): T & IMiniNativeTemplateAds {
         if (!this._ad) {
-            if (Platform.isHarmonyOS) {
+            if (Platform.isApk233) {
+                this._ad = new Apk233Ads();
+            } else if (Platform.isHarmonyOS) {
                 this._ad = new HarmonyAds();
             } else if (Platform.isWX) {
                 this._ad = new WechatAds();

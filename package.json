@@ -1,6 +1,6 @@
 {
   "name": "cygnat-cc-framework",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "description": "A Cocos Creator TypeScript game framework.",
   "private": true,
   "type": "module",
@@ -16,6 +16,9 @@
   "files": [
     "dist",
     "native/harmonyos-next",
+    "native/android-233",
+    "scripts/install-apk233-ads.mjs",
+    "docs/apk233-ads.md",
     "scripts/install-harmony-ads.mjs",
     "scripts/install-harmony-account.mjs",
     "scripts/harmony-account-installation.mjs",
