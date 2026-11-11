@@ -26,8 +26,10 @@ export interface LoginResult {
     gamePlayerId?: string;
     /** OPPO 登录凭证。 */
     token?: string;
-    /** OPPO 用户标识。 */
+    /** OPPO 或 233 APK 用户标识。 */
     uid?: string;
+    /** 233 APK 会话凭证，交给业务服务端校验。 */
+    sid?: string;
     /** OPPO 用户昵称。 */
     nickName?: string;
     /** OPPO 用户头像地址。 */

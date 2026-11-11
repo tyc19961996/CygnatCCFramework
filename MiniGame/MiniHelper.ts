@@ -9,6 +9,7 @@ import { AlipayAds } from "./alipay/AlipayAds";
 import { AlipayCommon } from "./alipay/AlipayCommon";
 import { AlipayPay } from "./alipay/AlipayPay";
 import { Apk233Ads } from "./apk233/Apk233Ads";
+import { Apk233Common } from "./apk233/Apk233Common";
 import { BaseAds } from "./Base/BaseAds";
 import { BaseCommon } from "./Base/BaseCommon";
 import { BilibiliAds } from "./bilibili/BilibiliAds";
@@ -40,7 +41,9 @@ export class MiniHelper {
 
     public static common<T extends IMiniCommon>(): T & Required<Pick<IMiniCommon, "navigateToMiniProgram" | "createPageManager" | "getSystemInfo">> {
         if (!this._common) {
-            if (Platform.isHarmonyOS) {
+            if (Platform.isApk233) {
+                this._common = new Apk233Common();
+            } else if (Platform.isHarmonyOS) {
                 this._common = new HarmonyCommon();
             } else if (Platform.isWX) {
                 this._common = new WechatCommon();

@@ -226,3 +226,50 @@ test("宿主目录是链接时不向其他目录写入 AAR", async () => {
     assert.deepEqual(await snapshot(app), before);
     assert.deepEqual(await readdir(outside), []);
 });
+
+
+test("可向已接线的广告 APK 追加登录 SDK 并重复检查", async () => {
+    const { project, app, aar, aarBytes } = await fixture();
+    const gradleRoot = path.join(project, "build", "android", "proj");
+    const properties = path.join(gradleRoot, "gradle.properties");
+    await mkdir(gradleRoot, { recursive: true });
+    await writeFile(properties, "android.useAndroidX=true\r\nandroid.enableJetifier=false\r\n");
+    assert.equal(run(project, "--aar", aar, "--apply").status, 0);
+    assert.match(await readFile(properties, "utf8"), /enableJetifier=false/);
+    const loginAar = path.join(project, "mpg-pay-v3.2.24.aar");
+    await writeFile(loginAar, aarBytes);
+    const preview = run(project, "--login-aar", loginAar, "--dry-run");
+    assert.equal(preview.status, 0, preview.stderr);
+    assert.match(preview.stdout, /Cygnat233AccountBridge/);
+    assert.match(await readFile(properties, "utf8"), /enableJetifier=false/);
+    const install = run(project, "--login-aar", loginAar, "--apply");
+    assert.equal(install.status, 0, install.stderr);
+    const java = await readFile(path.join(app, activityPath), "utf8");
+    assert.equal((java.match(/Cygnat233AccountBridge\.(attach|detach)\(this\)/g) || []).length, 2);
+    assert.equal((java.match(/Cygnat233AdsBridge\.(attach|detach)\(this\)/g) || []).length, 2);
+    assert.deepEqual(await readFile(path.join(app, "libs", "mpg-pay-v3.2.24.aar")), aarBytes);
+    const proguard = await readFile(path.join(app, "proguard-rules.pro"), "utf8");
+    assert.match(proguard, /Cygnat233AccountBridge/);
+    const buildGradle = await readFile(path.join(app, "build.gradle"), "utf8");
+    assert.match(buildGradle, /androidx\.appcompat:appcompat:/);
+    assert.match(buildGradle, /com\.github\.bumptech\.glide:glide:/);
+    assert.match(buildGradle, /com\.alipay\.sdk:alipaysdk-android:15\.8\.42/);
+    assert.equal(await readFile(properties, "utf8"), "android.useAndroidX=true\r\nandroid.enableJetifier=true\r\n");
+    assert.equal(run(project, "--check").status, 0);
+    const snapshotBefore = await snapshot(app);
+    assert.equal(run(project, "--apply").status, 0);
+    assert.deepEqual(await snapshot(app), snapshotBefore);
+});
+
+test("登录 AAR 与已有 Gradle 依赖冲突时不会部分安装", async () => {
+    const { project, app, aar, aarBytes } = await fixture({
+        buildGradle: gradle.replace("dependencies {", "dependencies {\n    implementation files('libs/mpg-pay-v3.2.19.aar')"),
+    });
+    const loginAar = path.join(project, "mpg-pay-v3.2.24.aar");
+    await writeFile(loginAar, aarBytes);
+    const original = await snapshot(app);
+    const result = run(project, "--aar", aar, "--login-aar", loginAar, "--apply");
+    assert.equal(result.status, 2);
+    assert.match(result.stderr, /mpg-pay-v3\.2\.19\.aar/);
+    assert.deepEqual(await snapshot(app), original);
+});

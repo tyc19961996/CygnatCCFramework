@@ -85,10 +85,10 @@ test("233 标记只对带有广告桥接的 Android 原生 APK 生效", () => {
     assert.deepEqual(web.calls, []);
 });
 
-test("MiniHelper 只在广告入口选择 233 适配器", () => {
+test("MiniHelper 为 233 选择登录和广告适配器", () => {
     const code = readFileSync("MiniGame/MiniHelper.ts", "utf8");
     const [common, ad, pay] = code.split(/public static (?:ad|pay)</);
-    assert.doesNotMatch(common, /isApk233/);
+    assert.match(common, /Platform\.isApk233[\s\S]*?new Apk233Common\(\)/);
     assert.match(common, /new BaseCommon\(\)/);
     assert.match(ad, /Platform\.isApk233[\s\S]*?new Apk233Ads\(\)/);
     assert.doesNotMatch(pay, /isApk233/);

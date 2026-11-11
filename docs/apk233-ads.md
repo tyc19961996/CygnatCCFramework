@@ -2,6 +2,8 @@
 
 适用于 Cocos Creator 3.8.5 的 Android 构建与 233 乐园广告 SDK v1.1.1。完成 Android 桥接接线后，框架会识别 `Core.Platform.isApk233` 和 `Core.PlatformType.Apk233`，`isAndroid` 仍为 true。游戏照常使用 `MiniGame.MiniHelper.ad()`，通用能力沿用 `BaseCommon`。
 
+需要同时接入登录时，通过同一安装器追加登录 AAR，见[233 乐园 APK 账号接入](apk233-account.md)。
+
 | 广告 | 233 SDK 方法 | 框架行为 |
 | --- | --- | --- |
 | 激励视频 | `showVideoAd(int, IVideoIAdCallback)` | 收到奖励且关闭才调用 `success`。提前关闭走 `fail`。 |

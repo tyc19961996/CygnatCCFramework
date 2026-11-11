@@ -134,6 +134,8 @@ node node_modules/cygnat-cc-framework/scripts/install-apk233-ads.mjs --project .
 
 AAR 下载、安装检查和真机自测见[233 乐园 APK 原生广告接入](docs/apk233-ads.md)。
 
+233 渠道可以通过同一安装器追加账号登录。业务在隐私授权后调用 `MiniGame.Apk233Account.init()`，再通过 `MiniGame.MiniHelper.common().login()` 获取服务端校验所需的凭证。接线、账号切换和真机验证见[233 乐园 APK 账号接入](docs/apk233-account.md)。
+
 ## 开发与验证
 
 安装依赖并构建：

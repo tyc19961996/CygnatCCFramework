@@ -86,3 +86,7 @@ export { HarmonyCommon } from './harmony/HarmonyCommon';
 export { HarmonyAccount } from './harmony/HarmonyAccount';
 export { HarmonyAccountErrorCode } from './interface/IHarmonyAccount';
 export type { HarmonyPlayerRole, HarmonyAccountChangedEvent } from './interface/IHarmonyAccount';
+
+/** 233 APK */
+export { Apk233Account } from './apk233/Apk233Account';
+export type { Apk233AccountConfig, Apk233AccountChangedEvent } from './apk233/Apk233Account';

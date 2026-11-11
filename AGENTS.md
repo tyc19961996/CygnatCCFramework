@@ -125,10 +125,11 @@ npm run pack:check
 
 ## 当前状态与变更记忆
 
-基线日期：2026-09-23。当前分支为 `main`，包版本为 `0.3.13`。以下是最近已经落地、后续改动必须保留的行为：
+基线日期：2026-09-23。当前分支为 `main`，包版本为 `0.3.14`。以下是最近已经落地、后续改动必须保留的行为：
 
 | 日期 | 已落地行为 | 主要位置 | 已有验证 |
 | --- | --- | --- | --- |
+| 2026-11-11 | 233 APK 在隐私同意后支持账号初始化、统一登录及宿主切号，变更通知只含代次和原因。Android 安装器可向原广告工程追加登录 AAR。SDK 超时保留旧回调的进程级归属，已登录 Activity 销毁时通知游戏失效。 | `MiniGame/apk233/`、`native/android-233/`、`scripts/install-apk233-ads.mjs`、`docs/apk233-account.md` | `npm test` 154 项及类型通过，`npm run build`、`npm run pack:check`、`git diff --check`。官方 v3.2.24 AAR 签名编译、JVM 超时、切号及生命周期模拟、真实 Creator 3.8.5 模板安装和官方 AAR Manifest 合并通过。真机待验收。 |
 | 2026-11-10 | 新增 233 APK Android 接线安装器，提供预演、安装和状态检查，随框架版本 `0.3.13` 交付。标准 Creator 3.8.5 模板接线可随项目保留并复用。 | `scripts/install-apk233-ads.mjs`、`tests/apk233-installer.test.mjs`、`docs/apk233-ads.md` | `npm test`、构建、包清单及差异检查通过。用真实 Creator 3.8.5 模板和官方 AAR 验证首次安装、检查和重复执行。 |
 | 2026-11-10 | 新增 233 乐园 Android APK 渠道。广告沿用框架统一入口，通用能力走 Base，Banner 需显式配置。 | `Core/engine/Platform.ts`、`MiniGame/apk233/`、`native/android-233/`、`docs/apk233-ads.md` | `npm test` 138 项及类型检查、`npm run build`、`npm run pack:check`、`git diff --check`。官方 v1.1.1 AAR 签名编译与 JVM 生命周期模拟通过，真机实播待验收。 |
 | 2026-11-03 | 用户授权提交完整 OPPO 原生模板广告并提升版本到 `0.3.12`，同步包清单和锁文件，保留四类广告接口及旧自定义适配器兼容。 | 本次 OPPO 模板广告源码、类型、测试和中文说明/设计/计划，`package.json`、`package-lock.json`；提交主题：新增(MiniGame)：接入 OPPO 原生模板广告并升级到 0.3.12 | 版本更新后 `npm test`（129 项、全量类型通过）、`npm run build`、临时 npm 缓存下 `npm run pack:check`（656 文件、版本 0.3.12）、`git diff --check`；OPPO 真机待验证 |
